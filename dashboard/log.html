@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Log Workout — FitTrack</title>
+  <link rel="icon" type="image/png" href="../assets/images/fitness.png">
+  <link rel="stylesheet" href="../shared/global.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../config.local.js"></script>
+</head>
+<body>
+<div class="page" id="app">
+  <div class="log-wrap">
+
+    <a href="dashboard.html" style="font-size:13px;color:var(--text-3);display:inline-flex;align-items:center;gap:5px;margin-bottom:18px;text-decoration:none">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </a>
+
+    <div class="log-title">LOG YOUR<br><span>WORKOUT</span></div>
+    <p style="color:var(--text-2);margin-top:8px;font-size:15px;margin-bottom:20px">Select exercises below, enter reps, and save.</p>
+
+    <div class="date-row">
+      <label class="form-label" style="margin:0;flex-shrink:0">📅</label>
+      <input type="date" id="datePicker">
+      <span id="dateLabel" style="font-size:13px;color:var(--text-3)"></span>
+    </div>
+
+    <!-- Exercise selector by category -->
+    <div class="ex-selector">
+      <div class="ex-selector-title">+ Add Exercises</div>
+
+      <div class="ex-cat-section">
+        <div class="ex-cat-label" style="color:var(--lime)">💪 Push (Chest · Shoulders · Triceps)</div>
+        <div class="ex-chips" id="chips-push"></div>
+      </div>
+      <div class="ex-cat-section">
+        <div class="ex-cat-label" style="color:var(--cyan)">🏋️ Pull (Back · Biceps)</div>
+        <div class="ex-chips" id="chips-pull"></div>
+      </div>
+      <div class="ex-cat-section">
+        <div class="ex-cat-label" style="color:var(--violet)">🦵 Legs & Lower Body</div>
+        <div class="ex-chips" id="chips-legs"></div>
+      </div>
+      <div class="ex-cat-section">
+        <div class="ex-cat-label" style="color:var(--amber)">🧘 Core & Abs</div>
+        <div class="ex-chips" id="chips-core"></div>
+      </div>
+      <div class="ex-cat-section">
+        <div class="ex-cat-label" style="color:var(--coral)">🔥 Cardio & Full Body</div>
+        <div class="ex-chips" id="chips-cardio"></div>
+      </div>
+      <div class="ex-cat-section">
+        <div class="ex-cat-label" style="color:#ff6b9d">✈️ Calisthenics & Statics</div>
+        <div class="ex-chips" id="chips-calisthenics"></div>
+      </div>
+    </div>
+
+    <!-- Logged exercise cards -->
+    <div id="exerciseCards"></div>
+
+    <div class="total-banner">
+      <div class="total-label">Total Reps Today</div>
+      <div class="total-val" id="totalVal">0</div>
+    </div>
+
+    <button id="saveBtn" class="btn btn-lime btn-full btn-lg">💾 Save Workout</button>
+
+  </div>
+</div>
+
+<div id="appToast" class="toast"></div>
+
+<script type="module">
+  import { sb } from '../shared/db.js';
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const app = initializeApp(CONFIG.firebase);
+  const auth = getAuth(app);
+  let uid = null;
+  let dailyLog = {};
+
+  const EXERCISES = [
+    { id:'push-up',             name:'Push-Up',             cat:'push',         emoji:'💪', color:'lime'   },
+    { id:'diamond-push-up',     name:'Diamond Push-Up',     cat:'push',         emoji:'💎', color:'lime'   },
+    { id:'incline-push-up',     name:'Incline Push-Up',     cat:'push',         emoji:'📐', color:'lime'   },
+    { id:'decline-push-up',     name:'Decline Push-Up',     cat:'push',         emoji:'⬇️', color:'lime'   },
+    { id:'pike-push-up',        name:'Pike Push-Up',        cat:'push',         emoji:'🔺', color:'lime'   },
+    { id:'dips',                name:'Dips',                cat:'push',         emoji:'🪑', color:'lime'   },
+    { id:'pull-up',             name:'Pull-Up',             cat:'pull',         emoji:'🏋️', color:'cyan'   },
+    { id:'chin-up',             name:'Chin-Up',             cat:'pull',         emoji:'🤌', color:'cyan'   },
+    { id:'bodyweight-row',      name:'Bodyweight Row',      cat:'pull',         emoji:'🚣', color:'cyan'   },
+    { id:'muscle-up',           name:'Muscle-Up',           cat:'pull',         emoji:'🎯', color:'cyan'   },
+    { id:'squat',               name:'Squat',               cat:'legs',         emoji:'🦵', color:'violet' },
+    { id:'lunges',              name:'Lunges',              cat:'legs',         emoji:'🚶', color:'violet' },
+    { id:'bulgarian-split-squat',name:'Bulgarian Split Squat',cat:'legs',      emoji:'🏔️', color:'violet' },
+    { id:'calf-raises',         name:'Calf Raises',         cat:'legs',         emoji:'🦶', color:'violet' },
+    { id:'glute-bridge',        name:'Glute Bridge',        cat:'legs',         emoji:'🌉', color:'violet' },
+    { id:'pistol-squat',        name:'Pistol Squat',        cat:'legs',         emoji:'🔫', color:'violet' },
+    { id:'plank',               name:'Plank',               cat:'core',         emoji:'🪨', color:'amber'  },
+    { id:'sit-ups',             name:'Sit-Ups',             cat:'core',         emoji:'🧘', color:'amber'  },
+    { id:'crunches',            name:'Crunches',            cat:'core',         emoji:'🦴', color:'amber'  },
+    { id:'russian-twist',       name:'Russian Twist',       cat:'core',         emoji:'🌀', color:'amber'  },
+    { id:'hanging-leg-raises',  name:'Hanging Leg Raises',  cat:'core',         emoji:'🦵', color:'amber'  },
+    { id:'bicycle-crunch',      name:'Bicycle Crunch',      cat:'core',         emoji:'🚴', color:'amber'  },
+    { id:'burpees',             name:'Burpees',             cat:'cardio',       emoji:'💥', color:'coral'  },
+    { id:'jumping-jacks',       name:'Jumping Jacks',       cat:'cardio',       emoji:'⭐', color:'coral'  },
+    { id:'high-knees',          name:'High Knees',          cat:'cardio',       emoji:'🦿', color:'coral'  },
+    { id:'mountain-climbers',   name:'Mountain Climbers',   cat:'cardio',       emoji:'🧗', color:'coral'  },
+    { id:'jump-squats',         name:'Jump Squats',         cat:'cardio',       emoji:'🚀', color:'coral'  },
+    { id:'handstand-hold',      name:'Handstand Hold',      cat:'calisthenics', emoji:'🤸', color:'violet' },
+    { id:'hspu',                name:'Handstand Push-Up',   cat:'calisthenics', emoji:'🏛️', color:'violet' },
+    { id:'l-sit',               name:'L-Sit',               cat:'calisthenics', emoji:'📐', color:'violet' },
+    { id:'front-lever',         name:'Front Lever',         cat:'calisthenics', emoji:'🪃', color:'violet' },
+    { id:'planche',             name:'Planche',             cat:'calisthenics', emoji:'✈️', color:'violet' },
+  ];
+
+  // Build chips by category
+  ['push','pull','legs','core','cardio','calisthenics'].forEach(cat => {
+    const container = document.getElementById(`chips-${cat}`);
+    EXERCISES.filter(e => e.cat === cat).forEach(ex => {
+      const btn = document.createElement('button');
+      btn.className = 'ex-chip-btn';
+      btn.dataset.id = ex.id;
+      btn.innerHTML = `${ex.emoji} ${ex.name}`;
+      btn.onclick = () => addExercise(ex.id);
+      container.appendChild(btn);
+    });
+  });
+
+  // Date setup
+  const dp = document.getElementById('datePicker');
+  const today = new Date().toISOString().split('T')[0];
+  dp.value = today; dp.max = today;
+  updateDateLabel();
+  dp.addEventListener('change', () => { updateDateLabel(); loadLog(); });
+
+  function updateDateLabel() {
+    const d = new Date(dp.value + 'T00:00:00');
+    document.getElementById('dateLabel').textContent =
+      d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  }
+
+  // Add exercise
+  function addExercise(id) {
+    if (dailyLog[id] !== undefined) { showToast('Already added!','error'); return; }
+    dailyLog[id] = 0;
+    renderCards();
+    updateChips();
+    // Scroll to cards
+    document.getElementById('exerciseCards').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
+  function updateChips() {
+    document.querySelectorAll('.ex-chip-btn').forEach(btn => {
+      const id = btn.dataset.id;
+      btn.classList.toggle('added', dailyLog[id] !== undefined);
+    });
+  }
+
+  window.updateRep = function(id, change) {
+    dailyLog[id] = Math.max(0, (dailyLog[id]||0) + change);
+    document.getElementById(`rep-${id}`).value = dailyLog[id];
+    updateTotal();
+  };
+
+  window.handleInput = function(id, val) {
+    let v = parseInt(val);
+    dailyLog[id] = (isNaN(v)||v<0) ? 0 : v;
+    updateTotal();
+  };
+
+  window.removeExercise = function(id) {
+    delete dailyLog[id];
+    renderCards();
+    updateChips();
+  };
+
+  function updateTotal() {
+    document.getElementById('totalVal').textContent = Object.values(dailyLog).reduce((a,b)=>a+b,0).toLocaleString();
+  }
+
+  function renderCards() {
+    const container = document.getElementById('exerciseCards');
+    container.innerHTML = '';
+    Object.keys(dailyLog).forEach(id => {
+      const ex = EXERCISES.find(e => e.id === id);
+      if (!ex) return;
+      const div = document.createElement('div');
+      div.className = 'ex-log-card';
+      div.innerHTML = `
+        <div class="ex-icon ${ex.color}">${ex.emoji}</div>
+        <div class="ex-info">
+          <div class="ex-name" style="color:var(--${ex.color})">${ex.name}</div>
+          <div class="ex-sub">${ex.cat.charAt(0).toUpperCase()+ex.cat.slice(1)}</div>
+        </div>
+        <div class="rep-ctrl">
+          <button class="rep-btn" onclick="updateRep('${id}',-1)">−</button>
+          <input type="number" id="rep-${id}" class="rep-input" value="${dailyLog[id]||0}" min="0" inputmode="numeric"
+            oninput="handleInput('${id}',this.value)">
+          <button class="rep-btn" onclick="updateRep('${id}',1)">+</button>
+        </div>
+        <button class="remove-btn" onclick="removeExercise('${id}')" title="Remove">✕</button>`;
+      container.appendChild(div);
+    });
+    updateTotal();
+  }
+
+  // Auth + load
+  onAuthStateChanged(auth, user => {
+    if (!user) { window.location.href = '../auth/login.html'; return; }
+    uid = user.uid;
+    loadLog();
+  });
+
+  async function loadLog() {
+    if (!uid) return;
+    const { data } = await sb.from('workout_logs').select('*').eq('firebase_uid', uid).eq('log_date', dp.value).maybeSingle();
+    dailyLog = data?.exercises || {};
+    renderCards();
+    updateChips();
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    if (!uid) return;
+    const btn = document.getElementById('saveBtn');
+    btn.textContent = 'Saving…'; btn.disabled = true;
+    try {
+      const { error } = await sb.from('workout_logs').upsert({
+        firebase_uid: uid,
+        log_date: dp.value,
+        exercises: dailyLog
+      }, { onConflict: 'firebase_uid,log_date' });
+      if (error) throw error;
+      showToast('Workout saved! 💪','success');
+    } catch(err) {
+      console.error(err);
+      showToast('Error saving. Please try again.','error');
+    }
+    btn.textContent = '💾 Save Workout'; btn.disabled = false;
+  });
+
+  function showToast(msg, type='success') {
+    const t = document.getElementById('appToast');
+    t.textContent = msg; t.className = `toast ${type} visible`;
+    setTimeout(() => t.classList.remove('visible'), 3000);
+  }
+</script>
+<script type="module" src="../shared/navbar.js"></script>
+</body>
+</html>

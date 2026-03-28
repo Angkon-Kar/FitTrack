@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dashboard — FitTrack</title>
+  <link rel="icon" type="image/png" href="../assets/images/fitness.png">
+  <link rel="stylesheet" href="../shared/global.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="../config.local.js"></script>
+</head>
+<body>
+<div class="dash-page" id="app">
+  <div class="wrap">
+
+    <!-- ── Header ── -->
+    <div class="dash-header">
+      <div class="dash-greeting">Welcome back,</div>
+      <div class="dash-header-inner">
+        <div>
+          <div class="dash-name"><span id="greetName">Athlete</span><span style="color:var(--lime)">.</span></div>
+          <div class="dash-insight" id="dashInsight" style="display:none">
+            <span class="dash-insight-icon" id="insightIcon">💡</span>
+            <span id="insightText">Loading insights…</span>
+          </div>
+        </div>
+        <a href="log.html" class="btn btn-lime">✏️ Log Workout</a>
+      </div>
+      <div class="dash-meta">
+        <span class="stat-pill">📅 <span id="metaDate"></span></span>
+        <span class="stat-pill" id="streakPill" style="display:none">🔥 <span id="metaStreak"></span> day streak</span>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="emptyState" style="display:none" class="empty">
+      <div class="empty-icon">🏋️</div>
+      <h3>No workouts logged yet</h3>
+      <p style="margin-bottom:24px">Start logging to see your progress charts and stats.</p>
+      <a href="log.html" class="btn btn-lime">Log Your First Workout →</a>
+    </div>
+
+    <!-- Dashboard content -->
+    <div id="dashContent" style="display:none">
+
+      <!-- ── Stat cards ── -->
+      <div class="stats-row">
+        <div class="stat-card c-lime">
+          <span class="sc-icon">💪</span>
+          <div class="sc-label">Push Group</div>
+          <div class="sc-value" style="color:var(--lime)" id="stPush">—</div>
+          <div class="sc-sub">total reps</div>
+          <div class="sc-delta flat" id="deltaPush">—</div>
+        </div>
+        <div class="stat-card c-cyan">
+          <span class="sc-icon">🏋️</span>
+          <div class="sc-label">Pull Group</div>
+          <div class="sc-value" style="color:var(--cyan)" id="stPull">—</div>
+          <div class="sc-sub">total reps</div>
+          <div class="sc-delta flat" id="deltaPull">—</div>
+        </div>
+        <div class="stat-card c-violet">
+          <span class="sc-icon">🦵</span>
+          <div class="sc-label">Legs + Core</div>
+          <div class="sc-value" style="color:var(--violet)" id="stLegs">—</div>
+          <div class="sc-sub">total reps</div>
+          <div class="sc-delta flat" id="deltaLegs">—</div>
+        </div>
+        <div class="stat-card c-amber">
+          <span class="sc-icon">🔥</span>
+          <div class="sc-label">Grand Total</div>
+          <div class="sc-value" id="stTotal">—</div>
+          <div class="sc-sub">all reps</div>
+          <div class="sc-delta flat" id="deltaTotal">—</div>
+        </div>
+      </div>
+
+      <!-- ── Activity Heatmap ── -->
+      <div class="heatmap-box">
+        <div class="heatmap-header">
+          <div class="heatmap-title">📅 Activity — Last 52 Weeks</div>
+          <div class="heatmap-legend">
+            Less
+            <div class="heatmap-legend-cells">
+              <div class="heatmap-legend-cell" style="background:var(--bg-4)"></div>
+              <div class="heatmap-legend-cell" data-level="1"></div>
+              <div class="heatmap-legend-cell" data-level="2"></div>
+              <div class="heatmap-legend-cell" data-level="3"></div>
+              <div class="heatmap-legend-cell" data-level="4"></div>
+            </div>
+            More
+          </div>
+        </div>
+        <div class="heatmap-scroll">
+          <div class="heatmap-inner">
+            <div class="heatmap-day-labels">
+              <div class="heatmap-day-label"></div>
+              <div class="heatmap-day-label">Mon</div>
+              <div class="heatmap-day-label"></div>
+              <div class="heatmap-day-label">Wed</div>
+              <div class="heatmap-day-label"></div>
+              <div class="heatmap-day-label">Fri</div>
+              <div class="heatmap-day-label"></div>
+            </div>
+            <div id="heatmapGrid"></div>
+          </div>
+        </div>
+      </div>
+      <div class="heatmap-tooltip" id="hmTooltip"></div>
+
+      <!-- ── Charts: Weekly Goal + Radar + Line ── -->
+      <div class="charts-row-3">
+
+        <!-- Weekly Goal (circular) -->
+        <div class="chart-box">
+          <div class="chart-box-title">🎯 Weekly Goal</div>
+          <div class="goal-center">
+            <div class="goal-ring-wrap">
+              <svg class="goal-ring-svg" width="150" height="150" viewBox="0 0 150 150">
+                <circle class="goal-ring-bg" cx="75" cy="75" r="62" stroke-width="10"/>
+                <circle class="goal-ring-fill" id="goalRingFill" cx="75" cy="75" r="62"
+                  stroke-width="10"
+                  stroke-dasharray="389.56"
+                  stroke-dashoffset="389.56"/>
+              </svg>
+              <div class="goal-ring-text">
+                <div class="goal-pct" id="goalPct">0%</div>
+                <div class="goal-sub-text">complete</div>
+              </div>
+            </div>
+            <div class="goal-detail" style="width:100%">
+              <div class="goal-row">
+                <span class="goal-row-label">This week</span>
+                <span class="goal-row-val" id="goalThisWeek">0</span>
+              </div>
+              <div class="goal-row">
+                <span class="goal-row-label">Goal</span>
+                <span class="goal-row-val" id="goalTarget">1000</span>
+              </div>
+              <div class="goal-row">
+                <span class="goal-row-label">Remaining</span>
+                <span class="goal-row-val" id="goalRemaining" style="color:var(--lime)">—</span>
+              </div>
+              <div class="goal-edit-row">
+                <input type="number" class="goal-edit-input" id="goalInput" placeholder="Set goal" min="100" max="50000">
+                <button class="btn btn-lime btn-sm" onclick="saveGoal()">Set</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Radar Chart -->
+        <div class="chart-box">
+          <div class="chart-box-title">🕸️ Muscle Balance</div>
+          <div style="height:260px;position:relative"><canvas id="radarChart"></canvas></div>
+        </div>
+
+        <!-- Line Chart -->
+        <div class="chart-box">
+          <div class="chart-box-title">📈 Progress — Last 30 Days</div>
+          <div style="height:260px;position:relative"><canvas id="mainChart"></canvas></div>
+        </div>
+
+      </div>
+
+      <!-- ── Bottom: Best Day + Recent Logs ── -->
+      <div class="bottom-row">
+        <div class="best-day-box">
+          <div class="box-title" style="margin-bottom:14px">🏆 Best Single Day</div>
+          <div class="bdi"><span class="bdi-label">💪 Push</span><span class="bdi-val" style="color:var(--lime)" id="bdPush">—</span></div>
+          <div class="bdi"><span class="bdi-label">🏋️ Pull</span><span class="bdi-val" style="color:var(--cyan)" id="bdPull">—</span></div>
+          <div class="bdi"><span class="bdi-label">🦵 Legs</span><span class="bdi-val" style="color:var(--violet)" id="bdLegs">—</span></div>
+          <div class="bdi"><span class="bdi-label">🧘 Core</span><span class="bdi-val" style="color:var(--amber)" id="bdCore">—</span></div>
+          <div class="bdi"><span class="bdi-label">📅 Date</span><span class="bdi-val" style="font-size:13px;font-family:var(--font-body)" id="bdDate">—</span></div>
+        </div>
+
+        <div class="logs-box">
+          <div class="box-header">
+            <div class="box-title">Recent Workouts</div>
+            <a href="log.html" class="btn btn-ghost btn-sm">+ Log</a>
+          </div>
+          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+            <table class="log-table">
+              <thead><tr><th>Date</th><th>Exercises</th><th>Total Reps</th></tr></thead>
+              <tbody id="logsTbody">
+                <tr><td colspan="3"><div class="loading-row"><div class="spinner"></div> Loading…</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px">
+        <a href="log.html" class="btn btn-lime">✏️ Log Workout</a>
+        <a href="../compare/compare.html" class="btn btn-outline">⚔️ Challenge a Friend</a>
+        <a href="../exercises/exercises.html" class="btn btn-ghost">💪 Exercise Library</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { sb } from '../shared/db.js';
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const app = initializeApp(CONFIG.firebase);
+  const auth = getAuth(app);
+  let mainChart, radarChart;
+
+  document.getElementById('metaDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+
+  // ── Group helper ─────────────────────────────────────
+  function getGroups(exObj) {
+    let push=0, pull=0, legs=0, core=0, cardio=0;
+    for (const [k, v] of Object.entries(exObj||{})) {
+      if (['push-up','diamond-push-up','incline-push-up','decline-push-up','pike-push-up','dips','hspu','planche'].some(e=>k===e)) push+=v;
+      else if (['pull-up','chin-up','bodyweight-row','muscle-up','front-lever'].some(e=>k===e)) pull+=v;
+      else if (['squat','lunges','bulgarian-split-squat','calf-raises','glute-bridge','pistol-squat','jump-squats'].some(e=>k===e)) legs+=v;
+      else if (['plank','sit-ups','crunches','russian-twist','hanging-leg-raises','bicycle-crunch','l-sit'].some(e=>k===e)) core+=v;
+      else cardio+=v;
+    }
+    return {push,pull,legs,core,cardio};
+  }
+
+  function totalReps(exObj) { return Object.values(exObj||{}).reduce((a,b)=>a+b,0); }
+
+  // ── Auth ─────────────────────────────────────────────
+  onAuthStateChanged(auth, async user => {
+    if (!user) { window.location.href = '../auth/login.html'; return; }
+
+    const { data: profile } = await sb.from('users').select('name,username').eq('firebase_uid', user.uid).maybeSingle();
+    if (profile) document.getElementById('greetName').textContent = (profile.name||profile.username||'Athlete').split(' ')[0];
+
+    const { data: logs } = await sb.from('workout_logs').select('*').eq('firebase_uid', user.uid).order('log_date', { ascending: false });
+    if (!logs || !logs.length) { document.getElementById('emptyState').style.display = 'block'; return; }
+    document.getElementById('dashContent').style.display = 'block';
+
+    renderAll(logs);
+  });
+
+  function renderAll(logs) {
+    // ── Totals ────────────────────────────────────────
+    let tPush=0,tPull=0,tLegs=0,tCore=0,tTotal=0;
+    logs.forEach(l => {
+      const g = getGroups(l.exercises);
+      tPush+=g.push; tPull+=g.pull; tLegs+=g.legs+g.core; tCore+=g.core;
+      tTotal += totalReps(l.exercises);
+    });
+    document.getElementById('stPush').textContent  = tPush.toLocaleString();
+    document.getElementById('stPull').textContent  = tPull.toLocaleString();
+    document.getElementById('stLegs').textContent  = tLegs.toLocaleString();
+    document.getElementById('stTotal').textContent = tTotal.toLocaleString();
+
+    // Week comparison for delta
+    const now = new Date(); const weekAgo = new Date(now - 7*864e5); const twoWeekAgo = new Date(now - 14*864e5);
+    const thisWeekLogs = logs.filter(l => new Date(l.log_date+'T00:00:00') >= weekAgo);
+    const lastWeekLogs = logs.filter(l => { const d = new Date(l.log_date+'T00:00:00'); return d >= twoWeekAgo && d < weekAgo; });
+    const thisW = thisWeekLogs.reduce((s,l)=>s+totalReps(l.exercises),0);
+    const lastW = lastWeekLogs.reduce((s,l)=>s+totalReps(l.exercises),0);
+    setDelta('deltaTotal', thisW, lastW);
+    setDelta('deltaPush', thisWeekLogs.reduce((s,l)=>s+getGroups(l.exercises).push,0), lastWeekLogs.reduce((s,l)=>s+getGroups(l.exercises).push,0));
+    setDelta('deltaPull', thisWeekLogs.reduce((s,l)=>s+getGroups(l.exercises).pull,0), lastWeekLogs.reduce((s,l)=>s+getGroups(l.exercises).pull,0));
+    setDelta('deltaLegs', thisWeekLogs.reduce((s,l)=>s+getGroups(l.exercises).legs+getGroups(l.exercises).core,0), lastWeekLogs.reduce((s,l)=>s+getGroups(l.exercises).legs+getGroups(l.exercises).core,0));
+
+    // ── Smart Insight ─────────────────────────────────
+    buildInsight(logs, thisW, lastW);
+
+    // ── Streak ────────────────────────────────────────
+    const streak = calcStreak(logs);
+    if (streak > 1) { document.getElementById('streakPill').style.display = 'flex'; document.getElementById('metaStreak').textContent = streak; }
+
+    // ── Best Day ──────────────────────────────────────
+    let best = logs[0], bestReps = 0;
+    logs.forEach(l => { const t = totalReps(l.exercises); if (t > bestReps) { bestReps = t; best = l; } });
+    const bg = getGroups(best.exercises);
+    document.getElementById('bdPush').textContent  = bg.push || 0;
+    document.getElementById('bdPull').textContent  = bg.pull || 0;
+    document.getElementById('bdLegs').textContent  = bg.legs || 0;
+    document.getElementById('bdCore').textContent  = bg.core || 0;
+    document.getElementById('bdDate').textContent  = fmtDate(best.log_date);
+
+    // ── Heatmap ───────────────────────────────────────
+    buildHeatmap(logs);
+
+    // ── Weekly Goal ───────────────────────────────────
+    const goal = parseInt(localStorage.getItem('ft-weekly-goal') || '1000');
+    document.getElementById('goalInput').value = goal;
+    document.getElementById('goalTarget').textContent = goal.toLocaleString();
+    updateGoalRing(thisW, goal);
+
+    // ── Table ─────────────────────────────────────────
+    const tb = document.getElementById('logsTbody');
+    tb.innerHTML = logs.slice(0,12).map(l => {
+      const t = totalReps(l.exercises);
+      const names = Object.keys(l.exercises||{}).slice(0,3).map(k => `<span class="ex-tag-sm">${k.replace(/-/g,' ')}</span>`).join('');
+      const more = Object.keys(l.exercises||{}).length > 3 ? `<span class="ex-tag-sm">+${Object.keys(l.exercises).length-3}</span>` : '';
+      return `<tr><td>${fmtDate(l.log_date)}</td><td><div class="ex-tags">${names}${more}</div></td><td style="font-family:var(--font-mono);font-weight:700">${t.toLocaleString()}</td></tr>`;
+    }).join('');
+
+    // ── Charts ────────────────────────────────────────
+    buildLineChart(logs);
+    buildRadarChart(logs);
+  }
+
+  // ── Delta badge ───────────────────────────────────────
+  function setDelta(id, thisW, lastW) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!lastW) { el.textContent = 'New'; el.className = 'sc-delta flat'; return; }
+    const pct = Math.round(((thisW - lastW) / lastW) * 100);
+    if (pct > 0)       { el.textContent = `↑ ${pct}% this week`; el.className = 'sc-delta up'; }
+    else if (pct < 0)  { el.textContent = `↓ ${Math.abs(pct)}% this week`; el.className = 'sc-delta down'; }
+    else               { el.textContent = 'Same as last week'; el.className = 'sc-delta flat'; }
+  }
+
+  // ── Smart Insight ─────────────────────────────────────
+  function buildInsight(logs, thisW, lastW) {
+    const el = document.getElementById('dashInsight');
+    const iconEl = document.getElementById('insightIcon');
+    const textEl = document.getElementById('insightText');
+    const streak = calcStreak(logs);
+    let msg = '', icon = '💡';
+
+    const daysSinceLegs = (() => {
+      const legLogs = logs.filter(l => getGroups(l.exercises).legs > 0 || getGroups(l.exercises).core > 0);
+      if (!legLogs.length) return 99;
+      return Math.round((new Date() - new Date(legLogs[0].log_date+'T00:00:00')) / 864e5);
+    })();
+
+    if (streak >= 7) { icon='🔥'; msg=`<strong>🔥 ${streak}-day streak!</strong> You are on fire — don't stop now!`; }
+    else if (thisW > lastW * 1.2) { icon='📈'; msg=`<strong>You trained ${Math.round(((thisW-lastW)/lastW)*100)}% more</strong> this week vs last week. Keep pushing!`; }
+    else if (daysSinceLegs >= 5) { icon='⚠️'; msg=`<strong>Heads up!</strong> You haven't trained legs or core in ${daysSinceLegs} days. Balance is key.`; }
+    else if (streak === 0 && logs.length > 0) { icon='😴'; msg=`<strong>Rest day?</strong> Your last workout was ${daysSince(logs[0].log_date)} days ago. Let's get back on track!`; }
+    else if (lastW && thisW < lastW * 0.8) { icon='💪'; msg=`<strong>Push harder this week!</strong> You're at ${Math.round((thisW/lastW)*100)}% of last week's volume.`; }
+    else { icon='✅'; msg=`<strong>Great consistency!</strong> You have ${logs.length} total workouts logged.`; }
+
+    iconEl.textContent = icon;
+    textEl.innerHTML = msg;
+    el.style.display = 'flex';
+  }
+
+  function daysSince(dateStr) { return Math.round((new Date() - new Date(dateStr+'T00:00:00')) / 864e5); }
+
+  // ── Heatmap ───────────────────────────────────────────
+  function buildHeatmap(logs) {
+    const logMap = {};
+    logs.forEach(l => { logMap[l.log_date] = totalReps(l.exercises); });
+
+    const today = new Date(); today.setHours(0,0,0,0);
+    const start = new Date(today);
+    start.setDate(start.getDate() - 363 - start.getDay()); // go back 52 weeks, start Sunday
+
+    // Find max for scaling
+    const vals = Object.values(logMap);
+    const max = vals.length ? Math.max(...vals) : 1;
+
+    const grid = document.getElementById('heatmapGrid');
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const tooltip = document.getElementById('hmTooltip');
+
+    // Build weeks
+    let html = '';
+    let monthLabels = '';
+    let lastMonth = -1;
+    let weekIdx = 0;
+
+    const weeks = [];
+    let cur = new Date(start);
+    let currentWeek = [];
+
+    while (cur <= today || currentWeek.length % 7 !== 0) {
+      const d = new Date(cur);
+      currentWeek.push(d);
+      if (currentWeek.length === 7) { weeks.push(currentWeek); currentWeek = []; }
+      cur.setDate(cur.getDate() + 1);
+      if (cur > today && currentWeek.length > 0) {
+        while (currentWeek.length < 7) { currentWeek.push(null); }
+        weeks.push(currentWeek); currentWeek = []; break;
+      }
+    }
+
+    // Month labels row
+    let monthHtml = '<div class="heatmap-month-row">';
+    weeks.forEach((week, wi) => {
+      const firstReal = week.find(d => d);
+      if (firstReal) {
+        const m = firstReal.getMonth();
+        if (m !== lastMonth) {
+          monthHtml += `<div class="heatmap-month-label" style="min-width:${(13+3)}px">${MONTHS[m]}</div>`;
+          lastMonth = m;
+        } else {
+          monthHtml += `<div style="min-width:${(13+3)}px"></div>`;
+        }
+      }
+    });
+    monthHtml += '</div>';
+
+    // Weeks
+    let weeksHtml = '<div class="heatmap-weeks">';
+    weeks.forEach(week => {
+      weeksHtml += '<div class="heatmap-week">';
+      week.forEach(day => {
+        if (!day || day > today) {
+          weeksHtml += `<div class="heatmap-cell" style="opacity:0"></div>`;
+          return;
+        }
+        const ds = day.toISOString().split('T')[0];
+        const reps = logMap[ds] || 0;
+        const isToday = ds === today.toISOString().split('T')[0];
+        let level = 0;
+        if (reps > 0)       level = 1;
+        if (reps > max*0.25) level = 2;
+        if (reps > max*0.5)  level = 3;
+        if (reps > max*0.75) level = 4;
+        const dateLabel = day.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+        weeksHtml += `<div class="heatmap-cell${isToday?' today':''}" data-level="${level}" data-date="${dateLabel}" data-reps="${reps}"></div>`;
+      });
+      weeksHtml += '</div>';
+    });
+    weeksHtml += '</div>';
+
+    grid.innerHTML = monthHtml + weeksHtml;
+
+    // Tooltip
+    grid.querySelectorAll('.heatmap-cell[data-date]').forEach(cell => {
+      cell.addEventListener('mouseenter', e => {
+        const reps = parseInt(cell.dataset.reps);
+        tooltip.textContent = reps > 0 ? `${cell.dataset.date} — ${reps.toLocaleString()} reps` : `${cell.dataset.date} — No workout`;
+        tooltip.style.display = 'block';
+        positionTooltip(e);
+      });
+      cell.addEventListener('mousemove', positionTooltip);
+      cell.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+    });
+    function positionTooltip(e) {
+      tooltip.style.left = (e.clientX + 10) + 'px';
+      tooltip.style.top  = (e.clientY - 30) + 'px';
+    }
+
+    // Legend cells
+    document.querySelectorAll('.heatmap-legend-cell[data-level]').forEach(cell => {
+      const lv = cell.dataset.level;
+      // CSS handles colors via data-level attribute
+    });
+  }
+
+  // ── Weekly Goal ───────────────────────────────────────
+  window.saveGoal = function() {
+    const g = parseInt(document.getElementById('goalInput').value);
+    if (!g || g < 100) return;
+    localStorage.setItem('ft-weekly-goal', g);
+    document.getElementById('goalTarget').textContent = g.toLocaleString();
+    const thisW = parseInt(document.getElementById('goalThisWeek')?.textContent?.replace(/,/g,'')) || 0;
+    updateGoalRing(thisW, g);
+  };
+
+  function updateGoalRing(done, goal) {
+    const pct = Math.min(Math.round((done/goal)*100), 100);
+    const circumference = 2 * Math.PI * 62; // r=62
+    const offset = circumference - (pct/100) * circumference;
+    const ring = document.getElementById('goalRingFill');
+    ring.style.strokeDashoffset = offset;
+    document.getElementById('goalPct').textContent = pct + '%';
+    document.getElementById('goalThisWeek').textContent = done.toLocaleString();
+    document.getElementById('goalRemaining').textContent = Math.max(0, goal - done).toLocaleString();
+    // Color based on completion
+    const color = pct >= 100 ? '#c6ff00' : pct >= 60 ? '#00e5ff' : pct >= 30 ? '#ffa726' : '#ff4d6d';
+    ring.style.stroke = color;
+    document.getElementById('goalPct').style.color = color;
+  }
+
+  // ── Line Chart ────────────────────────────────────────
+  function buildLineChart(logs) {
+    const last30 = [...logs].reverse().slice(-30);
+    const labels = last30.map(l => fmtShort(l.log_date));
+    const pushD  = last30.map(l => getGroups(l.exercises).push);
+    const pullD  = last30.map(l => getGroups(l.exercises).pull);
+    const legsD  = last30.map(l => getGroups(l.exercises).legs + getGroups(l.exercises).core);
+    const chartOpts = {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{intersect:false,mode:'index'},
+      plugins:{
+        legend:{labels:{color:'#5a5a7a',font:{family:'Barlow',size:11},usePointStyle:true}},
+        tooltip:{backgroundColor:'#1c1c2c',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleColor:'#f2f2ff',bodyColor:'#9494b8',padding:10}
+      },
+      scales:{
+        x:{ticks:{color:'#38384a',font:{size:10},maxTicksLimit:8},grid:{color:'rgba(255,255,255,0.03)'}},
+        y:{ticks:{color:'#38384a',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'},beginAtZero:true}
+      }
+    };
+    if(mainChart) mainChart.destroy();
+    mainChart = new Chart(document.getElementById('mainChart').getContext('2d'),{
+      type:'line',
+      data:{labels,datasets:[
+        {label:'Push',data:pushD,borderColor:'#c6ff00',backgroundColor:'rgba(198,255,0,0.06)',fill:true,tension:0.4,pointRadius:2,pointHoverRadius:5},
+        {label:'Pull',data:pullD,borderColor:'#00e5ff',backgroundColor:'rgba(0,229,255,0.06)',fill:true,tension:0.4,pointRadius:2,pointHoverRadius:5},
+        {label:'Legs+Core',data:legsD,borderColor:'#b44dff',backgroundColor:'rgba(180,77,255,0.06)',fill:true,tension:0.4,pointRadius:2,pointHoverRadius:5}
+      ]},options:chartOpts
+    });
+  }
+
+  // ── Radar Chart ───────────────────────────────────────
+  function buildRadarChart(logs) {
+    const last30 = logs.slice(0, 30);
+    const totals = { Push:0, Pull:0, Legs:0, Core:0, Cardio:0 };
+    last30.forEach(l => {
+      const g = getGroups(l.exercises);
+      totals.Push += g.push; totals.Pull += g.pull;
+      totals.Legs += g.legs; totals.Core += g.core; totals.Cardio += g.cardio;
+    });
+    const maxVal = Math.max(...Object.values(totals), 1);
+    const normalized = Object.values(totals).map(v => Math.round((v/maxVal)*100));
+    if(radarChart) radarChart.destroy();
+    radarChart = new Chart(document.getElementById('radarChart').getContext('2d'),{
+      type:'radar',
+      data:{
+        labels:['Push 💪','Pull 🏋️','Legs 🦵','Core 🧘','Cardio 🔥'],
+        datasets:[{
+          label:'Your Balance',
+          data:normalized,
+          borderColor:'#c6ff00',
+          backgroundColor:'rgba(198,255,0,0.1)',
+          pointBackgroundColor:'#c6ff00',
+          borderWidth:2,
+          pointRadius:4,
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{backgroundColor:'#1c1c2c',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,bodyColor:'#9494b8',titleColor:'#f2f2ff'}},
+        scales:{r:{
+          ticks:{display:false,stepSize:25},
+          grid:{color:'rgba(255,255,255,0.06)'},
+          angleLines:{color:'rgba(255,255,255,0.06)'},
+          pointLabels:{color:'#9494b8',font:{family:'Barlow',size:12,weight:'600'}}
+        }}
+      }
+    });
+  }
+
+  // ── Helpers ───────────────────────────────────────────
+  function calcStreak(logs) {
+    if (!logs?.length) return 0;
+    const sorted = [...logs].sort((a,b)=>new Date(b.log_date)-new Date(a.log_date));
+    const today = new Date(); today.setHours(0,0,0,0);
+    const first = new Date(sorted[0].log_date+'T00:00:00');
+    const diffToday = Math.round((today - first) / 864e5);
+    if (diffToday > 1) return 0; // broke streak
+    let streak = 1, prev = first;
+    for (let i = 1; i < sorted.length; i++) {
+      const cur = new Date(sorted[i].log_date+'T00:00:00');
+      if (Math.round((prev - cur) / 864e5) === 1) { streak++; prev = cur; } else break;
+    }
+    return streak;
+  }
+  function fmtDate(s) { if(!s)return''; return new Date(s+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+  function fmtShort(s){ if(!s)return''; return new Date(s+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+</script>
+<script type="module" src="../shared/navbar.js"></script>
+</body>
+</html>
