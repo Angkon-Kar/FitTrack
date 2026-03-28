@@ -43,8 +43,12 @@ echo "✅ HTML files updated to use config.js"
 echo "📁 Creating dist folder for Netlify deployment..."
 mkdir -p dist
 
-# আপনার সব ফাইল dist ফোল্ডারে কপি করা হচ্ছে
-rsync -a --exclude='.git' --exclude='node_modules' --exclude='dist' ./ dist/
+# Copy all project files into dist, excluding dev/build directories.
+find . -mindepth 1 -maxdepth 1 \
+  ! -name '.git' \
+  ! -name 'node_modules' \
+  ! -name 'dist' \
+  -exec cp -R {} dist/ \;
 
 echo "✅ Files successfully moved to dist/ folder!"
 echo "✅ Build complete!"

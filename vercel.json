@@ -1,6 +1,6 @@
 {
   "buildCommand": "bash build.sh",
-  "outputDirectory": ".",
+  "outputDirectory": "dist",
   "installCommand": "echo 'No install needed'",
   "framework": null,
   "rewrites": [

@@ -1,35 +1,29 @@
-{
-  "build": {
-    "command": "bash build.sh",
-    "publish": "dist"
-  },
-  "redirects": [
-    {
-      "from": "/api/send-report",
-      "to": "/.netlify/functions/send-report",
-      "status": 200
-    }
-  ],
-  "headers": [
-    {
-      "for": "/locales/*",
-      "values": {
-        "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": "public, max-age=86400",
-        "Access-Control-Allow-Origin": "*"
-      }
-    },
-    {
-      "for": "/*",
-      "values": {
-        "X-Content-Type-Options": "nosniff",
-        "X-Frame-Options": "DENY",
-        "Referrer-Policy": "strict-origin-when-cross-origin"
-      }
-    }
-  ],
-  "dev": {
-    "command": "echo 'Static site — open index.html directly'",
-    "port": 8888
-  }
-}
+[build]
+command = "bash build.sh"
+publish = "dist"
+
+[functions]
+directory = "api"
+
+[[redirects]]
+from = "/api/send-report"
+to = "/.netlify/functions/send-report"
+status = 200
+
+[[headers]]
+for = "/locales/*"
+[headers.values]
+Content-Type = "application/json; charset=utf-8"
+Cache-Control = "public, max-age=86400"
+Access-Control-Allow-Origin = "*"
+
+[[headers]]
+for = "/*"
+[headers.values]
+X-Content-Type-Options = "nosniff"
+X-Frame-Options = "DENY"
+Referrer-Policy = "strict-origin-when-cross-origin"
+
+[dev]
+command = "echo 'Static site - open index.html directly'"
+port = 8888
