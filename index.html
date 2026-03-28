@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="FitTrack — Track your push-ups, pull-ups and squats daily. Visualize progress. Challenge friends.">
+  <title>FitTrack — Track Your Reps. Beat Your Best.</title>
+  <link rel="icon" type="image/png" href="assets/images/fitness.png">
+  <link rel="stylesheet" href="shared/global.css">
+  <link rel="stylesheet" href="landing.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="config.local.js"></script>
+</head>
+<body>
+
+<div class="page" id="app">
+
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+
+      <div class="hero-text">
+        <div class="hero-tag"><span>⚡</span> Free Workout Tracker</div>
+        <h1 class="hero-title">
+          TRACK<br>
+          <span class="line-accent">YOUR REPS.</span><br>
+          <span class="line-stroke">BEAT YOUR</span><br>
+          <span class="line-accent">BEST.</span>
+        </h1>
+        <p class="hero-subtitle">Log daily push-ups, pull-ups &amp; squats. Beautiful progress charts. Challenge friends head-to-head. 100% free, forever.</p>
+        <div class="hero-cta">
+          <a href="auth/signup.html" class="btn btn-lime btn-lg">Start Tracking Free →</a>
+          <a href="exercises/exercises.html" class="btn btn-outline btn-lg">Learn Exercises</a>
+        </div>
+        <div class="hero-social-proof">
+          <div class="hero-numbers">
+            <div class="hero-num"><div class="hero-num-val" style="color:var(--lime)">3</div><div class="hero-num-label">Exercises</div></div>
+            <div class="hero-num"><div class="hero-num-val">∞</div><div class="hero-num-label">Days</div></div>
+            <div class="hero-num"><div class="hero-num-val" style="color:var(--cyan)">Free</div><div class="hero-num-label">Forever</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-preview">
+        <div class="preview-card">
+          <div class="preview-header">
+            <div class="preview-dots"><span></span><span></span><span></span></div>
+            <div class="preview-title-bar">MY DASHBOARD</div>
+          </div>
+          <div class="preview-stats">
+            <div class="preview-stat"><div class="preview-stat-val" style="color:var(--lime)">248</div><div class="preview-stat-label">Push-ups</div></div>
+            <div class="preview-stat"><div class="preview-stat-val" style="color:var(--cyan)">96</div><div class="preview-stat-label">Pull-ups</div></div>
+            <div class="preview-stat"><div class="preview-stat-val" style="color:var(--violet)">180</div><div class="preview-stat-label">Squats</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--text-4);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Last 7 days</div>
+          <div class="preview-chart-bars">
+            <div class="preview-bar" style="height:40%;background:var(--lime);animation-delay:0.0s"></div>
+            <div class="preview-bar" style="height:60%;background:var(--lime);animation-delay:0.1s"></div>
+            <div class="preview-bar" style="height:35%;background:var(--lime);animation-delay:0.2s"></div>
+            <div class="preview-bar" style="height:80%;background:var(--lime);animation-delay:0.3s"></div>
+            <div class="preview-bar" style="height:55%;background:var(--lime);animation-delay:0.4s"></div>
+            <div class="preview-bar" style="height:70%;background:var(--lime);animation-delay:0.5s"></div>
+            <div class="preview-bar" style="height:95%;background:var(--lime);animation-delay:0.6s"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section">
+    <div class="wrap">
+      <div class="section-eyebrow">Why FitTrack</div>
+      <div class="section-heading">BUILT FOR<br>SERIOUS ATHLETES</div>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon" style="background:rgba(198,255,0,0.1)">📊</div><div class="feature-title">PROGRESS CHARTS</div><p class="feature-text">Beautiful line charts showing your last 30 days of training. See trends, spot weaknesses, celebrate PRs.</p></div>
+        <div class="feature-card"><div class="feature-icon" style="background:rgba(0,229,255,0.1)">⚔️</div><div class="feature-title">FRIEND BATTLES</div><p class="feature-text">Search any username and compare your stats side-by-side. Radar charts. Bar charts. Full breakdown.</p></div>
+        <div class="feature-card"><div class="feature-icon" style="background:rgba(180,77,255,0.1)">💪</div><div class="feature-title">EXERCISE GUIDES</div><p class="feature-text">Step-by-step tutorials with proper form, sets/reps recommendations, common mistakes, and variations.</p></div>
+        <div class="feature-card"><div class="feature-icon" style="background:rgba(255,167,38,0.1)">🏆</div><div class="feature-title">BEST DAY TRACKING</div><p class="feature-text">Automatically tracks your best single-day performance. Always know your personal record to beat.</p></div>
+        <div class="feature-card"><div class="feature-icon" style="background:rgba(255,77,109,0.1)">📱</div><div class="feature-title">WORKS EVERYWHERE</div><p class="feature-text">iPhone, Android, iPad, Mac, Windows. Fully responsive. Add to home screen for app-like experience.</p></div>
+        <div class="feature-card"><div class="feature-icon" style="background:rgba(198,255,0,0.1)">📝</div><div class="feature-title">FITNESS BLOG</div><p class="feature-text">Expert articles on testosterone, body composition, recovery, and mindset — to keep you motivated.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-section">
+    <div class="wrap">
+      <div class="section-eyebrow">3 Simple Steps</div>
+      <div class="section-heading">HOW IT WORKS</div>
+      <div class="steps-row">
+        <div class="step-item"><div class="step-num">1</div><div class="step-title">CREATE ACCOUNT</div><p class="step-text">Sign up with email or Google. Pick a unique username. Takes 30 seconds.</p></div>
+        <div class="step-item"><div class="step-num">2</div><div class="step-title">LOG DAILY</div><p class="step-text">After each workout, enter your push-up, pull-up, and squat counts. Takes 10 seconds.</p></div>
+        <div class="step-item"><div class="step-num">3</div><div class="step-title">GROW &amp; COMPETE</div><p class="step-text">Watch your charts climb. Challenge friends. Beat your personal best every week.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="wrap">
+      <div class="section-eyebrow">Get Started</div>
+      <h2 class="section-heading" style="margin-bottom:16px">ZERO EXCUSES.<br>START TODAY.</h2>
+      <p style="color:var(--text-2);font-size:17px;margin-bottom:32px">Free forever. No credit card. No BS.</p>
+      <a href="auth/signup.html" class="btn btn-lime btn-lg">Create Free Account →</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <a href="index.html" class="nav-logo" style="font-size:20px">FIT<span class="dot">.</span>TRACK</a>
+      <div class="footer-links">
+        <a href="exercises/exercises.html">Exercises</a>
+        <a href="blog/blog.html">Blog</a>
+        <a href="compare/compare.html">Compare</a>
+        <a href="dashboard/dashboard.html">Dashboard</a>
+      </div>
+      <p style="font-size:12px;color:var(--text-4)">© 2025 FitTrack. Built for athletes.</p>
+    </div>
+  </footer>
+
+</div>
+
+<script type="module" src="shared/navbar.js"></script>
+</body>
+</html>
