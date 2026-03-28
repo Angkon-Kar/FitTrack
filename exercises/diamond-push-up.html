@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Diamond Push-Up — FitTrack Exercise Guide</title>
+  <meta name="description" content="Hands form a diamond under the chest. Maximum triceps isolation with bodyweight.">
+  <link rel="icon" type="image/png" href="../assets/fitness.png">
+  <link rel="stylesheet" href="../shared/global.css">
+  <link rel="stylesheet" href="exercise-detail.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../config.local.js"></script>
+</head>
+<body>
+<div class="detail-page">
+  <div class="wrap">
+
+    <!-- Back + Hero -->
+    <div class="detail-hero" style="background:radial-gradient(ellipse 50% 80% at 0% 60%,var(--lime)07,transparent)">
+      <a href="exercises.html" class="detail-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        All Exercises
+      </a>
+      <div class="detail-badge" style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);color:var(--cyan)">
+        🟡 Push &nbsp;·&nbsp; Intermediate
+      </div>
+      <h1 class="detail-title" style="color:var(--lime)">Diamond Push-Up</h1>
+      <p class="detail-desc">Hands form a diamond under the chest. Maximum triceps isolation with bodyweight.</p>
+      <div class="detail-muscles"><span class="muscle-tag primary">Triceps</span><span class="muscle-tag primary">Inner Chest</span><span class="muscle-tag">Front Deltoids</span><span class="muscle-tag">Core</span></div>
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="detail-layout">
+
+      <!-- LEFT: Image slider + Quick stats -->
+      <div class="detail-left">
+
+        <!-- Image / GIF box -->
+        <div class="detail-img-box">
+          <div class="detail-img-slider" id="imgSlider"
+            data-startx="0" data-dragging="false">
+
+            <div class="detail-img-track" id="imgTrack">
+              <!-- Slides injected by JS -->
+            </div>
+
+            <button class="slider-arrow prev hidden" id="sliderPrev" onclick="slide(-1)" aria-label="Previous image">&#8249;</button>
+            <button class="slider-arrow next hidden" id="sliderNext" onclick="slide(1)"  aria-label="Next image">&#8250;</button>
+          </div>
+          <div class="slider-dots" id="sliderDots"></div>
+        </div>
+
+        <!-- Quick stats -->
+        <div class="detail-quick-stats">
+          <div class="qs-row">
+            <span class="qs-label">Category</span>
+            <span class="qs-val" style="color:var(--lime)">Push</span>
+          </div>
+          <div class="qs-row">
+            <span class="qs-label">Difficulty</span>
+            <span class="qs-val">🟡 Intermediate</span>
+          </div>
+          <div class="qs-row">
+            <span class="qs-label">Primary</span>
+            <span class="qs-val" style="font-family:var(--font-body);font-size:12px;text-align:right;max-width:160px">Triceps, Inner Chest</span>
+          </div>
+          <div class="qs-row">
+            <span class="qs-label">Sets · Reps</span>
+            <span class="qs-val">3 · 8–12</span>
+          </div>
+        </div>
+
+      </div><!-- /detail-left -->
+
+      <!-- RIGHT: All content -->
+      <div class="detail-right">
+
+        <!-- Steps -->
+        <div class="detail-card">
+          <div class="detail-card-head">
+            <div class="detail-card-title">📋 Step-by-Step Form</div>
+          </div>
+          <div class="detail-card-body">
+            <div class="step-row">
+              <div class="step-num" style="background:var(--lime)20;color:var(--lime)">1</div>
+              <div><div class="step-head">Hand Position</div><div class="step-text">Place hands together under chest, index fingers and thumbs touching to form a diamond shape.</div></div>
+            </div>
+<div class="step-row">
+              <div class="step-num" style="background:var(--lime)20;color:var(--lime)">2</div>
+              <div><div class="step-head">Body Alignment</div><div class="step-text">Arms extended, body straight head to heels. Expect fewer reps than standard push-ups.</div></div>
+            </div>
+<div class="step-row">
+              <div class="step-num" style="background:var(--lime)20;color:var(--lime)">3</div>
+              <div><div class="step-head">Elbow Tracking</div><div class="step-text">As you lower, elbows flare slightly OUT to the sides — this is correct for diamond push-ups.</div></div>
+            </div>
+<div class="step-row">
+              <div class="step-num" style="background:var(--lime)20;color:var(--lime)">4</div>
+              <div><div class="step-head">Full Depth</div><div class="step-text">Lower chest toward your hands. As deep as shoulder mobility allows without wrist pain.</div></div>
+            </div>
+<div class="step-row">
+              <div class="step-num" style="background:var(--lime)20;color:var(--lime)">5</div>
+              <div><div class="step-head">Explosive Press</div><div class="step-text">Push forcefully back to start. Feel the tricep contraction at full extension.</div></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Breathing -->
+        <div class="detail-card">
+          <div class="detail-card-head">
+            <div class="detail-card-title">🌬️ Breathing Pattern</div>
+          </div>
+          <div class="detail-card-body" style="padding-top:14px">
+            <div class="breath-row">
+              <div class="breath-box">
+                <div class="breath-phase">Going Down</div>
+                <div class="breath-action" style="color:var(--lime)">Inhale</div>
+              </div>
+              <div class="breath-box">
+                <div class="breath-phase">At Bottom</div>
+                <div class="breath-action" style="color:var(--text-2)">Pause</div>
+              </div>
+              <div class="breath-box">
+                <div class="breath-phase">Coming Up</div>
+                <div class="breath-action" style="color:var(--lime)">Exhale</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sets & Reps -->
+        <div class="detail-card">
+          <div class="detail-card-head">
+            <div class="detail-card-title">📊 Sets &amp; Reps Guide</div>
+          </div>
+          <div class="detail-card-body" style="padding-top:6px">
+            <table class="reps-table">
+              <thead><tr><th>Level</th><th>Sets</th><th>Reps / Time</th><th>Rest</th></tr></thead>
+              <tbody><tr><td>🟡 Intermediate</td><td>3</td><td>8–12</td><td style="color:var(--text-3)">75s</td></tr>
+<tr><td>🔴 Advanced</td><td>4</td><td>15–20</td><td style="color:var(--text-3)">60s</td></tr>
+<tr><td>💀 Athlete</td><td>5</td><td>25+</td><td style="color:var(--text-3)">45s</td></tr>
+</tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Mistakes + Tips side by side on wide screens -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="detail-card">
+            <div class="detail-card-head"><div class="detail-card-title">⚠️ Common Mistakes</div></div>
+            <div class="detail-card-body"><div class="list-row"><span class="list-icon" style="color:var(--coral)">✗</span>Wrist pain — warm up wrists first, use fists if needed</div><div class="list-row"><span class="list-icon" style="color:var(--coral)">✗</span>Hands too wide — keep diamond tight</div><div class="list-row"><span class="list-icon" style="color:var(--coral)">✗</span>Excessive elbow flare — slight flare is fine, not extreme</div></div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-card-head"><div class="detail-card-title">✅ Pro Tips</div></div>
+            <div class="detail-card-body"><div class="list-row"><span class="list-icon" style="color:var(--lime)">→</span>Great superset with regular push-ups</div><div class="list-row"><span class="list-icon" style="color:var(--lime)">→</span>Use fists on floor if wrists hurt flat</div><div class="list-row"><span class="list-icon" style="color:var(--lime)">→</span>Slow the eccentric (lowering) phase for more tension</div></div>
+          </div>
+        </div>
+
+        <!-- Variations -->
+        <div class="detail-card">
+          <div class="detail-card-head"><div class="detail-card-title">🔄 Variations</div></div>
+          <div class="detail-card-body" style="padding-top:14px;padding-bottom:14px">
+            <span class="var-chip">Standard Push-up (wider)</span><span class="var-chip">Decline Diamond Push-up</span><span class="var-chip">Weighted Diamond Push-up</span>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="detail-cta">
+          <div>
+            <div class="detail-cta-text">Ready to train?</div>
+            <div class="detail-cta-sub">Log your Diamond Push-Up reps in your dashboard.</div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a href="../dashboard/log.html" class="btn btn-lime">✏️ Log Workout</a>
+            <a href="../dashboard/dashboard.html" class="btn btn-outline">📊 Dashboard</a>
+          </div>
+        </div>
+
+      </div><!-- /detail-right -->
+    </div><!-- /detail-layout -->
+
+    <!-- Prev / Next nav -->
+    <div class="detail-nav">
+      <a href="push-up.html" class="detail-nav-card"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><div><div class="nav-card-label">Previous</div><div class="nav-card-name">Push-Up</div></div></a>
+      <a href="exercises.html" class="detail-nav-card center">
+        <div>
+          <div class="nav-card-label">Library</div>
+          <div class="nav-card-name" style="color:var(--lime)">All Exercises</div>
+        </div>
+      </a>
+      <a href="incline-push-up.html" class="detail-nav-card next"><div><div class="nav-card-label">Next</div><div class="nav-card-name">Incline Push-Up</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Image Slider ─────────────────────────────────────────
+const SLIDES = [
+  { type:'img', src:'../assets/images/exercises/diamond-push-up/diamond-push-up.gif',  fallback:'../assets/images/exercises/diamond-push-up/diamond-push-up.gif' },
+  { type:'img', src:'../assets/images/exercises/diamond-push-up/diamond-push-up1.jpg',fallback:'../assets/images/exercises/diamond-push-up/diamond-push-up1.jpg' },
+  { type:'img', src:'../assets/images/exercises/diamond-push-up/diamond-push-up2.png',fallback:'../assets/images/exercises/diamond-push-up/diamond-push-up2.png' },
+  { type:'img', src:'../assets/images/exercises/diamond-push-up/diamond-push-up3.gif',fallback:'../assets/images/exercises/diamond-push-up/diamond-push-up3.gif' },
+  { type:'emoji', emoji:'💎' },
+];
+
+const track  = document.getElementById('imgTrack');
+const dotsEl = document.getElementById('sliderDots');
+const prevBtn= document.getElementById('sliderPrev');
+const nextBtn= document.getElementById('sliderNext');
+let current = 0;
+let loadedSlides = [];
+let touchStartX = 0;
+
+function tryLoadSlides() {
+  const promises = SLIDES.slice(0,5).map((s,i) => new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve({ i, ok:true,  src:s.src });
+    img.onerror = () => {
+      const img2 = new Image();
+      img2.onload  = () => resolve({ i, ok:true,  src:s.fallback });
+      img2.onerror = () => resolve({ i, ok:false });
+      img2.src = s.fallback;
+    };
+    img.src = s.src;
+  }));
+
+  Promise.all(promises).then(results => {
+    const found = results.filter(r => r.ok);
+    if (found.length === 0) {
+      loadedSlides = [{ type:'emoji' }];
+    } else {
+      loadedSlides = found.map(r => ({ type:'img', src:r.src }));
+    }
+    buildSlider();
+  });
+}
+
+function buildSlider() {
+  track.innerHTML = '';
+  dotsEl.innerHTML = '';
+  loadedSlides.forEach((s, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'detail-img-slide';
+    slide.style.background = 'linear-gradient(135deg,var(--lime)12,var(--lime)06,var(--bg-3))';
+    if (s.type === 'img') {
+      const img = document.createElement('img');
+      img.src = s.src; img.alt = 'Diamond Push-Up';
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;pointer-events:none';
+      slide.appendChild(img);
+    } else {
+      const em = document.createElement('div');
+      em.className = 'detail-img-emoji'; em.textContent = '💎';
+      slide.appendChild(em);
+    }
+    track.appendChild(slide);
+
+    if (loadedSlides.length > 1) {
+      const dot = document.createElement('button');
+      dot.className = 'slider-dot' + (i===0?' active':'');
+      dot.setAttribute('aria-label','Slide '+(i+1));
+      dot.onclick = () => goTo(i);
+      dotsEl.appendChild(dot);
+    }
+  });
+
+  if (loadedSlides.length < 2) {
+    prevBtn.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+    dotsEl.style.display = 'none';
+  } else {
+    prevBtn.classList.toggle('hidden', current === 0);
+    nextBtn.classList.toggle('hidden', current === loadedSlides.length - 1);
+    dotsEl.style.display = 'flex';
+  }
+  goTo(0, false);
+}
+
+function goTo(idx, animate=true) {
+  current = Math.max(0, Math.min(idx, loadedSlides.length - 1));
+  if (!animate) track.style.transition = 'none';
+  track.style.transform = 'translateX(-' + (current * 100) + '%)';
+  if (!animate) requestAnimationFrame(() => { track.style.transition = ''; });
+  document.querySelectorAll('.slider-dot').forEach((d,i) => d.classList.toggle('active', i===current));
+  prevBtn.classList.toggle('hidden', current === 0);
+  nextBtn.classList.toggle('hidden', current === loadedSlides.length - 1);
+}
+
+window.slide = (dir) => goTo(current + dir);
+
+// Touch / swipe support
+const slider = document.getElementById('imgSlider');
+let isDragging = false, startX = 0, diffX = 0;
+
+slider.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; diffX = 0; }, {passive:true});
+slider.addEventListener('touchmove',  e => { if (isDragging) diffX = e.touches[0].clientX - startX; }, {passive:true});
+slider.addEventListener('touchend',   () => {
+  if (Math.abs(diffX) > 40) goTo(diffX < 0 ? current + 1 : current - 1);
+  isDragging = false; diffX = 0;
+});
+
+// Mouse drag
+slider.addEventListener('mousedown', e => { startX = e.clientX; isDragging = true; diffX = 0; e.preventDefault(); });
+window.addEventListener('mousemove', e => { if (isDragging) diffX = e.clientX - startX; });
+window.addEventListener('mouseup',   () => {
+  if (isDragging && Math.abs(diffX) > 40) goTo(diffX < 0 ? current + 1 : current - 1);
+  isDragging = false; diffX = 0;
+});
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft')  goTo(current - 1);
+  if (e.key === 'ArrowRight') goTo(current + 1);
+});
+
+// Responsive: grid for mistakes+tips on mobile
+function checkWidth() {
+  const grid = document.querySelector('.detail-right > div[style*="grid-template-columns"]');
+  if (grid) grid.style.gridTemplateColumns = window.innerWidth < 600 ? '1fr' : '1fr 1fr';
+}
+window.addEventListener('resize', checkWidth);
+checkWidth();
+
+tryLoadSlides();
+
+// ── Lightbox ────────────────────────────────────────────
+function openLightbox(idx) {
+  if (!loadedSlides || !loadedSlides.length) return;
+  const lb = document.getElementById('lightbox');
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  lbShow(idx ?? current);
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function lbClose(e) { if (e.target === document.getElementById('lightbox')) closeLightbox(); }
+function lbSlide(dir) {
+  const idx = (lbCurrentIdx + dir + loadedSlides.length) % loadedSlides.length;
+  lbShow(idx); event.stopPropagation();
+}
+let lbCurrentIdx = 0;
+function lbShow(idx) {
+  lbCurrentIdx = idx;
+  const s = loadedSlides[idx];
+  const img = document.getElementById('lbImg');
+  const em  = document.getElementById('lbEmoji');
+  if (s.type === 'img') {
+    img.src = s.src; img.style.display = 'block'; em.style.display = 'none';
+  } else {
+    em.textContent = s.emoji || document.querySelector('.detail-img-emoji')?.textContent || '💪';
+    em.style.display = 'block'; img.style.display = 'none';
+  }
+  const ctr = document.getElementById('lbCounter');
+  ctr.textContent = loadedSlides.length > 1 ? `${idx+1} / ${loadedSlides.length}` : '';
+  document.getElementById('lbPrev').classList.toggle('hidden', loadedSlides.length <= 1);
+  document.getElementById('lbNext').classList.toggle('hidden', loadedSlides.length <= 1);
+}
+// Click on slider opens lightbox
+document.getElementById('imgSlider').addEventListener('click', function(e) {
+  if (Math.abs(diffX) < 8) openLightbox(current);
+});
+// Keyboard esc closes
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
+ 
+</script>
+
+<script type="module" src="../shared/navbar.js"></script>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="lbClose(event)">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">✕</button>
+  <button class="lightbox-arrow lb-prev" id="lbPrev" onclick="lbSlide(-1);event.stopPropagation()" aria-label="Previous">&#8249;</button>
+  <img class="lightbox-img" id="lbImg" src="" alt="" style="display:none">
+  <div class="lightbox-emoji" id="lbEmoji" style="display:none"></div>
+  <button class="lightbox-arrow lb-next" id="lbNext" onclick="lbSlide(1);event.stopPropagation()" aria-label="Next">&#8250;</button>
+  <div class="lightbox-counter" id="lbCounter"></div>
+</div>
+ 
+</body>
+</html>

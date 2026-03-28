@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Exercise Library — FitTrack</title>
+  <meta name="description" content="32 bodyweight exercises with difficulty filters, muscle group filters, and detailed guides.">
+  <link rel="icon" type="image/png" href="../assets/images/fitness.png">
+  <link rel="stylesheet" href="../shared/global.css">
+  <link rel="stylesheet" href="exercises.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../config.local.js"></script>
+</head>
+<body>
+<div class="ex-page">
+  <div class="wrap">
+
+    <div class="ex-hero">
+      <div class="section-eyebrow">Exercise Library</div>
+      <h1>MASTER<br><span>EVERY MOVE.</span></h1>
+      <p>32 bodyweight exercises. Filter by difficulty or muscle group, then open any exercise for full step-by-step guidance.</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Level</span>
+        <button class="filter-btn active"      data-f="diff" data-v="all">All</button>
+        <button class="filter-btn"             data-f="diff" data-v="Beginner">Beginner</button>
+        <button class="filter-btn f-intermediate" data-f="diff" data-v="Intermediate">Intermediate</button>
+        <button class="filter-btn f-advanced"  data-f="diff" data-v="Advanced">Advanced</button>
+        <button class="filter-btn f-elite"     data-f="diff" data-v="Elite">Elite</button>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-group">
+        <span class="filter-label">Muscle</span>
+        <button class="filter-btn active" data-f="cat" data-v="all">All</button>
+        <button class="filter-btn" data-f="cat" data-v="Push">Push</button>
+        <button class="filter-btn" data-f="cat" data-v="Pull">Pull</button>
+        <button class="filter-btn" data-f="cat" data-v="Legs">Legs</button>
+        <button class="filter-btn" data-f="cat" data-v="Core">Core</button>
+        <button class="filter-btn" data-f="cat" data-v="Cardio">Cardio</button>
+        <button class="filter-btn" data-f="cat" data-v="Calisthenics">Statics</button>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="ex-search-wrap">
+        <span class="ex-search-icon">🔍</span>
+        <input type="text" class="ex-search" id="exSearch" placeholder="Search exercises…" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="ex-count"><span id="exNum">32</span> exercises</div>
+
+    <div id="exSections"></div>
+
+  </div>
+</div>
+
+<script>
+const EXERCISES = [
+  // ── PUSH ──────────────────────────────────────────────
+  { id:'push-up',              name:'Push-Up',               cat:'Push',         diff:'Beginner',     emoji:'💪', muscles:'Chest · Front Deltoids · Triceps',   tags:['Chest','Core'] },
+  { id:'diamond-push-up',      name:'Diamond Push-Up',        cat:'Push',         diff:'Intermediate', emoji:'💎', muscles:'Triceps · Inner Chest',             tags:['Triceps'] },
+  { id:'incline-push-up',      name:'Incline Push-Up',        cat:'Push',         diff:'Beginner',     emoji:'📐', muscles:'Lower Chest · Triceps',             tags:['Beginner Friendly'] },
+  { id:'decline-push-up',      name:'Decline Push-Up',        cat:'Push',         diff:'Intermediate', emoji:'⬇️', muscles:'Upper Chest · Front Deltoids',      tags:['Upper Chest'] },
+  { id:'pike-push-up',         name:'Pike Push-Up',           cat:'Push',         diff:'Intermediate', emoji:'🔺', muscles:'Shoulders · Triceps',               tags:['Shoulder Focus'] },
+  { id:'dips',                 name:'Dips',                   cat:'Push',         diff:'Intermediate', emoji:'🪑', muscles:'Triceps · Lower Chest',             tags:['Compound'] },
+  // ── PULL ──────────────────────────────────────────────
+  { id:'pull-up',              name:'Pull-Up',                cat:'Pull',         diff:'Intermediate', emoji:'🏋️', muscles:'Lats · Biceps',                    tags:['Back','Biceps'] },
+  { id:'chin-up',              name:'Chin-Up',                cat:'Pull',         diff:'Intermediate', emoji:'🤌', muscles:'Biceps · Lats',                    tags:['Biceps Focus'] },
+  { id:'bodyweight-row',       name:'Bodyweight Row',         cat:'Pull',         diff:'Beginner',     emoji:'🚣', muscles:'Lats · Rhomboids',                 tags:['Horizontal Pull'] },
+  { id:'muscle-up',            name:'Muscle-Up',              cat:'Pull',         diff:'Elite',        emoji:'🎯', muscles:'Lats · Chest · Triceps',           tags:['Advanced','Full Body'] },
+  // ── LEGS ──────────────────────────────────────────────
+  { id:'squat',                name:'Squat',                  cat:'Legs',         diff:'Beginner',     emoji:'🦵', muscles:'Quads · Glutes',                   tags:['Compound','Core'] },
+  { id:'lunges',               name:'Lunges',                 cat:'Legs',         diff:'Beginner',     emoji:'🚶', muscles:'Quads · Glutes',                   tags:['Unilateral','Balance'] },
+  { id:'bulgarian-split-squat',name:'Bulgarian Split Squat',  cat:'Legs',         diff:'Advanced',     emoji:'🏔️', muscles:'Quads · Glutes',                  tags:['Unilateral'] },
+  { id:'calf-raises',          name:'Calf Raises',            cat:'Legs',         diff:'Beginner',     emoji:'🦶', muscles:'Gastrocnemius · Soleus',           tags:['Calves'] },
+  { id:'glute-bridge',         name:'Glute Bridge',           cat:'Legs',         diff:'Beginner',     emoji:'🌉', muscles:'Glutes · Hamstrings',              tags:['Glutes'] },
+  { id:'pistol-squat',         name:'Pistol Squat',           cat:'Legs',         diff:'Elite',        emoji:'🔫', muscles:'Quads · Glutes',                   tags:['One Leg','Balance'] },
+  // ── CORE ──────────────────────────────────────────────
+  { id:'plank',                name:'Plank',                  cat:'Core',         diff:'Beginner',     emoji:'🪨', muscles:'Transverse Abdominis · Core',      tags:['Isometric'] },
+  { id:'sit-ups',              name:'Sit-Ups',                cat:'Core',         diff:'Beginner',     emoji:'🧘', muscles:'Rectus Abdominis · Hip Flexors',   tags:['Classic'] },
+  { id:'crunches',             name:'Crunches',               cat:'Core',         diff:'Beginner',     emoji:'🦴', muscles:'Upper Abs · Obliques',             tags:['Abs'] },
+  { id:'russian-twist',        name:'Russian Twist',          cat:'Core',         diff:'Intermediate', emoji:'🌀', muscles:'Obliques · Core',                  tags:['Rotational'] },
+  { id:'hanging-leg-raises',   name:'Hanging Leg Raises',     cat:'Core',         diff:'Advanced',     emoji:'🦵', muscles:'Lower Abs · Hip Flexors',          tags:['Hanging'] },
+  { id:'bicycle-crunch',       name:'Bicycle Crunch',         cat:'Core',         diff:'Intermediate', emoji:'🚴', muscles:'Obliques · Rectus Abdominis',      tags:['Full Abs'] },
+  // ── CARDIO ────────────────────────────────────────────
+  { id:'burpees',              name:'Burpees',                cat:'Cardio',       diff:'Intermediate', emoji:'💥', muscles:'Full Body',                        tags:['HIIT','Fat Burn'] },
+  { id:'jumping-jacks',        name:'Jumping Jacks',          cat:'Cardio',       diff:'Beginner',     emoji:'⭐', muscles:'Full Body · Shoulders',            tags:['Warm-up'] },
+  { id:'high-knees',           name:'High Knees',             cat:'Cardio',       diff:'Beginner',     emoji:'🦿', muscles:'Hip Flexors · Core',               tags:['Cardio'] },
+  { id:'mountain-climbers',    name:'Mountain Climbers',      cat:'Cardio',       diff:'Intermediate', emoji:'🧗', muscles:'Core · Shoulders',                 tags:['HIIT','Core'] },
+  { id:'jump-squats',          name:'Jump Squats',            cat:'Cardio',       diff:'Intermediate', emoji:'🚀', muscles:'Quads · Glutes',                   tags:['Plyometric','Power'] },
+  // ── CALISTHENICS ──────────────────────────────────────
+  { id:'handstand-hold',       name:'Handstand Hold',         cat:'Calisthenics', diff:'Advanced',     emoji:'🤸', muscles:'Shoulders · Core · Wrists',        tags:['Skill','Balance'] },
+  { id:'hspu',                 name:'Handstand Push-Up',      cat:'Calisthenics', diff:'Elite',        emoji:'🏛️', muscles:'Shoulders · Triceps',             tags:['Overhead Press'] },
+  { id:'l-sit',                name:'L-Sit',                  cat:'Calisthenics', diff:'Advanced',     emoji:'📐', muscles:'Hip Flexors · Core · Triceps',     tags:['Compression','Skill'] },
+  { id:'front-lever',          name:'Front Lever',            cat:'Calisthenics', diff:'Elite',        emoji:'🪃', muscles:'Lats · Core',                      tags:['Straight Arm'] },
+  { id:'planche',              name:'Planche',                cat:'Calisthenics', diff:'Elite',        emoji:'✈️', muscles:'Chest · Front Deltoids · Core',    tags:['Straight Arm','Advanced'] },
+];
+
+const CATS = [
+  { v:'Push',         label:'💪 Chest, Shoulders & Triceps', color:'var(--lime)'   },
+  { v:'Pull',         label:'🏋️ Back & Biceps',              color:'var(--cyan)'   },
+  { v:'Legs',         label:'🦵 Legs & Lower Body',           color:'var(--violet)' },
+  { v:'Core',         label:'🧘 Core & Abs',                  color:'var(--amber)'  },
+  { v:'Cardio',       label:'🔥 Full Body & Cardio',          color:'var(--coral)'  },
+  { v:'Calisthenics', label:'✈️ Calisthenics & Statics',      color:'#ff6b9d'       },
+];
+
+const DC = { Beginner:'diff-beginner', Intermediate:'diff-intermediate', Advanced:'diff-advanced', Elite:'diff-elite' };
+const CATCOLOR = Object.fromEntries(CATS.map(c=>[c.v, c.color]));
+
+let aDiff='all', aCat='all', aQ='';
+
+function filtered() {
+  return EXERCISES.filter(ex => {
+    const dOk = aDiff==='all' || ex.diff===aDiff;
+    const cOk = aCat ==='all' || ex.cat ===aCat;
+    const q   = aQ.toLowerCase();
+    const sOk = !q || ex.name.toLowerCase().includes(q) || ex.muscles.toLowerCase().includes(q) || ex.cat.toLowerCase().includes(q);
+    return dOk && cOk && sOk;
+  });
+}
+
+function render() {
+  const list = filtered();
+  document.getElementById('exNum').textContent = list.length;
+  const sec = document.getElementById('exSections');
+
+  if (!list.length) {
+    sec.innerHTML = `<div class="ex-empty"><div class="ex-empty-icon">🔍</div><h3 style="color:var(--text-2);margin-bottom:6px">No exercises found</h3><p>Try different filters or search terms.</p></div>`;
+    return;
+  }
+
+  let html = '';
+  CATS.forEach(cat => {
+    const exs = list.filter(e => e.cat===cat.v);
+    if (!exs.length) return;
+    html += `
+      <div class="ex-cat-header">
+        <div class="ex-cat-title" style="color:${cat.color}">${cat.label}</div>
+        <div class="ex-cat-line"></div>
+        <div class="ex-cat-count">${exs.length}</div>
+      </div>
+      <div class="ex-grid">
+        ${exs.map(ex => {
+          // Check for image in assets
+          const imgSrc = `../assets/images/exercises/${ex.id}/${ex.id}.gif`;
+          const fallback = `../assets/images/exercises/${ex.id}/${ex.id}.gif`;
+          return `
+          <a class="ex-card" href="${ex.id}.html">
+            <div class="ex-card-thumb" style="background:linear-gradient(135deg,${CATCOLOR[ex.cat]}18,var(--bg-3))">
+              <img src="${imgSrc}" alt="${ex.name}" class="ex-card-thumb-img"
+                onerror="this.src='${fallback}';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block'}"
+                style="width:100%;height:100%;object-fit:cover;display:block">
+              <div class="ex-card-emoji" style="display:none">${ex.emoji}</div>
+              <span class="ex-diff-badge ${DC[ex.diff]}">${ex.diff}</span>
+            </div>
+            <div class="ex-card-body">
+              <div class="ex-card-name">${ex.name}</div>
+              <div class="ex-card-muscles">${ex.muscles}</div>
+              <div class="ex-card-tags">${ex.tags.map(t=>`<span class="ex-tag">${t}</span>`).join('')}</div>
+            </div>
+          </a>`;
+        }).join('')}
+      </div>`;
+  });
+  sec.innerHTML = html;
+}
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const f = btn.dataset.f, v = btn.dataset.v;
+    document.querySelectorAll(`.filter-btn[data-f="${f}"]`).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (f==='diff') aDiff=v; else aCat=v;
+    render();
+  });
+});
+document.getElementById('exSearch').addEventListener('input', function(){ aQ=this.value.trim(); render(); });
+
+render();
+</script>
+<script type="module" src="../shared/navbar.js"></script>
+</body>
+</html>
