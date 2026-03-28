@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Blog — FitTrack</title>
+  <meta name="description" content="Expert articles on testosterone, body composition, gym training, health, and mindset to keep you motivated.">
+  <link rel="icon" type="image/png" href="../assets/images/fitness.png">
+  <link rel="stylesheet" href="../shared/global.css">
+  <link rel="stylesheet" href="blog.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../config.local.js"></script>
+</head>
+<body>
+
+<div class="blog-page">
+  <div class="wrap">
+
+    <!-- Hero -->
+    <div class="blog-hero">
+      <div class="section-eyebrow">FitTrack Blog</div>
+      <h1 class="section-heading">BUILD YOUR<br><span style="color:var(--lime)">BEST BODY.</span></h1>
+      <p style="color:var(--text-2);font-size:17px;margin-top:14px;max-width:500px;line-height:1.7">
+        Science-backed articles on testosterone, training, recovery, nutrition, and the mindset of peak performers.
+      </p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:20px">
+        <button class="btn btn-sm" onclick="filterPosts('all')" id="filter-all" style="background:var(--lime);color:var(--bg-0)">All</button>
+        <button class="btn btn-ghost btn-sm" onclick="filterPosts('fitness')" id="filter-fitness">Fitness</button>
+        <button class="btn btn-ghost btn-sm" onclick="filterPosts('hormones')" id="filter-hormones">Hormones</button>
+        <button class="btn btn-ghost btn-sm" onclick="filterPosts('health')" id="filter-health">Health</button>
+        <button class="btn btn-ghost btn-sm" onclick="filterPosts('body')" id="filter-body">Body Comp</button>
+        <button class="btn btn-ghost btn-sm" onclick="filterPosts('mindset')" id="filter-mindset">Mindset</button>
+      </div>
+    </div>
+
+    <!-- Featured -->
+    <div class="blog-featured" onclick="openArticle('testosterone-truth')" style="cursor:pointer">
+      <div>
+        <div class="blog-featured-badge">🔥 Featured Article</div>
+        <h2 class="blog-featured-title">THE TESTOSTERONE TRUTH: WHAT EVERY MAN NEEDS TO KNOW</h2>
+        <p style="color:var(--text-2);font-size:15px;margin:12px 0 20px;line-height:1.7">Exercise, sleep, diet, stress — everything affects your testosterone. Here's the complete science-backed guide on how to naturally optimize your most important hormone.</p>
+        <div style="display:flex;gap:12px;align-items:center">
+          <span class="blog-category blog-cat-hormones">Hormones</span>
+          <span class="blog-date">15 min read</span>
+          <span style="font-size:13px;font-weight:600;color:var(--lime)">Read article →</span>
+        </div>
+      </div>
+      <div class="blog-featured-visual">🦁</div>
+    </div>
+
+    <!-- Grid -->
+    <div class="blog-grid" id="blogGrid">
+
+      <div class="blog-card" data-cat="fitness" onclick="openArticle('100-pushups')">
+        <div class="blog-card-thumb" style="background:linear-gradient(135deg,rgba(198,255,0,0.1),var(--bg-3))">💪</div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-category blog-cat-fitness">Fitness</span>
+            <span class="blog-date">8 min read</span>
+          </div>
+          <h3 class="blog-card-title">100 PUSH-UPS A DAY: WHAT ACTUALLY HAPPENS</h3>
+          <p class="blog-card-excerpt">We break down the real results of a 30-day 100-push-up challenge. Muscle gain, fat loss, mental toughness — here's what to expect week by week.</p>
+          <div class="blog-card-footer">
+            <span class="blog-read-time">8 min</span>
+            <span class="blog-read-link">Read →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-card" data-cat="body" onclick="openArticle('body-fat')">
+        <div class="blog-card-thumb" style="background:linear-gradient(135deg,rgba(180,77,255,0.1),var(--bg-3))">📉</div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-category blog-cat-body">Body Comp</span>
+            <span class="blog-date">12 min read</span>
+          </div>
+          <h3 class="blog-card-title">HOW TO LOSE BODY FAT WITHOUT LOSING MUSCLE</h3>
+          <p class="blog-card-excerpt">Cutting calories destroys muscle. Unless you do it right. The science of maintaining muscle mass during a caloric deficit — protein timing, training frequency, and more.</p>
+          <div class="blog-card-footer">
+            <span class="blog-read-time">12 min</span>
+            <span class="blog-read-link">Read →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-card" data-cat="health" onclick="openArticle('sleep-muscle')">
+        <div class="blog-card-thumb" style="background:linear-gradient(135deg,rgba(0,229,255,0.1),var(--bg-3))">😴</div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-category blog-cat-health">Health</span>
+            <span class="blog-date">6 min read</span>
+          </div>
+          <h3 class="blog-card-title">SLEEP IS YOUR BEST SUPPLEMENT</h3>
+          <p class="blog-card-excerpt">You don't grow in the gym. You grow in your sleep. Here's exactly what happens to your muscles during the 7–9 hours of recovery that most people are skipping.</p>
+          <div class="blog-card-footer">
+            <span class="blog-read-time">6 min</span>
+            <span class="blog-read-link">Read →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-card" data-cat="fitness" onclick="openArticle('calisthenics-gym')">
+        <div class="blog-card-thumb" style="background:linear-gradient(135deg,rgba(255,167,38,0.1),var(--bg-3))">🏋️</div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-category blog-cat-fitness">Fitness</span>
+            <span class="blog-date">10 min read</span>
+          </div>
+          <h3 class="blog-card-title">CALISTHENICS VS GYM: THE HONEST COMPARISON</h3>
+          <p class="blog-card-excerpt">Push-ups, pull-ups, and squats vs. barbells and machines. Which builds more muscle? Which is better for long-term health? The data-driven answer might surprise you.</p>
+          <div class="blog-card-footer">
+            <span class="blog-read-time">10 min</span>
+            <span class="blog-read-link">Read →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-card" data-cat="hormones" onclick="openArticle('cold-shower')">
+        <div class="blog-card-thumb" style="background:linear-gradient(135deg,rgba(0,229,255,0.12),var(--bg-3))">🚿</div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-category blog-cat-hormones">Hormones</span>
+            <span class="blog-date">5 min read</span>
+          </div>
+          <h3 class="blog-card-title">COLD SHOWERS: MYTH VS SCIENCE</h3>
+          <p class="blog-card-excerpt">Cold showers for testosterone, fat loss, mental toughness, and recovery. We separate viral bro-science from peer-reviewed research. What does the evidence actually show?</p>
+          <div class="blog-card-footer">
+            <span class="blog-read-time">5 min</span>
+            <span class="blog-read-link">Read →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-card" data-cat="mindset" onclick="openArticle('consistency')">
+        <div class="blog-card-thumb" style="background:linear-gradient(135deg,rgba(255,77,109,0.1),var(--bg-3))">🔥</div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-category blog-cat-mindset">Mindset</span>
+            <span class="blog-date">7 min read</span>
+          </div>
+          <h3 class="blog-card-title">WHY CONSISTENCY BEATS INTENSITY EVERY SINGLE TIME</h3>
+          <p class="blog-card-excerpt">The man who trains moderately for 5 years beats the man who trains hard for 3 months then quits. The psychology of building habits that last — and how to become someone who never misses.</p>
+          <div class="blog-card-footer">
+            <span class="blog-read-time">7 min</span>
+            <span class="blog-read-link">Read →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-card" data-cat="health" onclick="openArticle('protein')">
+        <div class="blog-card-thumb" style="background:linear-gradient(135deg,rgba(198,255,0,0.08),var(--bg-3))">🥩</div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-category blog-cat-health">Health</span>
+            <span class="blog-date">9 min read</span>
+          </div>
+          <h3 class="blog-card-title">HOW MUCH PROTEIN DO YOU ACTUALLY NEED?</h3>
+          <p class="blog-card-excerpt">The fitness industry oversells protein. The truth: 0.7–1g per pound of bodyweight. Here's how to hit that number daily with real food, and when supplements actually help.</p>
+          <div class="blog-card-footer">
+            <span class="blog-read-time">9 min</span>
+            <span class="blog-read-link">Read →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-card" data-cat="body" onclick="openArticle('muscle-anatomy')">
+        <div class="blog-card-thumb" style="background:linear-gradient(135deg,rgba(180,77,255,0.08),var(--bg-3))">🧬</div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-category blog-cat-body">Body Comp</span>
+            <span class="blog-date">11 min read</span>
+          </div>
+          <h3 class="blog-card-title">HOW MUSCLE ACTUALLY GROWS: THE SCIENCE</h3>
+          <p class="blog-card-excerpt">Muscle hypertrophy explained simply: progressive overload, mechanical tension, metabolic stress, and muscle damage. Know the why so you can train smarter, not just harder.</p>
+          <div class="blog-card-footer">
+            <span class="blog-read-time">11 min</span>
+            <span class="blog-read-link">Read →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-card" data-cat="mindset" onclick="openArticle('morning-routine')">
+        <div class="blog-card-thumb" style="background:linear-gradient(135deg,rgba(255,167,38,0.08),var(--bg-3))">🌅</div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-category blog-cat-mindset">Mindset</span>
+            <span class="blog-date">6 min read</span>
+          </div>
+          <h3 class="blog-card-title">THE 30-MINUTE MORNING ROUTINE THAT CHANGES EVERYTHING</h3>
+          <p class="blog-card-excerpt">Wake up. Exercise. Win the day. The morning workout habit builds identity, not just fitness. Here's the simple routine used by high-performers — and why the morning is the most powerful time to train.</p>
+          <div class="blog-card-footer">
+            <span class="blog-read-time">6 min</span>
+            <span class="blog-read-link">Read →</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Article Modal -->
+<div class="article-modal" id="articleModal">
+  <div class="article-box" id="articleBox">
+    <button class="article-close" id="articleClose">✕</button>
+    <div id="articleContent"></div>
+  </div>
+</div>
+
+
+
+<script>
+// Article content database
+const articles = {
+  'testosterone-truth': {
+    cat: 'Hormones', catClass: 'blog-cat-hormones',
+    title: 'THE TESTOSTERONE TRUTH',
+    meta: '15 min read · Hormones · FitTrack',
+    content: `
+      <p>Testosterone is the most important anabolic hormone in the male body. It governs muscle growth, fat distribution, energy levels, mood, libido, and cognitive function. Yet most men have no idea whether their levels are optimal — or what to do about it.</p>
+      <h3>What "Normal" Actually Means</h3>
+      <p>The "normal" range for testosterone is 300–1,000 ng/dL. That's a 3× difference. A man at 310 is "normal." A man at 950 is "normal." But their lives feel completely different. Aim for the upper third of the range: <strong>700–1,000 ng/dL</strong> is where most men feel and perform their best.</p>
+      <h3>Exercise: The Most Powerful Natural Booster</h3>
+      <p>Resistance training directly stimulates testosterone release. The biggest hormonal response comes from:</p>
+      <ul>
+        <li><strong>Compound movements</strong> — squats, deadlifts, pull-ups, rows (large muscle groups)</li>
+        <li><strong>High intensity</strong> — moderate to heavy weight, not easy cardio</li>
+        <li><strong>Short rest periods</strong> — 60–90 second rest between sets</li>
+        <li><strong>Consistency</strong> — 3–5 days per week training</li>
+      </ul>
+      <div class="highlight">Push-ups, pull-ups, and squats done consistently create a measurable hormonal response. Bodyweight training works — especially when done at high volume and intensity.</div>
+      <h3>Sleep: Non-Negotiable</h3>
+      <p>70% of your daily testosterone is produced during sleep, especially in the first 3 hours of deep sleep. Men who sleep 5 hours have testosterone levels of men 15 years older. <strong>7–9 hours is not optional if you care about hormones.</strong></p>
+      <h3>The Lifestyle Killers</h3>
+      <p>These destroy testosterone faster than almost anything:</p>
+      <ul>
+        <li>Chronic stress (elevates cortisol, which directly suppresses testosterone)</li>
+        <li>Excessive alcohol consumption</li>
+        <li>Obesity and high body fat (estrogen is produced in fat tissue)</li>
+        <li>Sedentary lifestyle and no resistance training</li>
+        <li>Poor diet — especially chronically low fat intake</li>
+      </ul>
+      <h3>Nutrition for Testosterone</h3>
+      <p>Testosterone is made from cholesterol. Dietary fat is essential — especially saturated fats and monounsaturated fats. Zinc and Vitamin D deficiencies directly cause low testosterone. Eat eggs, red meat, olive oil, nuts, and get sunlight daily.</p>
+      <h3>The Bottom Line</h3>
+      <p>You don't need injections. You need discipline. Train hard, sleep well, eat real food, manage stress, and keep body fat reasonable. Do this for 6 months and your testosterone will be in a completely different place.</p>
+    `
+  },
+  '100-pushups': {
+    cat: 'Fitness', catClass: 'blog-cat-fitness',
+    title: '100 PUSH-UPS A DAY: WHAT ACTUALLY HAPPENS',
+    meta: '8 min read · Fitness · FitTrack',
+    content: `
+      <p>The 100 push-up challenge is everywhere. But what actually happens to your body when you do 100 push-ups every single day for 30 days? We break it down week by week.</p>
+      <h3>Week 1: Shock and Soreness</h3>
+      <p>Your chest, shoulders, and triceps will be extremely sore. Your body is experiencing muscle damage from the new stimulus. Don't skip days — delayed onset muscle soreness (DOMS) actually decreases after day 3–4 as your body adapts.</p>
+      <div class="highlight">Tip: Split your 100 reps across 5 sets of 20 rather than one all-out set. This maintains quality form and maximizes muscle stimulus.</div>
+      <h3>Week 2: Adaptation Begins</h3>
+      <p>The soreness decreases significantly. Your nervous system has become more efficient at the movement pattern. You'll notice 20 reps feels easier than it did on day 1.</p>
+      <h3>Week 3-4: Visible Changes</h3>
+      <p>By week 3, most people see visible improvement in chest definition and upper arm size. Your bench press equivalent will have increased by 10–20%. Your posture may improve from stronger chest and shoulder muscles.</p>
+      <h3>What You'll Gain</h3>
+      <ul>
+        <li>Increased chest, shoulder, and tricep size and definition</li>
+        <li>Significantly improved push-up endurance</li>
+        <li>Better posture and shoulder stability</li>
+        <li>Mental toughness — completing the challenge daily builds identity</li>
+      </ul>
+      <h3>The Limitation</h3>
+      <p>Push-ups alone don't build a complete physique. Add pull-ups for back/bicep balance, squats for lower body, and rows for rear deltoids. 100 push-ups is a great start, not a complete program.</p>
+    `
+  },
+  'sleep-muscle': {
+    cat: 'Health', catClass: 'blog-cat-health',
+    title: 'SLEEP IS YOUR BEST SUPPLEMENT',
+    meta: '6 min read · Health · FitTrack',
+    content: `
+      <p>Every elite athlete prioritizes sleep above almost everything else. LeBron James sleeps 10–12 hours. Roger Federer sleeps 10 hours. They're not lazy — they understand that growth happens during recovery, not during training.</p>
+      <h3>What Happens While You Sleep</h3>
+      <p>During deep sleep (slow-wave sleep), your body releases up to 70% of its daily Human Growth Hormone (HGH). HGH triggers muscle protein synthesis — the process of repairing and growing muscle fibers damaged during training. If you skip sleep, you skip gains.</p>
+      <h3>The Research Is Clear</h3>
+      <p>A Stanford study found that athletes who extended sleep to 10 hours improved sprint times by 5%, reaction time by 15%, and had significantly better mood and lower fatigue scores. All from more sleep.</p>
+      <div class="highlight">Sleep debt is cumulative and non-recoverable. Missing 2 hours per night for a week creates the same impairment as staying awake for 24 hours straight.</div>
+      <h3>Sleep Optimization</h3>
+      <ul>
+        <li><strong>Consistent schedule</strong> — Same bedtime and wake time 7 days a week</li>
+        <li><strong>Cold room</strong> — 65–68°F (18–20°C) is optimal for deep sleep</li>
+        <li><strong>No screens</strong> — Blue light suppresses melatonin production for 2+ hours</li>
+        <li><strong>No alcohol</strong> — Alcohol fragments sleep and kills REM sleep quality</li>
+        <li><strong>Dark room</strong> — Even small amounts of light disrupts sleep cycles</li>
+      </ul>
+      <h3>The Minimum Effective Dose</h3>
+      <p>7 hours is the minimum for healthy hormone production. 8–9 hours is optimal for athletes. If you're training hard and sleeping less than 7 hours, you're wasting significant training potential.</p>
+    `
+  },
+  'consistency': {
+    cat: 'Mindset', catClass: 'blog-cat-mindset',
+    title: 'WHY CONSISTENCY BEATS INTENSITY EVERY SINGLE TIME',
+    meta: '7 min read · Mindset · FitTrack',
+    content: `
+      <p>Every January, gyms fill with people going all-out: 2-hour workouts, extreme diets, waking up at 5am. By February, the gym is empty again. The most motivated people in any room in January are often the first to quit.</p>
+      <h3>The Compounding Math of Consistency</h3>
+      <p>If you improve just 1% every day, you're 37× better after one year. The math of compounding is extraordinary. But it only works if you show up every single day — not perfectly, but consistently.</p>
+      <div class="highlight">The man who does 50 push-ups every day beats the man who does 300 push-ups once a week — every time. Daily habits compound. Weekly "epic sessions" don't.</div>
+      <h3>Identity Over Goals</h3>
+      <p>People who say "I want to get fit" fail. People who say "I am someone who exercises" succeed. The goal is to become a person for whom daily training is non-negotiable — like brushing teeth. Not something you do when motivated. Something you are.</p>
+      <h3>The 2-Day Rule</h3>
+      <p>Never miss twice in a row. Missing one day is human. Missing two days starts a pattern. Missing three days breaks a habit. The rule: no matter what, never let two consecutive days pass without movement.</p>
+      <h3>Reducing Friction</h3>
+      <ul>
+        <li>Prepare your workout gear the night before</li>
+        <li>Start with just 10 minutes — often that's enough to do a full session</li>
+        <li>Track your streak (FitTrack shows your streak on the dashboard!)</li>
+        <li>Remove all decisions: same time, same exercises, same format daily</li>
+      </ul>
+      <h3>The Boring Truth</h3>
+      <p>The best physiques in the world were built by people who did boring, consistent work for years. Not by people who found the perfect program or the secret exercise. Consistency is the secret. There is no other secret.</p>
+    `
+  },
+  'calisthenics-gym': {
+    cat: 'Fitness', catClass: 'blog-cat-fitness',
+    title: 'CALISTHENICS VS GYM: THE HONEST ANSWER',
+    meta: '10 min read · Fitness · FitTrack',
+    content: `
+      <p>The calisthenics community says you don't need a gym. The gym community says bodyweight training doesn't build real muscle. Both are partially right. Here's the honest, evidence-based comparison.</p>
+      <h3>What Science Says About Muscle Growth</h3>
+      <p>Muscle hypertrophy requires <strong>progressive overload</strong> — progressively challenging your muscles over time. Both calisthenics and weight training can achieve this, just through different mechanisms.</p>
+      <ul>
+        <li><strong>Weights</strong>: Add more weight to the bar</li>
+        <li><strong>Calisthenics</strong>: Progress to harder variations, add reps, reduce rest</li>
+      </ul>
+      <div class="highlight">A 2023 meta-analysis found no significant difference in muscle hypertrophy between bodyweight training and weight training when volume and effort were equated.</div>
+      <h3>Calisthenics Wins</h3>
+      <ul>
+        <li>Free — no gym membership needed</li>
+        <li>Functional strength and movement quality</li>
+        <li>Better relative strength (strength-to-bodyweight ratio)</li>
+        <li>Lower injury risk in most cases</li>
+        <li>Can be done anywhere, anytime</li>
+        <li>Develops extraordinary body control and coordination</li>
+      </ul>
+      <h3>Gym Wins</h3>
+      <ul>
+        <li>Easier to progressively overload lower body</li>
+        <li>More direct isolation of specific muscles</li>
+        <li>Better for maximum muscle mass accumulation</li>
+        <li>Easier to measure and track loads precisely</li>
+      </ul>
+      <h3>The Verdict</h3>
+      <p>For most people — especially beginners and intermediates — push-ups, pull-ups, and squats will build an impressive physique. For those wanting to maximize muscle mass beyond a certain point, weights become advantageous. <strong>The best training is the training you'll actually do.</strong></p>
+    `
+  },
+  'cold-shower': {
+    cat: 'Hormones', catClass: 'blog-cat-hormones',
+    title: 'COLD SHOWERS: MYTH VS SCIENCE',
+    meta: '5 min read · Hormones · FitTrack',
+    content: `
+      <p>Social media is full of cold shower evangelists claiming cold exposure will increase testosterone by 200%, burn fat, cure depression, and make you invincible. The reality is more nuanced — but still interesting.</p>
+      <h3>What Cold Exposure Actually Does</h3>
+      <ul>
+        <li><strong>Increases norepinephrine</strong> — up to 300% increase, which improves focus and mood</li>
+        <li><strong>Reduces inflammation</strong> — cold water reduces inflammatory markers post-exercise</li>
+        <li><strong>Activates brown fat</strong> — cold triggers brown adipose tissue which burns calories for heat</li>
+        <li><strong>Improves recovery</strong> — reduces DOMS (delayed onset muscle soreness)</li>
+      </ul>
+      <h3>The Testosterone Claim</h3>
+      <p>One small study showed a temporary testosterone increase after cold exposure. However, multiple subsequent studies found no significant long-term effect. Cold showers probably don't meaningfully increase testosterone — but they also don't hurt.</p>
+      <div class="highlight">Cold showers are most valuable for mental toughness training. Doing something uncomfortable every morning, by choice, builds discipline that transfers to every area of life.</div>
+      <h3>The Practical Protocol</h3>
+      <p>If you want to try: end your warm shower with 2–3 minutes of cold water. Start with 30 seconds and build up. The discomfort decreases significantly after 2 weeks of practice.</p>
+    `
+  },
+  'body-fat': {
+    cat: 'Body Comp', catClass: 'blog-cat-body',
+    title: 'HOW TO LOSE FAT WITHOUT LOSING MUSCLE',
+    meta: '12 min read · Body Comp · FitTrack',
+    content: `
+      <p>Most people who "lose weight" lose as much muscle as fat. This is a tragedy — muscle is metabolically expensive, hard to build, and easy to lose. Here's how to preserve every gram of hard-earned muscle while losing fat.</p>
+      <h3>The Fundamental Principle</h3>
+      <p>Muscle is preserved when it is needed. If you train hard while cutting calories, your body has a signal to keep the muscle. If you only diet without training, your body sees muscle as an expensive energy drain it can afford to lose.</p>
+      <h3>Caloric Deficit: The Goldilocks Zone</h3>
+      <p>Too large a deficit → muscle loss. Too small a deficit → slow fat loss. The sweet spot: a <strong>300–500 calorie daily deficit</strong> (roughly 0.5–1 lb fat loss per week). Aggressive cuts of 1000+ calories per day reliably sacrifice muscle.</p>
+      <div class="highlight">The maximum sustainable rate of fat loss without significant muscle loss is approximately 1% of bodyweight per week. Anything faster and you're losing muscle.</div>
+      <h3>Protein: Your Shield</h3>
+      <p>During a caloric deficit, increase protein to 1.2–1.6g per kg of bodyweight. High protein preserves muscle through increased muscle protein synthesis even in a deficit. It also keeps you fuller on fewer calories.</p>
+      <h3>Training During a Cut</h3>
+      <p>Do NOT reduce your training volume when cutting. If anything, maintain or slightly increase volume to send the strongest possible "keep this muscle" signal. Strength training is the single most powerful tool for muscle preservation during fat loss.</p>
+    `
+  },
+  'protein': {
+    cat: 'Health', catClass: 'blog-cat-health',
+    title: 'HOW MUCH PROTEIN DO YOU ACTUALLY NEED?',
+    meta: '9 min read · Health · FitTrack',
+    content: `
+      <p>The fitness industry sells protein powder like water. The truth about protein needs is simpler — and cheaper — than the supplement companies want you to believe.</p>
+      <h3>The Research-Based Answer</h3>
+      <p>The most comprehensive meta-analysis on protein and muscle growth concluded: <strong>0.7–0.9g per pound of bodyweight</strong> (1.6–2.0g per kg) is sufficient for maximum muscle protein synthesis in resistance-trained individuals. Beyond this, additional protein shows no further benefit for muscle growth.</p>
+      <h3>The "1g per pound" Rule</h3>
+      <p>The common gym advice of "1g of protein per pound of bodyweight" is a slight overestimate — but not a harmful one. It's easy to remember and ensures you always hit the minimum. For a 180lb man, that's 180g of protein daily.</p>
+      <div class="highlight">Protein timing matters less than total daily intake. "Anabolic window" fears are mostly overstated. What matters most: hitting your daily protein target consistently.</div>
+      <h3>Real Food Sources (Per 100g)</h3>
+      <ul>
+        <li>Chicken breast: 31g protein</li>
+        <li>Eggs: 13g protein (6g per egg)</li>
+        <li>Canned tuna: 26g protein</li>
+        <li>Greek yogurt: 10g protein</li>
+        <li>Cottage cheese: 12g protein</li>
+        <li>Beef (lean): 26g protein</li>
+      </ul>
+      <h3>Do You Need Protein Powder?</h3>
+      <p>No. Protein powder is convenient, not necessary. If you can hit your protein target with food, you don't need supplements. Powder is useful when traveling, as a quick breakfast, or when appetite is low. It's food, not magic.</p>
+    `
+  },
+  'muscle-anatomy': {
+    cat: 'Body Comp', catClass: 'blog-cat-body',
+    title: 'HOW MUSCLE ACTUALLY GROWS: THE SCIENCE',
+    meta: '11 min read · Body Comp · FitTrack',
+    content: `
+      <p>Understanding how muscle growth actually works makes you a smarter, more efficient trainer. Once you know the mechanisms, you can manipulate your training to maximize each one.</p>
+      <h3>Three Mechanisms of Hypertrophy</h3>
+      <p><strong>1. Mechanical Tension</strong> — The primary driver. When muscle fibers are under tension (especially near their maximum length), it triggers anabolic signaling. This is why full range of motion reps beat partial reps for muscle growth.</p>
+      <p><strong>2. Metabolic Stress</strong> — The "pump." When muscles are occluded of blood flow during high-rep training, metabolites accumulate, causing cell swelling and anabolic hormone release. High-rep push-ups create this effectively.</p>
+      <p><strong>3. Muscle Damage</strong> — The soreness. Eccentric (lowering) portions of exercises create microscopic tears in muscle fibers. The repair process makes them thicker. This is why slowing down the lowering phase matters.</p>
+      <div class="highlight">For push-ups: 3-second lowering phase maximizes all three mechanisms — mechanical tension throughout, metabolic stress from high reps, and muscle damage from eccentric loading.</div>
+      <h3>Progressive Overload: The Non-Negotiable</h3>
+      <p>Without progressive overload, muscles have no reason to grow. You must consistently challenge your muscles beyond their current capacity. Add reps, reduce rest time, slow the tempo, or progress to harder variations.</p>
+      <h3>Recovery: Where Growth Happens</h3>
+      <p>Training is the stimulus. Recovery is the actual growth. Without adequate protein (for amino acids), sleep (for HGH), and rest time between sessions, the growth response cannot occur. Most beginners undertrain. Most intermediates under-recover.</p>
+    `
+  },
+  'morning-routine': {
+    cat: 'Mindset', catClass: 'blog-cat-mindset',
+    title: 'THE 30-MINUTE MORNING ROUTINE',
+    meta: '6 min read · Mindset · FitTrack',
+    content: `
+      <p>The first 30 minutes of your day set the tone for everything that follows. People who train in the morning report higher consistency, better mood, and greater productivity. Here's why — and how to build the habit.</p>
+      <h3>Why Mornings Work</h3>
+      <p>Decision fatigue is real. As the day progresses, your willpower depletes. By evening, you've made hundreds of decisions and used mental energy in meetings, conversations, and work. Morning training uses none of this. You wake up with full willpower. Use it on the most important thing first.</p>
+      <div class="highlight">Research shows morning exercisers are 3× more consistent than evening exercisers over a 12-month period. Not because mornings are magic — because willpower is finite.</div>
+      <h3>The 30-Minute Protocol</h3>
+      <ul>
+        <li><strong>0:00 – 5:00</strong> — Wake up. No phone. Drink water. Splash cold water on face.</li>
+        <li><strong>5:00 – 8:00</strong> — Light warm-up: joint circles, arm swings, leg swings</li>
+        <li><strong>8:00 – 25:00</strong> — Training: push-ups, pull-ups, squats (3 sets each)</li>
+        <li><strong>25:00 – 30:00</strong> — Stretch and breathe. Log your workout in FitTrack.</li>
+      </ul>
+      <h3>Building the Habit</h3>
+      <p>The first 14 days are the hardest. Your body fights the change. Get your clothes ready the night before. Set your alarm, and when it goes off, stand up immediately — don't negotiate with the snooze button. After 21 days, it stops being a decision. It becomes who you are.</p>
+    `
+  }
+};
+
+function openArticle(id) {
+  const a = articles[id];
+  if (!a) return;
+  document.getElementById('articleContent').innerHTML = `
+    <div class="article-category ${a.catClass}">${a.cat}</div>
+    <h1 class="article-title">${a.title}</h1>
+    <div class="article-meta"><span>📅 FitTrack Blog</span><span>⏱ ${a.meta}</span></div>
+    <div class="article-body">${a.content}</div>
+    <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border-subtle);text-align:center">
+      <a href="../auth/signup.html" class="btn btn-lime btn-full">Track Your Progress in FitTrack →</a>
+    </div>
+  `;
+  document.getElementById('articleModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+document.getElementById('articleClose').onclick = closeArticle;
+document.getElementById('articleModal').onclick = function(e) { if(e.target===this) closeArticle(); };
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeArticle(); });
+function closeArticle() {
+  document.getElementById('articleModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Filter
+function filterPosts(cat) {
+  const cards = document.querySelectorAll('.blog-card');
+  cards.forEach(c => {
+    if(cat==='all' || c.dataset.cat===cat) {
+      c.style.display = '';
+    } else {
+      c.style.display = 'none';
+    }
+  });
+  document.querySelectorAll('[id^="filter-"]').forEach(b => {
+    b.style.background = '';
+    b.style.color = '';
+    b.className = 'btn btn-ghost btn-sm';
+  });
+  const activeBtn = document.getElementById('filter-'+cat);
+  if(activeBtn) { activeBtn.style.background = 'var(--lime)'; activeBtn.style.color = 'var(--bg-0)'; activeBtn.className = 'btn btn-sm'; }
+}
+</script>
+
+<script type="module" src="../shared/navbar.js"></script>
+</body>
+</html>
