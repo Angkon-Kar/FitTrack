@@ -1,0 +1,112 @@
+/* auth.css */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 40px;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 50%, rgba(198,255,0,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 20%, rgba(0,229,255,0.03) 0%, transparent 60%),
+    var(--bg-0);
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 36px 32px;
+}
+
+.auth-logo {
+  display: block;
+  text-align: center;
+  margin-bottom: 28px;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--text-1);
+}
+.auth-logo .dot { color: var(--lime); }
+
+.auth-heading { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.auth-sub { font-size: 14px; color: var(--text-2); margin-bottom: 24px; }
+
+.auth-footer {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-3);
+  margin-top: 20px;
+}
+.auth-footer a { color: var(--lime); font-weight: 600; }
+
+/* Username check */
+.username-check {
+  font-size: 12px;
+  margin-top: -12px;
+  margin-bottom: 16px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  display: none;
+}
+.username-check.available { display: block; color: var(--lime); background: rgba(198,255,0,0.06); }
+.username-check.taken { display: block; color: var(--coral); background: rgba(255,77,109,0.06); }
+.username-check.checking { display: block; color: var(--text-3); }
+
+@media (max-width: 480px) {
+  .auth-box { padding: 28px 20px; border-radius: var(--radius-lg); }
+}
+
+/* ── Input with right-side icon ── */
+.input-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-icon-wrap .form-input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+/* Username status icon */
+.input-status-icon {
+  position: absolute;
+  right: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  width: 20px; height: 20px;
+  flex-shrink: 0;
+}
+.input-status-icon.icon-ok    { color: #c6ff00; }
+.input-status-icon.icon-error { color: #ff4d6d; }
+
+/* Spinning dot for "checking" state */
+.spin-dot {
+  width: 14px; height: 14px;
+  border: 2px solid var(--border-mid);
+  border-top-color: var(--lime);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: block;
+}
+
+/* Password eye button */
+.input-eye-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-3);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.input-eye-btn:hover { color: var(--text-1); }
