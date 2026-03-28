@@ -1,0 +1,25 @@
+# Environment variables - NEVER commit these
+.env
+.env.local
+.env.production
+config.js
+firebase-config.js
+supabase-config.js
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
