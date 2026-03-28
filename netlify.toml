@@ -1,7 +1,7 @@
 {
   "build": {
     "command": "bash build.sh",
-    "publish": "."
+    "publish": "dist"
   },
   "redirects": [
     {

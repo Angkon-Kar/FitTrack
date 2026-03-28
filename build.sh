@@ -38,4 +38,13 @@ done
 
 echo "✅ config.js generated"
 echo "✅ HTML files updated to use config.js"
+
+# Netlify-এর জন্য সব রেডি করা ফাইল dist ফোল্ডারে পাঠানো হচ্ছে
+echo "📁 Creating dist folder for Netlify deployment..."
+mkdir -p dist
+
+# আপনার সব ফাইল dist ফোল্ডারে কপি করা হচ্ছে
+rsync -a --exclude='.git' --exclude='node_modules' --exclude='dist' ./ dist/
+
+echo "✅ Files successfully moved to dist/ folder!"
 echo "✅ Build complete!"
