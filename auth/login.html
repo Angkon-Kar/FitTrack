@@ -15,7 +15,7 @@
 <body>
 <div class="auth-page">
   <div class="auth-box">
-    <a href="../index.html" class="auth-logo">FIT<span class="dot">.</span>TRACK</a>
+    <a href="../" class="auth-logo">FIT<span class="dot">.</span>TRACK</a>
     <h1 class="auth-heading">Welcome back 👋</h1>
     <p class="auth-sub">Sign in to track your gains</p>
 
@@ -76,7 +76,7 @@
   const gp   = new GoogleAuthProvider();
   const RECAPTCHA_KEY = '6Ldp540sAAAAAFDs-Ul_yIIQFHmfx5pukzbBLgWK';
 
-  onAuthStateChanged(auth, u => { if (u) window.location.href = '../dashboard/dashboard.html'; });
+  onAuthStateChanged(auth, u => { if (u) window.location.href = '../dashboard/'; });
 
   const FIREBASE_ERRORS = {
     'auth/invalid-credential':     'Incorrect email or password.',
@@ -165,7 +165,7 @@
           username: null, username_set: false
         });
       }
-      window.location.href = '../dashboard/dashboard.html';
+      window.location.href = '../dashboard/';
     } catch { showErr('Google sign-in failed. Please try again.'); }
   });
 </script>

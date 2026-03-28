@@ -15,8 +15,8 @@ const root  = depth === 0 ? './' : '../'.repeat(depth);
 
 function isActive(href) {
   const p = window.location.pathname;
-  if (href === root + 'index.html' || href === root)
-    return p === '/' || (p.endsWith('index.html') && !p.includes('/auth/') && !p.includes('/dashboard/') && !p.includes('/exercises/') && !p.includes('/blog/') && !p.includes('/compare/') && !p.includes('/profile/'));
+  if (href === root)
+    return p === '/' || p.endsWith('/index.html') || (p.endsWith('/') && !p.includes('/auth/') && !p.includes('/dashboard/') && !p.includes('/exercises/') && !p.includes('/blog/') && !p.includes('/compare/') && !p.includes('/profile/'));
   return p.includes(href.replace(root,'').replace('../','').replace('.html',''));
 }
 const nl = (href, icon, label) =>
@@ -27,13 +27,13 @@ const dl = (href, icon, label) =>
 document.body.insertAdjacentHTML('afterbegin', `
 <nav class="navbar" id="mainNav">
   <div class="nav-inner">
-    <a href="${root}index.html" class="nav-logo">FIT<span class="dot">.</span>TRACK</a>
+    <a href="${root}" class="nav-logo">FIT<span class="dot">.</span>TRACK</a>
     <ul class="nav-links">
-      ${nl('index.html','🏠','Home')}
-      ${nl('exercises/exercises.html','💪','Exercises')}
-      ${nl('blog/blog.html','📝','Blog')}
-      ${nl('compare/compare.html','⚔️','Compare')}
-      ${nl('dashboard/dashboard.html','📊','Dashboard')}
+      ${nl('','🏠','Home')}
+      ${nl('exercises/','💪','Exercises')}
+      ${nl('blog/','📝','Blog')}
+      ${nl('compare/','⚔️','Compare')}
+      ${nl('dashboard/','📊','Dashboard')}
     </ul>
     <div class="nav-right">
       <button class="theme-toggle" id="themeToggle" title="Toggle theme"><span id="themeIcon">🌙</span></button>
@@ -42,7 +42,7 @@ document.body.insertAdjacentHTML('afterbegin', `
         <a href="${root}auth/signup.html" class="btn btn-lime btn-sm">Start Free</a>
       </div>
       <div id="navUser" style="display:none;gap:10px;align-items:center">
-        <a href="${root}profile/profile.html" class="nav-profile-link" id="navProfileLink" title="My Profile">
+        <a href="${root}profile/" class="nav-profile-link" id="navProfileLink" title="My Profile">
           <div id="navProfileBubble" class="nav-profile-bubble">
             <img id="navProfileImg" src="" alt="" style="display:none;width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--border-mid)">
             <div id="navAvatar" class="nav-user-avatar" style="display:flex">?</div>
@@ -56,13 +56,13 @@ document.body.insertAdjacentHTML('afterbegin', `
   </div>
 </nav>
 <div class="nav-drawer" id="navDrawer">
-  ${dl('index.html','🏠','Home')}
-  ${dl('exercises/exercises.html','💪','Exercises')}
-  ${dl('blog/blog.html','📝','Blog')}
-  ${dl('compare/compare.html','⚔️','Compare')}
-  ${dl('dashboard/dashboard.html','📊','Dashboard')}
+  ${dl('','🏠','Home')}
+  ${dl('exercises/','💪','Exercises')}
+  ${dl('blog/','📝','Blog')}
+  ${dl('compare/','⚔️','Compare')}
+  ${dl('dashboard/','📊','Dashboard')}
   ${dl('dashboard/log.html','✏️','Log Workout')}
-  ${dl('profile/profile.html','👤','My Profile')}
+  ${dl('profile/','👤','My Profile')}
   <div class="nav-drawer-divider"></div>
   <button id="drawerThemeBtn" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:8px;background:none;border:none;color:var(--text-2);font-size:15px;font-weight:500;cursor:pointer;width:100%;text-align:left">
     <span id="drawerThemeIcon">🌙</span><span id="drawerThemeLabel">Switch to Light Mode</span>
@@ -73,8 +73,8 @@ document.body.insertAdjacentHTML('afterbegin', `
     <a href="${root}auth/signup.html" style="color:var(--lime)">⚡ Create Free Account</a>
   </div>
   <div id="drawerUser" style="display:none;flex-direction:column;gap:6px">
-    <a href="${root}profile/profile.html">👤 My Profile</a>
-    <a href="${root}dashboard/dashboard.html">📊 My Dashboard</a>
+    <a href="${root}profile/">👤 My Profile</a>
+    <a href="${root}dashboard/">📊 My Dashboard</a>
     <a href="#" id="drawerLogout" style="color:var(--coral)">🚪 Sign Out</a>
   </div>
 </div>
@@ -155,7 +155,7 @@ onAuthStateChanged(auth, async user => {
       // Toast if username not set (show once per session)
       if (!data.username_set && !sessionStorage.getItem('ft-username-toast')) {
         sessionStorage.setItem('ft-username-toast', '1');
-        setTimeout(() => showNavToast('👤 Set your username so friends can find you!', 'info', root + 'profile/profile.html'), 2000);
+        setTimeout(() => showNavToast('👤 Set your username so friends can find you!', 'info', root + 'profile/'), 2000);
       }
     } else {
       // First login — auto-create user record
@@ -172,7 +172,7 @@ onAuthStateChanged(auth, async user => {
 
       if (!sessionStorage.getItem('ft-username-toast')) {
         sessionStorage.setItem('ft-username-toast', '1');
-        setTimeout(() => showNavToast('👋 Welcome! Set your username in your profile.', 'info', root + 'profile/profile.html'), 1500);
+        setTimeout(() => showNavToast('👋 Welcome! Set your username in your profile.', 'info', root + 'profile/'), 1500);
       }
     }
   } else {
@@ -192,8 +192,8 @@ function showNavToast(msg, type, link) {
   setTimeout(() => t.classList.remove('visible'), 5000);
 }
 
-document.getElementById('navLogout')?.addEventListener('click',  () => signOut(auth).then(()=>window.location.href=root+'index.html'));
-document.getElementById('drawerLogout')?.addEventListener('click', e => { e.preventDefault(); signOut(auth).then(()=>window.location.href=root+'index.html'); });
+document.getElementById('navLogout')?.addEventListener('click',  () => signOut(auth).then(()=>window.location.href=root));
+document.getElementById('drawerLogout')?.addEventListener('click', e => { e.preventDefault(); signOut(auth).then(()=>window.location.href=root); });
 
 export { auth, sb, onAuthStateChanged, signOut, firebaseApp };
 

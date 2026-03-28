@@ -15,7 +15,7 @@
 <body>
 <div class="auth-page">
   <div class="auth-box">
-    <a href="../index.html" class="auth-logo">FIT<span class="dot">.</span>TRACK</a>
+    <a href="../" class="auth-logo">FIT<span class="dot">.</span>TRACK</a>
     <h1 class="auth-heading">Create account ⚡</h1>
     <p class="auth-sub">Free forever. Start tracking today.</p>
 
@@ -81,7 +81,7 @@
   const gp   = new GoogleAuthProvider();
   const RECAPTCHA_KEY = '6Ldp540sAAAAAFDs-Ul_yIIQFHmfx5pukzbBLgWK';
 
-  onAuthStateChanged(auth, u => { if (u) window.location.href = '../dashboard/dashboard.html'; });
+  onAuthStateChanged(auth, u => { if (u) window.location.href = '../dashboard/'; });
 
   // ── Error messages ───────────────────────────────────────
   const FIREBASE_ERRORS = {
@@ -203,7 +203,7 @@
         firebase_uid: cred.user.uid, name, username,
         email, username_set: true, profile_picture: ''
       });
-      window.location.href = '../dashboard/dashboard.html';
+      window.location.href = '../dashboard/';
     } catch(err) {
       const msg = getErrMsg(err);
       const isHtml = msg.includes('<a');
@@ -226,7 +226,7 @@
           username: null, username_set: false
         });
       }
-      window.location.href = '../dashboard/dashboard.html';
+      window.location.href = '../dashboard/';
     } catch { showErr('Google sign-in failed. Please try again.'); }
   });
 </script>

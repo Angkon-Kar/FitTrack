@@ -10,6 +10,36 @@ from = "/api/send-report"
 to = "/.netlify/functions/send-report"
 status = 200
 
+[[redirects]]
+from = "/index.html"
+to = "/"
+status = 301
+
+[[redirects]]
+from = "/exercises/exercises.html"
+to = "/exercises"
+status = 301
+
+[[redirects]]
+from = "/blog/blog.html"
+to = "/blog"
+status = 301
+
+[[redirects]]
+from = "/compare/compare.html"
+to = "/compare"
+status = 301
+
+[[redirects]]
+from = "/dashboard/dashboard.html"
+to = "/dashboard"
+status = 301
+
+[[redirects]]
+from = "/profile/profile.html"
+to = "/profile"
+status = 301
+
 [[headers]]
 for = "/locales/*"
 [headers.values]
