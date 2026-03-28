@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Compare Athletes — FitTrack</title>
+  <link rel="icon" type="image/png" href="../assets/images/fitness.png">
+  <link rel="stylesheet" href="../shared/global.css">
+  <link rel="stylesheet" href="compare.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="../config.local.js"></script>
+</head>
+<body>
+
+<div class="compare-page">
+  <div class="wrap">
+
+    <!-- Header -->
+    <div style="padding:48px 0 32px;border-bottom:1px solid var(--border-subtle);margin-bottom:32px">
+      <div class="section-eyebrow">Head to Head</div>
+      <h1 class="section-heading">COMPARE<br><span style="color:var(--coral)">ATHLETES</span></h1>
+      <p style="color:var(--text-2);margin-top:12px;font-size:16px">Search two usernames and see who's putting in more work.</p>
+    </div>
+
+    <!-- Search box -->
+    <div class="compare-search-box">
+      <div class="compare-inputs-row">
+        <div>
+          <label class="form-label">Athlete 1 Username</label>
+          <input type="text" id="user1Input" class="form-input" placeholder="e.g. john_doe" autocomplete="off" autocorrect="off" autocapitalize="none">
+        </div>
+        <div class="vs-pill">VS</div>
+        <div>
+          <label class="form-label">Athlete 2 Username</label>
+          <input type="text" id="user2Input" class="form-input" placeholder="e.g. jane_smith" autocomplete="off" autocorrect="off" autocapitalize="none">
+        </div>
+        <button id="compareBtn" class="btn btn-lime btn-lg" style="flex-shrink:0">⚔️ Compare</button>
+      </div>
+      <div id="searchAlert" class="alert" style="margin-top:14px;margin-bottom:0"></div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingState" style="display:none" class="loading-row">
+      <div class="spinner"></div> Loading athlete data…
+    </div>
+
+    <!-- Results -->
+    <div id="resultsArea" style="display:none">
+
+      <!-- Profiles -->
+      <div class="compare-profiles-row">
+        <div class="profile-box" id="profile1">
+          <div class="p-avatar" style="background:linear-gradient(135deg,var(--lime),var(--cyan))" id="av1">?</div>
+          <div class="p-name" id="pName1">—</div>
+          <div class="p-username" id="pUser1">—</div>
+          <div class="p-total" style="color:var(--lime)" id="pTotal1">0</div>
+          <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-top:2px">Total Reps</div>
+        </div>
+        <div class="vs-center">VS</div>
+        <div class="profile-box" id="profile2">
+          <div class="p-avatar" style="background:linear-gradient(135deg,var(--violet),var(--coral))" id="av2">?</div>
+          <div class="p-name" id="pName2">—</div>
+          <div class="p-username" id="pUser2">—</div>
+          <div class="p-total" style="color:var(--violet)" id="pTotal2">0</div>
+          <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-top:2px">Total Reps</div>
+        </div>
+      </div>
+
+      <!-- Winner banner -->
+      <div class="winner-banner" id="winnerBanner"></div>
+
+      <!-- Individual exercise stats -->
+      <div class="compare-stats-grid">
+        <div class="cstat-box">
+          <div class="cstat-label" style="color:var(--lime)">💪 Push-ups</div>
+          <div class="bar-pair">
+            <div class="bar-wrap">
+              <div class="bar-track"><div class="bar-fill" id="bar1Push" style="background:var(--lime)"></div></div>
+              <div class="bar-label" id="lbl1Push">0</div>
+              <div class="bar-name" id="barName1">—</div>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar-track"><div class="bar-fill" id="bar2Push" style="background:rgba(198,255,0,0.3)"></div></div>
+              <div class="bar-label" id="lbl2Push">0</div>
+              <div class="bar-name" id="barName2">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="cstat-box">
+          <div class="cstat-label" style="color:var(--cyan)">🏋️ Pull-ups</div>
+          <div class="bar-pair">
+            <div class="bar-wrap">
+              <div class="bar-track"><div class="bar-fill" id="bar1Pull" style="background:var(--cyan)"></div></div>
+              <div class="bar-label" id="lbl1Pull">0</div>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar-track"><div class="bar-fill" id="bar2Pull" style="background:rgba(0,229,255,0.3)"></div></div>
+              <div class="bar-label" id="lbl2Pull">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="cstat-box">
+          <div class="cstat-label" style="color:var(--violet)">🦵 Squats</div>
+          <div class="bar-pair">
+            <div class="bar-wrap">
+              <div class="bar-track"><div class="bar-fill" id="bar1Squat" style="background:var(--violet)"></div></div>
+              <div class="bar-label" id="lbl1Squat">0</div>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar-track"><div class="bar-fill" id="bar2Squat" style="background:rgba(180,77,255,0.3)"></div></div>
+              <div class="bar-label" id="lbl2Squat">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Radar chart -->
+      <div class="radar-box">
+        <div class="box-title" style="margin-bottom:18px">🕸️ Performance Radar</div>
+        <div style="height:320px;position:relative;max-width:500px;margin:0 auto">
+          <canvas id="radarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Detail stats table -->
+      <div class="compare-table-box">
+        <div class="box-title" style="margin-bottom:18px">📊 Full Comparison</div>
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+          <table class="log-table" id="compareTable">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th id="th1">—</th>
+                <th id="th2">—</th>
+                <th>Winner</th>
+              </tr>
+            </thead>
+            <tbody id="compareTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Empty state -->
+    <div id="emptyState" class="empty" style="padding:80px 0">
+      <div class="empty-icon">⚔️</div>
+      <h3>Challenge Anyone</h3>
+      <p style="max-width:300px;margin:0 auto 24px">Enter two usernames above to see a full head-to-head comparison with charts and stats.</p>
+      <a href="../auth/signup.html" class="btn btn-lime">Create Your Account →</a>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+
+  let radarChart;
+
+  function showAlert(msg, type='error') {
+    const el = document.getElementById('searchAlert');
+    el.textContent = msg;
+    el.className = `alert alert-${type} show`;
+  }
+
+  document.getElementById('compareBtn').addEventListener('click', doCompare);
+  document.getElementById('user1Input').addEventListener('keydown', e => { if(e.key==='Enter') doCompare(); });
+  document.getElementById('user2Input').addEventListener('keydown', e => { if(e.key==='Enter') doCompare(); });
+
+  async function doCompare() {
+    const u1 = document.getElementById('user1Input').value.trim().toLowerCase();
+    const u2 = document.getElementById('user2Input').value.trim().toLowerCase();
+
+    document.getElementById('searchAlert').classList.remove('show');
+
+    if (!u1 || !u2) { showAlert('Please enter both usernames.'); return; }
+    if (u1 === u2) { showAlert('Please enter two different usernames.'); return; }
+
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('resultsArea').style.display = 'none';
+    document.getElementById('loadingState').style.display = 'flex';
+
+    try {
+      const [r1, r2] = await Promise.all([fetchUser(u1), fetchUser(u2)]);
+      if (!r1) { showAlert(`User "@${u1}" not found.`); document.getElementById('loadingState').style.display='none'; return; }
+      if (!r2) { showAlert(`User "@${u2}" not found.`); document.getElementById('loadingState').style.display='none'; return; }
+
+      renderCompare(r1, r2);
+    } catch(err) {
+      showAlert('Error loading data. Please try again.');
+      document.getElementById('loadingState').style.display = 'none';
+    }
+  }
+
+  async function fetchUser(username) {
+    const { data: user } = await sb.from('users').select('*').eq('username', username).maybeSingle();
+    if (!user) return null;
+    const { data: logs } = await sb.from('workout_logs').select('*').eq('firebase_uid', user.firebase_uid);
+    return { user, logs: logs || [] };
+  }
+
+  function sum(logs, field) { return logs.reduce((s,l)=>s+(l[field]||0),0); }
+  function best(logs, field) { return Math.max(0,...logs.map(l=>l[field]||0)); }
+  function days(logs) { return new Set(logs.map(l=>l.log_date)).size; }
+
+  function renderCompare(d1, d2) {
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('resultsArea').style.display = 'block';
+
+    // Profiles
+    setProfile(1, d1);
+    setProfile(2, d2);
+
+    const s1 = { push: sum(d1.logs,'pushups'), pull: sum(d1.logs,'pullups'), squat: sum(d1.logs,'squats') };
+    const s2 = { push: sum(d2.logs,'pushups'), pull: sum(d2.logs,'pullups'), squat: sum(d2.logs,'squats') };
+    s1.total = s1.push+s1.pull+s1.squat;
+    s2.total = s2.push+s2.pull+s2.squat;
+
+    document.getElementById('pTotal1').textContent = s1.total.toLocaleString();
+    document.getElementById('pTotal2').textContent = s2.total.toLocaleString();
+
+    // Winner
+    const w = s1.total > s2.total ? d1.user.name||d1.user.username : s2.total > s1.total ? d2.user.name||d2.user.username : null;
+    document.getElementById('winnerBanner').textContent = w ? `🏆 ${w} is winning with more total reps!` : "🤝 It's a tie! Perfectly matched athletes.";
+
+    // Bars
+    const maxPush  = Math.max(s1.push,  s2.push,  1);
+    const maxPull  = Math.max(s1.pull,  s2.pull,  1);
+    const maxSquat = Math.max(s1.squat, s2.squat, 1);
+
+    setBars('Push',  s1.push,  s2.push,  maxPush);
+    setBars('Pull',  s1.pull,  s2.pull,  maxPull);
+    setBars('Squat', s1.squat, s2.squat, maxSquat);
+
+    document.querySelectorAll('.bar-name').forEach((el,i) => {
+      el.textContent = i < 3 ? '@'+d1.user.username : '@'+d2.user.username;
+    });
+
+    // Radar chart
+    const maxTotal = Math.max(s1.total, s2.total, 1);
+    const rd1 = [s1.push/maxPush*100, s1.pull/maxPull*100, s1.squat/maxSquat*100, days(d1.logs)/Math.max(days(d1.logs),days(d2.logs),1)*100, best(d1.logs,'pushups')/Math.max(best(d1.logs,'pushups'),best(d2.logs,'pushups'),1)*100];
+    const rd2 = [s2.push/maxPush*100, s2.pull/maxPull*100, s2.squat/maxSquat*100, days(d2.logs)/Math.max(days(d1.logs),days(d2.logs),1)*100, best(d2.logs,'pushups')/Math.max(best(d1.logs,'pushups'),best(d2.logs,'pushups'),1)*100];
+
+    if(radarChart) radarChart.destroy();
+    radarChart = new Chart(document.getElementById('radarChart').getContext('2d'),{
+      type:'radar',
+      data:{
+        labels:['Push-ups','Pull-ups','Squats','Consistency','Best Day'],
+        datasets:[
+          {label:'@'+d1.user.username,data:rd1,borderColor:'#c6ff00',backgroundColor:'rgba(198,255,0,0.1)',pointBackgroundColor:'#c6ff00',borderWidth:2,pointRadius:4},
+          {label:'@'+d2.user.username,data:rd2,borderColor:'#b44dff',backgroundColor:'rgba(180,77,255,0.1)',pointBackgroundColor:'#b44dff',borderWidth:2,pointRadius:4}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{labels:{color:'#9494b8',font:{family:'Barlow',size:12},usePointStyle:true}},
+          tooltip:{backgroundColor:'#1c1c2c',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleColor:'#f2f2ff',bodyColor:'#9494b8'}
+        },
+        scales:{
+          r:{
+            ticks:{display:false,stepSize:20},
+            grid:{color:'rgba(255,255,255,0.06)'},
+            angleLines:{color:'rgba(255,255,255,0.06)'},
+            pointLabels:{color:'#9494b8',font:{family:'Barlow',size:12,weight:'600'}}
+          }
+        }
+      }
+    });
+
+    // Table
+    document.getElementById('th1').textContent = '@'+d1.user.username;
+    document.getElementById('th2').textContent = '@'+d2.user.username;
+
+    const rows = [
+      ['Total Push-ups',   s1.push,       s2.push,       s1.push,       s2.push],
+      ['Total Pull-ups',   s1.pull,       s2.pull,       s1.pull,       s2.pull],
+      ['Total Squats',     s1.squat,      s2.squat,      s1.squat,      s2.squat],
+      ['Grand Total',      s1.total,      s2.total,      s1.total,      s2.total],
+      ['Days Logged',      days(d1.logs), days(d2.logs), days(d1.logs), days(d2.logs)],
+      ['Best Push Day',    best(d1.logs,'pushups'), best(d2.logs,'pushups'), best(d1.logs,'pushups'), best(d2.logs,'pushups')],
+      ['Best Pull Day',    best(d1.logs,'pullups'), best(d2.logs,'pullups'), best(d1.logs,'pullups'), best(d2.logs,'pullups')],
+      ['Best Squat Day',   best(d1.logs,'squats'),  best(d2.logs,'squats'),  best(d1.logs,'squats'),  best(d2.logs,'squats')]
+    ];
+
+    document.getElementById('compareTbody').innerHTML = rows.map(([label,v1,v2]) => {
+      const w = v1>v2 ? 1 : v2>v1 ? 2 : 0;
+      return `<tr>
+        <td style="font-weight:600;color:var(--text-1)">${label}</td>
+        <td style="${w===1?'color:var(--lime);font-weight:700':'color:var(--text-2)'}">${Number(v1).toLocaleString()}${w===1?' 🏆':''}</td>
+        <td style="${w===2?'color:var(--violet);font-weight:700':'color:var(--text-2)'}">${Number(v2).toLocaleString()}${w===2?' 🏆':''}</td>
+        <td>${w===0?'<span class="badge badge-amber">Tie</span>':w===1?'<span class="badge badge-lime">'+('Athlete 1')+'</span>':'<span class="badge badge-violet">'+('Athlete 2')+'</span>'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function setProfile(n, d) {
+    document.getElementById('pName'+n).textContent = d.user.name || d.user.username;
+    document.getElementById('pUser'+n).textContent = '@'+d.user.username;
+    document.getElementById('av'+n).textContent = (d.user.name||d.user.username||'?')[0].toUpperCase();
+  }
+
+  function setBars(type, v1, v2, max) {
+    const pct1 = Math.max(4, (v1/max)*100);
+    const pct2 = Math.max(4, (v2/max)*100);
+    document.getElementById('bar1'+type).style.height = pct1+'%';
+    document.getElementById('bar2'+type).style.height = pct2+'%';
+    document.getElementById('lbl1'+type).textContent = v1.toLocaleString();
+    document.getElementById('lbl2'+type).textContent = v2.toLocaleString();
+  }
+</script>
+<script type="module" src="../shared/navbar.js"></script>
+</body>
+</html>
