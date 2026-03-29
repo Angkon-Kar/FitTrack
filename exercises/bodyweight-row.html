@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Bodyweight Row — FitTrack Exercise Guide</title>
+  <meta name="description" content="Australian Pull-Up / Inverted Row. The best horizontal pull and perfect pull-up preparation.">
+  <link rel="icon" type="image/png" href="../assets/images/fitness.png">
+  <link rel="stylesheet" href="../shared/global.css">
+  <link rel="stylesheet" href="exercise-detail.css">
+  <script src="../config.local.js"></script>
+</head>
+<body>
+<div class="detail-page">
+  <div class="wrap">
+
+    <!-- Back + Hero -->
+    <div class="detail-hero" style="background:radial-gradient(ellipse 50% 80% at 0% 60%,var(--cyan)07,transparent)">
+      <a href="exercises.html" class="detail-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        All Exercises
+      </a>
+      <div class="detail-badge" style="background:rgba(198,255,0,0.1);border:1px solid rgba(198,255,0,0.2);color:var(--lime)">
+        🟢 Pull &nbsp;·&nbsp; Beginner
+      </div>
+      <h1 class="detail-title" style="color:var(--cyan)">Bodyweight Row</h1>
+      <p class="detail-desc">Australian Pull-Up / Inverted Row. The best horizontal pull and perfect pull-up preparation.</p>
+      <div class="detail-muscles"><span class="muscle-tag primary">Latissimus Dorsi</span><span class="muscle-tag primary">Rhomboids</span><span class="muscle-tag">Biceps</span><span class="muscle-tag">Core</span><span class="muscle-tag">Rear Deltoids</span></div>
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="detail-layout">
+
+      <!-- LEFT: Image slider + Quick stats -->
+      <div class="detail-left">
+
+        <!-- Image / GIF box -->
+        <div class="detail-img-box">
+          <div class="detail-img-slider" id="imgSlider"
+            data-startx="0" data-dragging="false">
+
+            <div class="detail-img-track" id="imgTrack">
+              <!-- Slides injected by JS -->
+            </div>
+
+            <button class="slider-arrow prev hidden" id="sliderPrev" onclick="slide(-1)" aria-label="Previous image">&#8249;</button>
+            <button class="slider-arrow next hidden" id="sliderNext" onclick="slide(1)"  aria-label="Next image">&#8250;</button>
+          </div>
+          <div class="slider-dots" id="sliderDots"></div>
+        </div>
+
+        <!-- Quick stats -->
+        <div class="detail-quick-stats">
+          <div class="qs-row">
+            <span class="qs-label">Category</span>
+            <span class="qs-val" style="color:var(--cyan)">Pull</span>
+          </div>
+          <div class="qs-row">
+            <span class="qs-label">Difficulty</span>
+            <span class="qs-val">🟢 Beginner</span>
+          </div>
+          <div class="qs-row">
+            <span class="qs-label">Primary</span>
+            <span class="qs-val" style="font-family:var(--font-body);font-size:12px;text-align:right;max-width:160px">Latissimus Dorsi, Rhomboids</span>
+          </div>
+          <div class="qs-row">
+            <span class="qs-label">Sets · Reps</span>
+            <span class="qs-val">3 · 8–12</span>
+          </div>
+        </div>
+
+      </div><!-- /detail-left -->
+
+      <!-- RIGHT: All content -->
+      <div class="detail-right">
+
+        <!-- Steps -->
+        <div class="detail-card">
+          <div class="detail-card-head">
+            <div class="detail-card-title">📋 Step-by-Step Form</div>
+          </div>
+          <div class="detail-card-body">
+            <div class="step-row">
+              <div class="step-num" style="background:var(--cyan)20;color:var(--cyan)">1</div>
+              <div><div class="step-head">Setup</div><div class="step-text">Use a low bar, table edge, or rings at waist height. Lie underneath, grip bar, heels on floor, body straight.</div></div>
+            </div>
+<div class="step-row">
+              <div class="step-num" style="background:var(--cyan)20;color:var(--cyan)">2</div>
+              <div><div class="step-head">Starting Position</div><div class="step-text">Arms extended, body rigid like a plank facing UP. Lower bar = harder.</div></div>
+            </div>
+<div class="step-row">
+              <div class="step-num" style="background:var(--cyan)20;color:var(--cyan)">3</div>
+              <div><div class="step-head">Pull Chest to Bar</div><div class="step-text">Pull chest to bar, leading with chest not chin. Squeeze shoulder blades together at top.</div></div>
+            </div>
+<div class="step-row">
+              <div class="step-num" style="background:var(--cyan)20;color:var(--cyan)">4</div>
+              <div><div class="step-head">Slow Descent</div><div class="step-text">Lower with full arm extension at bottom. That is one rep.</div></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Breathing -->
+        <div class="detail-card">
+          <div class="detail-card-head">
+            <div class="detail-card-title">🌬️ Breathing Pattern</div>
+          </div>
+          <div class="detail-card-body" style="padding-top:14px">
+            <div class="breath-row">
+              <div class="breath-box">
+                <div class="breath-phase">Going Down</div>
+                <div class="breath-action" style="color:var(--cyan)">Inhale</div>
+              </div>
+              <div class="breath-box">
+                <div class="breath-phase">At Bottom</div>
+                <div class="breath-action" style="color:var(--text-2)">Exhale up</div>
+              </div>
+              <div class="breath-box">
+                <div class="breath-phase">Coming Up</div>
+                <div class="breath-action" style="color:var(--lime)">Inhale down</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sets & Reps -->
+        <div class="detail-card">
+          <div class="detail-card-head">
+            <div class="detail-card-title">📊 Sets &amp; Reps Guide</div>
+          </div>
+          <div class="detail-card-body" style="padding-top:6px">
+            <table class="reps-table">
+              <thead><tr><th>Level</th><th>Sets</th><th>Reps / Time</th><th>Rest</th></tr></thead>
+              <tbody><tr><td>🟢 Beginner</td><td>3</td><td>8–12</td><td style="color:var(--text-3)">75s</td></tr>
+<tr><td>🟡 Intermediate</td><td>4</td><td>15–20</td><td style="color:var(--text-3)">60s</td></tr>
+<tr><td>🔴 Advanced</td><td>4</td><td>20+</td><td style="color:var(--text-3)">45s</td></tr>
+</tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Mistakes + Tips side by side on wide screens -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="detail-card">
+            <div class="detail-card-head"><div class="detail-card-title">⚠️ Common Mistakes</div></div>
+            <div class="detail-card-body"><div class="list-row"><span class="list-icon" style="color:var(--coral)">✗</span>Hips sagging — keep body straight like a plank</div><div class="list-row"><span class="list-icon" style="color:var(--coral)">✗</span>Not pulling shoulder blades together at top</div><div class="list-row"><span class="list-icon" style="color:var(--coral)">✗</span>Bar too high — makes it too easy to be effective</div></div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-card-head"><div class="detail-card-title">✅ Pro Tips</div></div>
+            <div class="detail-card-body"><div class="list-row"><span class="list-icon" style="color:var(--cyan)">→</span>Great if you cannot do pull-ups yet</div><div class="list-row"><span class="list-icon" style="color:var(--cyan)">→</span>Elevate feet to increase difficulty significantly</div><div class="list-row"><span class="list-icon" style="color:var(--cyan)">→</span>Add a pause at top for extra muscle activation</div></div>
+          </div>
+        </div>
+
+        <!-- Variations -->
+        <div class="detail-card">
+          <div class="detail-card-head"><div class="detail-card-title">🔄 Variations</div></div>
+          <div class="detail-card-body" style="padding-top:14px;padding-bottom:14px">
+            <span class="var-chip">Feet-elevated Row (harder)</span><span class="var-chip">Wide-grip Row</span><span class="var-chip">Pull-up (next progression)</span>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="detail-cta">
+          <div>
+            <div class="detail-cta-text">Ready to train?</div>
+            <div class="detail-cta-sub">Log your Bodyweight Row reps in your dashboard.</div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a href="../dashboard/log.html" class="btn btn-lime">✏️ Log Workout</a>
+            <a href="../dashboard/dashboard.html" class="btn btn-outline">📊 Dashboard</a>
+          </div>
+        </div>
+
+      </div><!-- /detail-right -->
+    </div><!-- /detail-layout -->
+
+    <!-- Prev / Next nav -->
+    <div class="detail-nav">
+      <a href="chin-up.html" class="detail-nav-card"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><div><div class="nav-card-label">Previous</div><div class="nav-card-name">Chin-Up</div></div></a>
+      <a href="exercises.html" class="detail-nav-card center">
+        <div>
+          <div class="nav-card-label">Library</div>
+          <div class="nav-card-name" style="color:var(--cyan)">All Exercises</div>
+        </div>
+      </a>
+      <a href="muscle-up.html" class="detail-nav-card next"><div><div class="nav-card-label">Next</div><div class="nav-card-name">Muscle-Up</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Image Slider ─────────────────────────────────────────
+const SLIDES = [
+  { type:'img', src:'../assets/images/exercises/bodyweight-row.gif',  fallback:'../assets/images/exercises/bodyweight-row.png' },
+  { type:'img', src:'../assets/images/exercises/bodyweight-row-2.gif',fallback:'../assets/images/exercises/bodyweight-row-2.png' },
+  { type:'img', src:'../assets/images/exercises/bodyweight-row-3.gif',fallback:'../assets/images/exercises/bodyweight-row-3.png' },
+  { type:'emoji', emoji:'🚣' },
+];
+
+const track  = document.getElementById('imgTrack');
+const dotsEl = document.getElementById('sliderDots');
+const prevBtn= document.getElementById('sliderPrev');
+const nextBtn= document.getElementById('sliderNext');
+let current = 0;
+let loadedSlides = [];
+let touchStartX = 0;
+
+function tryLoadSlides() {
+  const promises = SLIDES.slice(0,3).map((s,i) => new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve({ i, ok:true,  src:s.src });
+    img.onerror = () => {
+      const img2 = new Image();
+      img2.onload  = () => resolve({ i, ok:true,  src:s.fallback });
+      img2.onerror = () => resolve({ i, ok:false });
+      img2.src = s.fallback;
+    };
+    img.src = s.src;
+  }));
+
+  Promise.all(promises).then(results => {
+    const found = results.filter(r => r.ok);
+    if (found.length === 0) {
+      loadedSlides = [{ type:'emoji' }];
+    } else {
+      loadedSlides = found.map(r => ({ type:'img', src:r.src }));
+    }
+    buildSlider();
+  });
+}
+
+function buildSlider() {
+  track.innerHTML = '';
+  dotsEl.innerHTML = '';
+  loadedSlides.forEach((s, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'detail-img-slide';
+    slide.style.background = 'linear-gradient(135deg,var(--cyan)12,var(--cyan)06,var(--bg-3))';
+    if (s.type === 'img') {
+      const img = document.createElement('img');
+      img.src = s.src; img.alt = 'Bodyweight Row';
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;pointer-events:none';
+      slide.appendChild(img);
+    } else {
+      const em = document.createElement('div');
+      em.className = 'detail-img-emoji'; em.textContent = '🚣';
+      slide.appendChild(em);
+    }
+    track.appendChild(slide);
+
+    if (loadedSlides.length > 1) {
+      const dot = document.createElement('button');
+      dot.className = 'slider-dot' + (i===0?' active':'');
+      dot.setAttribute('aria-label','Slide '+(i+1));
+      dot.onclick = () => goTo(i);
+      dotsEl.appendChild(dot);
+    }
+  });
+
+  if (loadedSlides.length < 2) {
+    prevBtn.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+    dotsEl.style.display = 'none';
+  } else {
+    prevBtn.classList.toggle('hidden', current === 0);
+    nextBtn.classList.toggle('hidden', current === loadedSlides.length - 1);
+    dotsEl.style.display = 'flex';
+  }
+  goTo(0, false);
+}
+
+function goTo(idx, animate=true) {
+  current = Math.max(0, Math.min(idx, loadedSlides.length - 1));
+  if (!animate) track.style.transition = 'none';
+  track.style.transform = 'translateX(-' + (current * 100) + '%)';
+  if (!animate) requestAnimationFrame(() => { track.style.transition = ''; });
+  document.querySelectorAll('.slider-dot').forEach((d,i) => d.classList.toggle('active', i===current));
+  prevBtn.classList.toggle('hidden', current === 0);
+  nextBtn.classList.toggle('hidden', current === loadedSlides.length - 1);
+}
+
+window.slide = (dir) => goTo(current + dir);
+
+// Touch / swipe support
+const slider = document.getElementById('imgSlider');
+let isDragging = false, startX = 0, diffX = 0;
+
+slider.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; diffX = 0; }, {passive:true});
+slider.addEventListener('touchmove',  e => { if (isDragging) diffX = e.touches[0].clientX - startX; }, {passive:true});
+slider.addEventListener('touchend',   () => {
+  if (Math.abs(diffX) > 40) goTo(diffX < 0 ? current + 1 : current - 1);
+  isDragging = false; diffX = 0;
+});
+
+// Mouse drag
+slider.addEventListener('mousedown', e => { startX = e.clientX; isDragging = true; diffX = 0; e.preventDefault(); });
+window.addEventListener('mousemove', e => { if (isDragging) diffX = e.clientX - startX; });
+window.addEventListener('mouseup',   () => {
+  if (isDragging && Math.abs(diffX) > 40) goTo(diffX < 0 ? current + 1 : current - 1);
+  isDragging = false; diffX = 0;
+});
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft')  goTo(current - 1);
+  if (e.key === 'ArrowRight') goTo(current + 1);
+});
+
+// Responsive: grid for mistakes+tips on mobile
+function checkWidth() {
+  const grid = document.querySelector('.detail-right > div[style*="grid-template-columns"]');
+  if (grid) grid.style.gridTemplateColumns = window.innerWidth < 600 ? '1fr' : '1fr 1fr';
+}
+window.addEventListener('resize', checkWidth);
+checkWidth();
+
+tryLoadSlides();
+
+// ── Lightbox ────────────────────────────────────────────
+function openLightbox(idx) {
+  if (!loadedSlides || !loadedSlides.length) return;
+  const lb = document.getElementById('lightbox');
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  lbShow(idx ?? current);
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function lbClose(e) { if (e.target === document.getElementById('lightbox')) closeLightbox(); }
+function lbSlide(dir) {
+  const idx = (lbCurrentIdx + dir + loadedSlides.length) % loadedSlides.length;
+  lbShow(idx); event.stopPropagation();
+}
+let lbCurrentIdx = 0;
+function lbShow(idx) {
+  lbCurrentIdx = idx;
+  const s = loadedSlides[idx];
+  const img = document.getElementById('lbImg');
+  const em  = document.getElementById('lbEmoji');
+  if (s.type === 'img') {
+    img.src = s.src; img.style.display = 'block'; em.style.display = 'none';
+  } else {
+    em.textContent = s.emoji || document.querySelector('.detail-img-emoji')?.textContent || '💪';
+    em.style.display = 'block'; img.style.display = 'none';
+  }
+  const ctr = document.getElementById('lbCounter');
+  ctr.textContent = loadedSlides.length > 1 ? `${idx+1} / ${loadedSlides.length}` : '';
+  document.getElementById('lbPrev').classList.toggle('hidden', loadedSlides.length <= 1);
+  document.getElementById('lbNext').classList.toggle('hidden', loadedSlides.length <= 1);
+}
+// Click on slider opens lightbox
+document.getElementById('imgSlider').addEventListener('click', function(e) {
+  if (Math.abs(diffX) < 8) openLightbox(current);
+});
+// Keyboard esc closes
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+</script>
+<script type="module" src="../shared/navbar.js"></script>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="lbClose(event)">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">✕</button>
+  <button class="lightbox-arrow lb-prev" id="lbPrev" onclick="lbSlide(-1);event.stopPropagation()" aria-label="Previous">&#8249;</button>
+  <img class="lightbox-img" id="lbImg" src="" alt="" style="display:none">
+  <div class="lightbox-emoji" id="lbEmoji" style="display:none"></div>
+  <button class="lightbox-arrow lb-next" id="lbNext" onclick="lbSlide(1);event.stopPropagation()" aria-label="Next">&#8250;</button>
+  <div class="lightbox-counter" id="lbCounter"></div>
+</div>
+
+</body>
+</html>
