@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Russian Twist — FitTrack Exercise Guide</title>
+  <meta name="description" content="Seated rotational core exercise. Targets the obliques for a defined waist and rotational power.">
+  <link rel="icon" type="image/png" href="../assets/images/fitness.png">
+  <link rel="stylesheet" href="../shared/global.css">
+  <link rel="stylesheet" href="exercise-detail.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../config.local.js"></script>
+</head>
+<body>
+<div class="detail-page">
+  <div class="wrap">
+
+    <!-- Back + Hero -->
+    <div class="detail-hero" style="background:radial-gradient(ellipse 50% 80% at 0% 60%,var(--amber)07,transparent)">
+      <a href="exercises.html" class="detail-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        All Exercises
+      </a>
+      <div class="detail-badge" style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);color:var(--cyan)">
+        🟡 Core &nbsp;·&nbsp; Intermediate
+      </div>
+      <h1 class="detail-title" style="color:var(--amber)">Russian Twist</h1>
+      <p class="detail-desc">Seated rotational core exercise. Targets the obliques for a defined waist and rotational power.</p>
+      <div class="detail-muscles"><span class="muscle-tag primary">Obliques</span><span class="muscle-tag primary">Transverse Abdominis</span><span class="muscle-tag">Hip Flexors</span><span class="muscle-tag">Rectus Abdominis</span></div>
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="detail-layout">
+
+      <!-- LEFT: Image slider + Quick stats -->
+      <div class="detail-left">
+
+        <!-- Image / GIF box -->
+        <div class="detail-img-box">
+          <div class="detail-img-slider" id="imgSlider"
+            data-startx="0" data-dragging="false">
+
+            <div class="detail-img-track" id="imgTrack">
+              <!-- Slides injected by JS -->
+            </div>
+
+            <button class="slider-arrow prev hidden" id="sliderPrev" onclick="slide(-1)" aria-label="Previous image">&#8249;</button>
+            <button class="slider-arrow next hidden" id="sliderNext" onclick="slide(1)"  aria-label="Next image">&#8250;</button>
+          </div>
+          <div class="slider-dots" id="sliderDots"></div>
+        </div>
+
+        <!-- Quick stats -->
+        <div class="detail-quick-stats">
+          <div class="qs-row">
+            <span class="qs-label">Category</span>
+            <span class="qs-val" style="color:var(--amber)">Core</span>
+          </div>
+          <div class="qs-row">
+            <span class="qs-label">Difficulty</span>
+            <span class="qs-val">🟡 Intermediate</span>
+          </div>
+          <div class="qs-row">
+            <span class="qs-label">Primary</span>
+            <span class="qs-val" style="font-family:var(--font-body);font-size:12px;text-align:right;max-width:160px">Obliques, Transverse Abdominis</span>
+          </div>
+          <div class="qs-row">
+            <span class="qs-label">Sets · Reps</span>
+            <span class="qs-val">3 · 20 total</span>
+          </div>
+        </div>
+
+      </div><!-- /detail-left -->
+
+      <!-- RIGHT: All content -->
+      <div class="detail-right">
+
+        <!-- Steps -->
+        <div class="detail-card">
+          <div class="detail-card-head">
+            <div class="detail-card-title">📋 Step-by-Step Form</div>
+          </div>
+          <div class="detail-card-body">
+            <div class="step-row">
+              <div class="step-num" style="background:var(--amber)20;color:var(--amber)">1</div>
+              <div><div class="step-head">Seated Position</div><div class="step-text">Sit on floor, knees bent, heels 6 inches off floor. Lean back 45°. Hold this angle throughout.</div></div>
+            </div>
+<div class="step-row">
+              <div class="step-num" style="background:var(--amber)20;color:var(--amber)">2</div>
+              <div><div class="step-head">Arms Extended</div><div class="step-text">Hands clasped in front of chest or hold a weight. Arms straight or slightly bent.</div></div>
+            </div>
+<div class="step-row">
+              <div class="step-num" style="background:var(--amber)20;color:var(--amber)">3</div>
+              <div><div class="step-head">Rotate Left</div><div class="step-text">Twist torso fully to the left. Touch floor beside hip. Both shoulders rotate, not just arms.</div></div>
+            </div>
+<div class="step-row">
+              <div class="step-num" style="background:var(--amber)20;color:var(--amber)">4</div>
+              <div><div class="step-head">Rotate Right</div><div class="step-text">Return through center and rotate fully right. That is one complete rep.</div></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Breathing -->
+        <div class="detail-card">
+          <div class="detail-card-head">
+            <div class="detail-card-title">🌬️ Breathing Pattern</div>
+          </div>
+          <div class="detail-card-body" style="padding-top:14px">
+            <div class="breath-row">
+              <div class="breath-box">
+                <div class="breath-phase">Going Down</div>
+                <div class="breath-action" style="color:var(--amber)">Breathe rhythmically</div>
+              </div>
+              <div class="breath-box">
+                <div class="breath-phase">At Bottom</div>
+                <div class="breath-action" style="color:var(--text-2)">Exhale on each twist</div>
+              </div>
+              <div class="breath-box">
+                <div class="breath-phase">Coming Up</div>
+                <div class="breath-action" style="color:var(--lime)">Maintain pattern</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sets & Reps -->
+        <div class="detail-card">
+          <div class="detail-card-head">
+            <div class="detail-card-title">📊 Sets &amp; Reps Guide</div>
+          </div>
+          <div class="detail-card-body" style="padding-top:6px">
+            <table class="reps-table">
+              <thead><tr><th>Level</th><th>Sets</th><th>Reps / Time</th><th>Rest</th></tr></thead>
+              <tbody><tr><td>🟢 Beginner</td><td>3</td><td>20 total</td><td style="color:var(--text-3)">45s</td></tr>
+<tr><td>🟡 Intermediate</td><td>4</td><td>30–40 total</td><td style="color:var(--text-3)">30s</td></tr>
+<tr><td>🔴 Advanced</td><td>4</td><td>50+ total</td><td style="color:var(--text-3)">30s</td></tr>
+</tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Mistakes + Tips side by side on wide screens -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="detail-card">
+            <div class="detail-card-head"><div class="detail-card-title">⚠️ Common Mistakes</div></div>
+            <div class="detail-card-body"><div class="list-row"><span class="list-icon" style="color:var(--coral)">✗</span>Feet on floor (too easy) — elevate feet for more challenge</div><div class="list-row"><span class="list-icon" style="color:var(--coral)">✗</span>Rotating only arms not torso — ribcage must rotate</div><div class="list-row"><span class="list-icon" style="color:var(--coral)">✗</span>Back rounding — maintain 45° lean with straight spine</div></div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-card-head"><div class="detail-card-title">✅ Pro Tips</div></div>
+            <div class="detail-card-body"><div class="list-row"><span class="list-icon" style="color:var(--amber)">→</span>Add a weight plate or filled water bottle for progressive overload</div><div class="list-row"><span class="list-icon" style="color:var(--amber)">→</span>Slow it down for more time under tension</div><div class="list-row"><span class="list-icon" style="color:var(--amber)">→</span>Focus on rotating the ribcage, not just moving the arms</div></div>
+          </div>
+        </div>
+
+        <!-- Variations -->
+        <div class="detail-card">
+          <div class="detail-card-head"><div class="detail-card-title">🔄 Variations</div></div>
+          <div class="detail-card-body" style="padding-top:14px;padding-bottom:14px">
+            <span class="var-chip">Weighted Russian Twist</span><span class="var-chip">Feet-flat version (easier)</span><span class="var-chip">Mason Twist (more rotation)</span>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="detail-cta">
+          <div>
+            <div class="detail-cta-text">Ready to train?</div>
+            <div class="detail-cta-sub">Log your Russian Twist reps in your dashboard.</div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a href="../dashboard/log.html" class="btn btn-lime">✏️ Log Workout</a>
+            <a href="../dashboard/dashboard.html" class="btn btn-outline">📊 Dashboard</a>
+          </div>
+        </div>
+
+      </div><!-- /detail-right -->
+    </div><!-- /detail-layout -->
+
+    <!-- Prev / Next nav -->
+    <div class="detail-nav">
+      <a href="crunches.html" class="detail-nav-card"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><div><div class="nav-card-label">Previous</div><div class="nav-card-name">Crunches</div></div></a>
+      <a href="exercises.html" class="detail-nav-card center">
+        <div>
+          <div class="nav-card-label">Library</div>
+          <div class="nav-card-name" style="color:var(--amber)">All Exercises</div>
+        </div>
+      </a>
+      <a href="hanging-leg-raises.html" class="detail-nav-card next"><div><div class="nav-card-label">Next</div><div class="nav-card-name">Hanging Leg Raises</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Image Slider ─────────────────────────────────────────
+const SLIDES = [
+  { type:'img', src:'../assets/images/exercises/russian-twist/russian-twist.gif',  fallback:'../assets/images/exercises/russian-twist/russian-twist.gif' },
+  { type:'img', src:'../assets/images/exercises/russian-twist/russian-twist1.gif',fallback:'../assets/images/exercises/russian-twist/russian-twist1.gif' },
+  { type:'emoji', emoji:'🌀' },
+];
+
+const track  = document.getElementById('imgTrack');
+const dotsEl = document.getElementById('sliderDots');
+const prevBtn= document.getElementById('sliderPrev');
+const nextBtn= document.getElementById('sliderNext');
+let current = 0;
+let loadedSlides = [];
+let touchStartX = 0;
+
+function tryLoadSlides() {
+  const promises = SLIDES.slice(0,3).map((s,i) => new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve({ i, ok:true,  src:s.src });
+    img.onerror = () => {
+      const img2 = new Image();
+      img2.onload  = () => resolve({ i, ok:true,  src:s.fallback });
+      img2.onerror = () => resolve({ i, ok:false });
+      img2.src = s.fallback;
+    };
+    img.src = s.src;
+  }));
+
+  Promise.all(promises).then(results => {
+    const found = results.filter(r => r.ok);
+    if (found.length === 0) {
+      loadedSlides = [{ type:'emoji' }];
+    } else {
+      loadedSlides = found.map(r => ({ type:'img', src:r.src }));
+    }
+    buildSlider();
+  });
+}
+
+function buildSlider() {
+  track.innerHTML = '';
+  dotsEl.innerHTML = '';
+  loadedSlides.forEach((s, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'detail-img-slide';
+    slide.style.background = 'linear-gradient(135deg,var(--amber)12,var(--amber)06,var(--bg-3))';
+    if (s.type === 'img') {
+      const img = document.createElement('img');
+      img.src = s.src; img.alt = 'Russian Twist';
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;pointer-events:none';
+      slide.appendChild(img);
+    } else {
+      const em = document.createElement('div');
+      em.className = 'detail-img-emoji'; em.textContent = '🌀';
+      slide.appendChild(em);
+    }
+    track.appendChild(slide);
+
+    if (loadedSlides.length > 1) {
+      const dot = document.createElement('button');
+      dot.className = 'slider-dot' + (i===0?' active':'');
+      dot.setAttribute('aria-label','Slide '+(i+1));
+      dot.onclick = () => goTo(i);
+      dotsEl.appendChild(dot);
+    }
+  });
+
+  if (loadedSlides.length < 2) {
+    prevBtn.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+    dotsEl.style.display = 'none';
+  } else {
+    prevBtn.classList.toggle('hidden', current === 0);
+    nextBtn.classList.toggle('hidden', current === loadedSlides.length - 1);
+    dotsEl.style.display = 'flex';
+  }
+  goTo(0, false);
+}
+
+function goTo(idx, animate=true) {
+  current = Math.max(0, Math.min(idx, loadedSlides.length - 1));
+  if (!animate) track.style.transition = 'none';
+  track.style.transform = 'translateX(-' + (current * 100) + '%)';
+  if (!animate) requestAnimationFrame(() => { track.style.transition = ''; });
+  document.querySelectorAll('.slider-dot').forEach((d,i) => d.classList.toggle('active', i===current));
+  prevBtn.classList.toggle('hidden', current === 0);
+  nextBtn.classList.toggle('hidden', current === loadedSlides.length - 1);
+}
+
+window.slide = (dir) => goTo(current + dir);
+
+// Touch / swipe support
+const slider = document.getElementById('imgSlider');
+let isDragging = false, startX = 0, diffX = 0;
+
+slider.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; diffX = 0; }, {passive:true});
+slider.addEventListener('touchmove',  e => { if (isDragging) diffX = e.touches[0].clientX - startX; }, {passive:true});
+slider.addEventListener('touchend',   () => {
+  if (Math.abs(diffX) > 40) goTo(diffX < 0 ? current + 1 : current - 1);
+  isDragging = false; diffX = 0;
+});
+
+// Mouse drag
+slider.addEventListener('mousedown', e => { startX = e.clientX; isDragging = true; diffX = 0; e.preventDefault(); });
+window.addEventListener('mousemove', e => { if (isDragging) diffX = e.clientX - startX; });
+window.addEventListener('mouseup',   () => {
+  if (isDragging && Math.abs(diffX) > 40) goTo(diffX < 0 ? current + 1 : current - 1);
+  isDragging = false; diffX = 0;
+});
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft')  goTo(current - 1);
+  if (e.key === 'ArrowRight') goTo(current + 1);
+});
+
+// Responsive: grid for mistakes+tips on mobile
+function checkWidth() {
+  const grid = document.querySelector('.detail-right > div[style*="grid-template-columns"]');
+  if (grid) grid.style.gridTemplateColumns = window.innerWidth < 600 ? '1fr' : '1fr 1fr';
+}
+window.addEventListener('resize', checkWidth);
+checkWidth();
+
+tryLoadSlides();
+
+// ── Lightbox ────────────────────────────────────────────
+function openLightbox(idx) {
+  if (!loadedSlides || !loadedSlides.length) return;
+  const lb = document.getElementById('lightbox');
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  lbShow(idx ?? current);
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function lbClose(e) { if (e.target === document.getElementById('lightbox')) closeLightbox(); }
+function lbSlide(dir) {
+  const idx = (lbCurrentIdx + dir + loadedSlides.length) % loadedSlides.length;
+  lbShow(idx); event.stopPropagation();
+}
+let lbCurrentIdx = 0;
+function lbShow(idx) {
+  lbCurrentIdx = idx;
+  const s = loadedSlides[idx];
+  const img = document.getElementById('lbImg');
+  const em  = document.getElementById('lbEmoji');
+  if (s.type === 'img') {
+    img.src = s.src; img.style.display = 'block'; em.style.display = 'none';
+  } else {
+    em.textContent = s.emoji || document.querySelector('.detail-img-emoji')?.textContent || '💪';
+    em.style.display = 'block'; img.style.display = 'none';
+  }
+  const ctr = document.getElementById('lbCounter');
+  ctr.textContent = loadedSlides.length > 1 ? `${idx+1} / ${loadedSlides.length}` : '';
+  document.getElementById('lbPrev').classList.toggle('hidden', loadedSlides.length <= 1);
+  document.getElementById('lbNext').classList.toggle('hidden', loadedSlides.length <= 1);
+}
+// Click on slider opens lightbox
+document.getElementById('imgSlider').addEventListener('click', function(e) {
+  if (Math.abs(diffX) < 8) openLightbox(current);
+});
+// Keyboard esc closes
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+</script>
+<script type="module" src="../shared/navbar.js"></script>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="lbClose(event)">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">✕</button>
+  <button class="lightbox-arrow lb-prev" id="lbPrev" onclick="lbSlide(-1);event.stopPropagation()" aria-label="Previous">&#8249;</button>
+  <img class="lightbox-img" id="lbImg" src="" alt="" style="display:none">
+  <div class="lightbox-emoji" id="lbEmoji" style="display:none"></div>
+  <button class="lightbox-arrow lb-next" id="lbNext" onclick="lbSlide(1);event.stopPropagation()" aria-label="Next">&#8250;</button>
+  <div class="lightbox-counter" id="lbCounter"></div>
+</div>
+
+</body>
+</html>
