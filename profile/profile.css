@@ -18,12 +18,11 @@
     radial-gradient(circle at 60% 80%, rgba(180,77,255,0.06) 0%, transparent 35%);
 }
 .profile-cover-grid {
-  position: absolute; 
-  inset: 0;
+  position: absolute; inset: 0;
   background-image: linear-gradient(var(--border-subtle) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
-  background-size: 50px 50px;
-  opacity: 0.25;
+    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
 }
 
 /* Avatar floats over cover */

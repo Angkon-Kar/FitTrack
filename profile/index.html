@@ -8,26 +8,8 @@
   <link rel="stylesheet" href="../shared/global.css">
   <link rel="stylesheet" href="profile.css">
   <script src="../config.local.js"></script>
-  <script type="module">
-    import { initI18n } from '../shared/i18n.js';
-    initI18n();
-  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
-    .lang-btn {
-      display: flex; align-items: center; gap: 8px;
-      padding: 10px 20px; border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle); background: var(--bg-3);
-      color: var(--text-1); font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: all 0.15s; font-family: var(--font-body);
-      -webkit-tap-highlight-color: transparent;
-    }
-    .lang-btn:hover { border-color: var(--border-bright); }
-    .lang-btn.active { background: rgba(198,255,0,0.08); border-color: rgba(198,255,0,0.3); color: var(--lime); }
-    .lang-bn { font-family: 'Noto Sans Bengali', 'SolaimanLipi', sans-serif; }
-    /* Bangla font fallback */
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap');
-
   .period-btn {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
     padding: 16px 10px; border-radius: var(--radius-lg);
@@ -83,7 +65,7 @@
     <div class="profile-action-row">
       <button class="btn btn-lime" onclick="switchTab('edit')">✏️ Edit Profile</button>
       <a href="../dashboard/log.html"   class="btn btn-outline">+ Log Workout</a>
-      <a href="../compare/" class="btn btn-ghost">⚔️ Challenge</a>
+      <a href="../compare/compare.html" class="btn btn-ghost">⚔️ Challenge</a>
     </div>
 
     <div class="profile-stats">
@@ -210,25 +192,6 @@
           <p class="form-hint"><span id="bioCount">0</span>/120 characters</p>
         </div>
 
-
-        <!-- Language Setting -->
-        <div class="pform-card" style="margin-top:0">
-          <div class="pform-title" data-i18n="profile.languageSettings">🌐 Language</div>
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label" data-i18n="profile.selectLanguage">Select Language</label>
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="lang-btn" id="langBtnEn" onclick="changeLang('en')">
-                <span style="font-size:20px">🇬🇧</span>
-                <span>English</span>
-              </button>
-              <button class="lang-btn" id="langBtnBn" onclick="changeLang('bn')">
-                <span style="font-size:20px">🇧🇩</span>
-                <span>বাংলা</span>
-              </button>
-            </div>
-            <p id="langSavedMsg" style="font-size:12px;color:var(--lime);margin-top:8px;display:none" data-i18n="profile.languageSaved">Language updated!</p>
-          </div>
-        </div>
         <div style="display:flex;gap:10px">
           <button class="btn btn-lime" id="saveProfileBtn" onclick="saveProfile()">💾 Save Changes</button>
           <button class="btn btn-ghost" onclick="switchTab('overview')">Cancel</button>
@@ -1003,31 +966,6 @@
         <span style="font-size:12px;color:var(--lime)">✓ Sent</span>
       </div>`).join('');
   }
-
-  // ── Language Switcher ─────────────────────────────────
-  window.changeLang = async function(lang) {
-    try {
-      const { setLang } = await import('../shared/i18n.js');
-      await setLang(lang);
-    } catch(e) {
-      // Fallback if i18n module not loaded
-      localStorage.setItem('ft-lang', lang);
-      location.reload();
-    }
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    const btn = document.getElementById(lang === 'en' ? 'langBtnEn' : 'langBtnBn');
-    if (btn) btn.classList.add('active');
-    const msg = document.getElementById('langSavedMsg');
-    if (msg) { msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 2000); }
-    showToast(lang === 'bn' ? 'ভাষা পরিবর্তন হয়েছে! 🌐' : 'Language updated! 🌐', 'success');
-  };
-
-  // Set active lang button on load
-  (function() {
-    const saved = localStorage.getItem('ft-lang') || 'en';
-    const btn = document.getElementById(saved === 'bn' ? 'langBtnBn' : 'langBtnEn');
-    if (btn) btn.classList.add('active');
-  })();
 
   function showAlert(el,msg,type){el.textContent=msg;el.className=`alert alert-${type} show`;}
   function showToast(msg,type='success'){const t=document.getElementById('appToast');t.textContent=msg;t.className=`toast ${type} visible`;setTimeout(()=>t.classList.remove('visible'),3000);}
