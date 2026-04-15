@@ -201,4 +201,3 @@
 @media (max-width: 1024px) { .charts-row-3 { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 900px) { .stats-row { grid-template-columns: repeat(2, 1fr); } .charts-row-3 { grid-template-columns: 1fr; } .bottom-row { grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; } .sc-value { font-size: 30px; } .heatmap-cell { width: 11px; height: 11px; } .ex-log-card { flex-wrap: wrap; } .rep-ctrl { width: 100%; justify-content: flex-end; } }
-
