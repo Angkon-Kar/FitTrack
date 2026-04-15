@@ -194,8 +194,9 @@
 // ── Image Slider ─────────────────────────────────────────
 const SLIDES = [
   { type:'img', src:'../assets/images/exercises/calf-raises/calf-raises.gif',   fallback:'../assets/images/exercises/calf-raises/calf-raises.gif' },
-  { type:'img', src:'../assets/images/exercises/calf-raises/calf-raises1.gif',  fallback:'../assets/images/exercises/calf-raises/calf-raises2.png' },
-  { type:'img', src:'../assets/images/exercises/calf-raises/calf-raises2.gif',  fallback:'../assets/images/exercises/calf-raises/calf-raises3.png' },
+  { type:'img', src:'../assets/images/exercises/calf-raises/calf-raises1.gif',  fallback:'../assets/images/exercises/calf-raises/calf-raises1.gif' },
+  { type:'img', src:'../assets/images/exercises/calf-raises/calf-raises2.gif',  fallback:'../assets/images/exercises/calf-raises/calf-raises2.gif' },
+  { type:'img', src:'../assets/images/exercises/calf-raises/calf-raises3.gif',  fallback:'../assets/images/exercises/calf-raises/calf-raises3.gif' },
   { type:'emoji', emoji:'🦶' },
 ];
 
@@ -208,7 +209,7 @@ let loadedSlides = [];
 let touchStartX = 0;
 
 function tryLoadSlides() {
-  const promises = SLIDES.slice(0,3).map((s,i) => new Promise(resolve => {
+  const promises = SLIDES.slice(0,4).map((s,i) => new Promise(resolve => {
     const img = new Image();
     img.onload  = () => resolve({ i, ok:true,  src:s.src });
     img.onerror = () => {
