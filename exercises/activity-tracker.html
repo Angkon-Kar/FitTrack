@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Activity Tracker — FitTrack</title>
+  <link rel="icon" type="image/png" href="../assets/images/fitness.png">
+  <link rel="stylesheet" href="../shared/global.css">
+  <link rel="stylesheet" href="activity-tracker.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="../config.local.js"></script>
+</head>
+<body>
+<div class="at-page">
+  <div class="wrap">
+
+    <!-- Hero -->
+    <div class="at-hero">
+      <a href="exercises.html" class="detail-back" style="display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text-3);text-decoration:none;margin-bottom:16px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Exercises
+      </a>
+      <div class="section-eyebrow">Activity Tracker</div>
+      <h1 class="at-title">TRACK YOUR<br><span>MOVEMENT.</span></h1>
+      <p style="color:var(--text-2);font-size:15px;margin-top:8px">Log daily runs, walks, and rides. See your distance, steps, and calories on the leaderboard.</p>
+    </div>
+
+    <!-- Date row -->
+    <div class="date-row" style="margin-bottom:20px">
+      <label class="form-label" style="margin:0;flex-shrink:0">📅</label>
+      <input type="date" id="datePicker">
+      <span id="dateLabel" style="font-size:13px;color:var(--text-3)"></span>
+    </div>
+
+    <!-- Activity type selector -->
+    <div class="at-type-row">
+      <button class="at-type-btn active" data-type="running"  onclick="selectType('running',this)">
+        <span class="at-type-icon">🏃</span>
+        <span class="at-type-label">Running</span>
+      </button>
+      <button class="at-type-btn" data-type="walking" onclick="selectType('walking',this)">
+        <span class="at-type-icon">🚶</span>
+        <span class="at-type-label">Walking</span>
+      </button>
+      <button class="at-type-btn" data-type="cycling" onclick="selectType('cycling',this)">
+        <span class="at-type-icon">🚴</span>
+        <span class="at-type-label">Cycling</span>
+      </button>
+    </div>
+
+    <!-- Input form -->
+    <div class="at-form">
+      <div id="formAlert" class="alert" style="margin-bottom:14px;display:none"></div>
+
+      <div class="at-inputs-grid">
+        <!-- Distance -->
+        <div class="at-input-card">
+          <div class="at-input-icon">📏</div>
+          <div class="at-input-label">Distance</div>
+          <div class="at-input-row">
+            <input type="number" id="inDistance" class="at-num-input" placeholder="0.0" step="0.1" min="0" max="999" inputmode="decimal">
+            <span class="at-unit">km</span>
+          </div>
+          <div class="at-input-hint" id="milesHint"></div>
+        </div>
+
+        <!-- Duration -->
+        <div class="at-input-card">
+          <div class="at-input-icon">⏱️</div>
+          <div class="at-input-label">Duration</div>
+          <div class="at-input-row">
+            <input type="number" id="inDuration" class="at-num-input" placeholder="0" min="0" max="600" inputmode="numeric">
+            <span class="at-unit">min</span>
+          </div>
+          <div class="at-input-hint" id="paceHint"></div>
+        </div>
+
+        <!-- Steps -->
+        <div class="at-input-card">
+          <div class="at-input-icon">👟</div>
+          <div class="at-input-label">Steps</div>
+          <div class="at-input-row">
+            <input type="number" id="inSteps" class="at-num-input" placeholder="0" min="0" max="100000" inputmode="numeric">
+            <span class="at-unit">steps</span>
+          </div>
+          <div class="at-input-hint" id="stepsHint">~2,000 steps/km</div>
+        </div>
+
+        <!-- Calories -->
+        <div class="at-input-card">
+          <div class="at-input-icon">🔥</div>
+          <div class="at-input-label">Calories</div>
+          <div class="at-input-row">
+            <input type="number" id="inCalories" class="at-num-input" placeholder="0" min="0" max="9999" inputmode="numeric">
+            <span class="at-unit">kcal</span>
+          </div>
+          <div class="at-input-hint" id="calHint"></div>
+        </div>
+      </div>
+
+      <!-- Auto-estimate notice -->
+      <div class="at-estimate" id="estimateBox" style="display:none">
+        <span style="font-size:14px">🤖</span>
+        <span id="estimateText"></span>
+        <button onclick="applyEstimate()" class="btn btn-ghost btn-sm">Apply Estimate</button>
+      </div>
+
+      <div class="form-group" style="margin-top:14px;margin-bottom:0">
+        <label class="form-label">Notes (optional)</label>
+        <input type="text" id="inNotes" class="form-input" placeholder="Morning run · Park route · Felt great" maxlength="120">
+      </div>
+    </div>
+
+    <button id="saveBtn" class="btn btn-lime btn-full btn-lg" style="margin-top:16px" onclick="saveActivity()">
+      💾 Save Activity
+    </button>
+
+    <!-- Stats cards -->
+    <div class="at-stats-row" id="statsRow" style="display:none">
+      <div class="at-stat c-lime">
+        <div class="at-stat-val" id="totalKm">0</div>
+        <div class="at-stat-label">Total km</div>
+      </div>
+      <div class="at-stat c-cyan">
+        <div class="at-stat-val" id="totalSteps">0</div>
+        <div class="at-stat-label">Total Steps</div>
+      </div>
+      <div class="at-stat c-coral">
+        <div class="at-stat-val" id="totalCals">0</div>
+        <div class="at-stat-label">Calories</div>
+      </div>
+      <div class="at-stat c-violet">
+        <div class="at-stat-val" id="totalDays">0</div>
+        <div class="at-stat-label">Active Days</div>
+      </div>
+    </div>
+
+    <!-- Progress chart -->
+    <div class="at-chart-box" id="chartBox" style="display:none">
+      <div class="at-chart-title">📈 Distance — Last 30 Days</div>
+      <div style="height:200px;position:relative"><canvas id="actChart"></canvas></div>
+    </div>
+
+    <!-- Recent activity log -->
+    <div class="at-log-box" id="logBox" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="at-chart-title" style="margin:0">Recent Activities</div>
+        <a href="../leaderboard/leaderboard.html?cat=km" class="btn btn-ghost btn-sm">🏆 Leaderboard</a>
+      </div>
+      <div id="activityLog"></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="appToast" class="toast"></div>
+
+<style>
+.at-page  { padding: 62px 0 80px; min-height: 100vh; }
+.at-hero  { padding: 36px 0 24px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 24px; }
+.at-title { font-family: var(--font-display); font-size: clamp(36px,6vw,64px); font-weight: 900; line-height: .9; }
+.at-title span { color: var(--lime); }
+
+/* Type selector */
+.at-type-row { display: flex; gap: 10px; margin-bottom: 18px; }
+.at-type-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 16px 10px; border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle); background: var(--bg-2);
+  cursor: pointer; transition: all .15s; font-family: var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+}
+.at-type-btn.active { border-color: rgba(198,255,0,.35); background: rgba(198,255,0,.06); }
+.at-type-icon  { font-size: 28px; }
+.at-type-label { font-size: 13px; font-weight: 700; color: var(--text-2); }
+.at-type-btn.active .at-type-label { color: var(--lime); }
+
+/* Form */
+.at-form {
+  background: var(--bg-2); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl); padding: 22px; margin-bottom: 16px;
+}
+.at-inputs-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 14px;
+}
+.at-input-card {
+  background: var(--bg-1); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg); padding: 16px;
+}
+.at-input-icon  { font-size: 22px; margin-bottom: 6px; }
+.at-input-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text-3); margin-bottom: 10px; }
+.at-input-row   { display: flex; align-items: center; gap: 8px; }
+.at-num-input {
+  flex: 1; background: var(--bg-3); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm); padding: 8px 10px;
+  color: var(--text-1); font-family: var(--font-mono); font-size: 22px; font-weight: 700;
+  outline: none; width: 0; -webkit-appearance: none; appearance: none;
+}
+.at-num-input:focus { border-color: var(--lime); }
+.at-unit  { font-size: 12px; color: var(--text-3); font-weight: 600; white-space: nowrap; }
+.at-input-hint { font-size: 11px; color: var(--text-4); margin-top: 6px; min-height: 16px; }
+
+.at-estimate {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(0,229,255,.06); border: 1px solid rgba(0,229,255,.2);
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  font-size: 13px; color: var(--text-2);
+}
+
+/* Stats */
+.at-stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin: 20px 0; }
+.at-stat {
+  background: var(--bg-2); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg); padding: 16px; text-align: center; position: relative;
+}
+.at-stat::after { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:0 0 2px 2px; }
+.at-stat.c-lime::after   { background:var(--lime); }
+.at-stat.c-cyan::after   { background:var(--cyan); }
+.at-stat.c-coral::after  { background:var(--coral); }
+.at-stat.c-violet::after { background:var(--violet); }
+.at-stat-val   { font-family:var(--font-display); font-size:28px; font-weight:900; line-height:1; }
+.at-stat-label { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:var(--text-3); margin-top:4px; }
+
+/* Chart + Log */
+.at-chart-box, .at-log-box {
+  background: var(--bg-2); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl); padding: 22px; margin-bottom: 16px;
+}
+.at-chart-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-3); margin-bottom:16px; }
+
+/* Activity log rows */
+.at-log-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.at-log-row:last-child { border-bottom: none; }
+.at-log-icon  { font-size: 26px; flex-shrink: 0; }
+.at-log-info  { flex: 1; min-width: 0; }
+.at-log-type  { font-weight: 700; font-size: 14px; text-transform: capitalize; }
+.at-log-date  { font-size: 12px; color: var(--text-3); }
+.at-log-note  { font-size: 12px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.at-log-stats { text-align: right; flex-shrink: 0; }
+.at-log-dist  { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--lime); }
+.at-log-sub   { font-size: 11px; color: var(--text-3); }
+
+@media (max-width:600px) {
+  .at-inputs-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .at-stats-row   { grid-template-columns: repeat(2,1fr); }
+  .at-type-row    { gap: 8px; }
+}
+</style>
+
+<script type="module">
+  import { sb } from '../shared/db.js';
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const auth = getAuth(initializeApp(CONFIG.firebase));
+  let uid = null, actChart;
+  let selectedType = 'running';
+  let estimateData = {};
+
+  // ── Date setup ─────────────────────────────────────────
+  const dp = document.getElementById('datePicker');
+  dp.value = new Date().toISOString().split('T')[0];
+  dp.max   = dp.value;
+  updateDateLabel();
+  dp.addEventListener('change', () => { updateDateLabel(); loadForDate(); });
+  function updateDateLabel() {
+    const d = new Date(dp.value+'T00:00:00');
+    document.getElementById('dateLabel').textContent = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  }
+
+  // ── Type selector ──────────────────────────────────────
+  window.selectType = function(type, btn) {
+    selectedType = type;
+    document.querySelectorAll('.at-type-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadForDate();
+  };
+
+  // ── Auto-estimate ──────────────────────────────────────
+  const PACE  = { running: 5.5, walking: 12, cycling: 3.3 }; // min/km
+  const CALS  = { running: 70,  walking: 50,  cycling: 40  }; // kcal/km
+  const STEPS_PER_KM = { running: 1200, walking: 1350, cycling: 0 };
+
+  function updateEstimate() {
+    const km   = parseFloat(document.getElementById('inDistance').value)  || 0;
+    const dur  = parseInt(document.getElementById('inDuration').value)   || 0;
+    const steps= parseInt(document.getElementById('inSteps').value)      || 0;
+    const cals = parseInt(document.getElementById('inCalories').value)   || 0;
+
+    const estBox = document.getElementById('estimateBox');
+    estimateData = {};
+
+    if (km > 0) {
+      const estDur   = Math.round(km * PACE[selectedType]);
+      const estCals  = Math.round(km * CALS[selectedType]);
+      const estSteps = Math.round(km * STEPS_PER_KM[selectedType]);
+
+      document.getElementById('milesHint').textContent = `≈ ${(km*0.621).toFixed(1)} miles`;
+      if (dur>0) {
+        const pace = dur/km;
+        document.getElementById('paceHint').textContent = `Pace: ${Math.floor(pace)}:${String(Math.round((pace%1)*60)).padStart(2,'0')} min/km`;
+      } else {
+        document.getElementById('paceHint').textContent = `Est. ${estDur} min at avg pace`;
+        estimateData.duration = estDur;
+      }
+      if (!cals)  { estimateData.calories = estCals;  document.getElementById('calHint').textContent   = `Est. ~${estCals} kcal`; }
+      if (!steps && selectedType!=='cycling') { estimateData.steps = estSteps; document.getElementById('stepsHint').textContent = `Est. ~${estSteps.toLocaleString()} steps`; }
+
+      if (Object.keys(estimateData).length) {
+        const parts = [];
+        if (estimateData.duration) parts.push(`${estimateData.duration} min`);
+        if (estimateData.steps)    parts.push(`${estimateData.steps.toLocaleString()} steps`);
+        if (estimateData.calories) parts.push(`${estimateData.calories} kcal`);
+        document.getElementById('estimateText').textContent = `Auto-estimate: ${parts.join(', ')}`;
+        estBox.style.display = 'flex';
+      } else { estBox.style.display = 'none'; }
+    } else {
+      ['milesHint','paceHint','calHint'].forEach(id => document.getElementById(id).textContent='');
+      document.getElementById('stepsHint').textContent = '~2,000 steps/km';
+      estBox.style.display = 'none';
+    }
+  }
+
+  window.applyEstimate = function() {
+    if (estimateData.duration) document.getElementById('inDuration').value  = estimateData.duration;
+    if (estimateData.steps)    document.getElementById('inSteps').value     = estimateData.steps;
+    if (estimateData.calories) document.getElementById('inCalories').value  = estimateData.calories;
+    document.getElementById('estimateBox').style.display = 'none';
+  };
+
+  ['inDistance','inDuration'].forEach(id =>
+    document.getElementById(id).addEventListener('input', updateEstimate)
+  );
+
+  // ── Auth ───────────────────────────────────────────────
+  onAuthStateChanged(auth, user => {
+    if (!user) { window.location.href = '../auth/login.html'; return; }
+    uid = user.uid;
+    loadForDate();
+    loadAllStats();
+  });
+
+  async function loadForDate() {
+    if (!uid) return;
+    const { data } = await sb.from('activity_logs')
+      .select('*').eq('firebase_uid', uid).eq('log_date', dp.value).eq('activity_type', selectedType).maybeSingle();
+    if (data) {
+      document.getElementById('inDistance').value = data.distance_km || '';
+      document.getElementById('inDuration').value = data.duration_min || '';
+      document.getElementById('inSteps').value    = data.steps || '';
+      document.getElementById('inCalories').value = data.calories || '';
+      document.getElementById('inNotes').value    = data.notes || '';
+    } else {
+      ['inDistance','inDuration','inSteps','inCalories','inNotes'].forEach(id => document.getElementById(id).value='');
+    }
+    updateEstimate();
+  }
+
+  async function loadAllStats() {
+    const { data } = await sb.from('activity_logs').select('*').eq('firebase_uid', uid).order('log_date',{ascending:false});
+    if (!data?.length) return;
+
+    const totalKm    = data.reduce((s,a)=>s+(+a.distance_km||0),0);
+    const totalSteps = data.reduce((s,a)=>s+(+a.steps||0),0);
+    const totalCals  = data.reduce((s,a)=>s+(+a.calories||0),0);
+    const totalDays  = new Set(data.map(a=>a.log_date)).size;
+
+    document.getElementById('totalKm').textContent    = totalKm.toFixed(1);
+    document.getElementById('totalSteps').textContent = totalSteps > 999 ? (totalSteps/1000).toFixed(1)+'k' : totalSteps;
+    document.getElementById('totalCals').textContent  = totalCals > 999 ? (totalCals/1000).toFixed(1)+'k' : totalCals;
+    document.getElementById('totalDays').textContent  = totalDays;
+    document.getElementById('statsRow').style.display = 'grid';
+
+    // Chart — last 30 days
+    const last30 = [...data].reverse().slice(-30);
+    const labels = last30.map(a => new Date(a.log_date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+    const kmData = last30.map(a => +(a.distance_km||0));
+    if (actChart) actChart.destroy();
+    document.getElementById('chartBox').style.display = 'block';
+    actChart = new Chart(document.getElementById('actChart').getContext('2d'),{
+      type:'bar',
+      data:{labels, datasets:[{
+        label:'km',data:kmData,
+        backgroundColor:'rgba(198,255,0,.5)',borderColor:'#c6ff00',
+        borderWidth:1,borderRadius:4
+      }]},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{backgroundColor:'#1c1c2c',borderColor:'rgba(255,255,255,.1)',borderWidth:1,bodyColor:'#9494b8',titleColor:'#f2f2ff'}},
+        scales:{
+          x:{ticks:{color:'#5a5a7a',font:{size:10},maxTicksLimit:8},grid:{display:false}},
+          y:{ticks:{color:'#5a5a7a',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'},beginAtZero:true}
+        }
+      }
+    });
+
+    // Log
+    const ICONS = { running:'🏃', walking:'🚶', cycling:'🚴' };
+    document.getElementById('logBox').style.display = 'block';
+    document.getElementById('activityLog').innerHTML = data.slice(0,10).map(a => `
+      <div class="at-log-row">
+        <div class="at-log-icon">${ICONS[a.activity_type]||'🏃'}</div>
+        <div class="at-log-info">
+          <div class="at-log-type">${a.activity_type}</div>
+          <div class="at-log-date">${new Date(a.log_date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+          ${a.notes?`<div class="at-log-note">${a.notes}</div>`:''}
+        </div>
+        <div class="at-log-stats">
+          <div class="at-log-dist">${(+a.distance_km||0).toFixed(1)} km</div>
+          <div class="at-log-sub">${a.duration_min||0}min · ${(a.steps||0).toLocaleString()} steps</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // ── Save ───────────────────────────────────────────────
+  window.saveActivity = async function() {
+    const km   = parseFloat(document.getElementById('inDistance').value) || 0;
+    const dur  = parseInt(document.getElementById('inDuration').value)   || 0;
+    const steps= parseInt(document.getElementById('inSteps').value)      || 0;
+    const cals = parseInt(document.getElementById('inCalories').value)   || 0;
+    const notes= document.getElementById('inNotes').value.trim();
+    const alertEl = document.getElementById('formAlert');
+
+    if (km <= 0 && dur <= 0) {
+      alertEl.textContent = 'Enter at least distance or duration.';
+      alertEl.className = 'alert alert-error'; alertEl.style.display = 'block';
+      return;
+    }
+    alertEl.style.display = 'none';
+
+    const btn = document.getElementById('saveBtn');
+    btn.textContent = 'Saving…'; btn.disabled = true;
+
+    try {
+      const { error } = await sb.from('activity_logs').upsert({
+        firebase_uid:  uid,
+        log_date:      dp.value,
+        activity_type: selectedType,
+        distance_km:   km,
+        duration_min:  dur,
+        steps:         steps,
+        calories:      cals,
+        notes:         notes,
+      }, { onConflict: 'firebase_uid,log_date,activity_type' });
+
+      if (error) throw error;
+      showToast(`${selectedType.charAt(0).toUpperCase()+selectedType.slice(1)} logged! 🎉`, 'success');
+      loadAllStats();
+    } catch(err) {
+      alertEl.textContent = 'Error saving: ' + err.message;
+      alertEl.className = 'alert alert-error'; alertEl.style.display = 'block';
+    }
+    btn.textContent = '💾 Save Activity'; btn.disabled = false;
+  };
+
+  function showToast(msg, type='success') {
+    const t = document.getElementById('appToast');
+    t.textContent = msg; t.className = `toast ${type} visible`;
+    setTimeout(()=>t.classList.remove('visible'),3000);
+  }
+</script>
+<script type="module" src="../shared/navbar.js"></script>
+</body>
+</html>
