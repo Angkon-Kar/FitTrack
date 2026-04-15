@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Leaderboard — FitTrack</title>
+  <link rel="icon" type="image/png" href="../assets/images/fitness.png">
+  <link rel="stylesheet" href="../shared/global.css">
+  <style>
+/* leaderboard/leaderboard.css */
+.lb-page { padding: 62px 0 80px; min-height: 100vh; }
+
+/* Hero */
+.lb-hero { padding: 44px 0 28px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 24px; }
+.lb-hero h1 { font-family: var(--font-display); font-size: clamp(42px,7vw,80px); font-weight: 900; line-height: .9; margin-bottom: 8px; }
+.lb-hero h1 span { color: var(--amber); }
+.lb-hero p { font-size: 15px; color: var(--text-2); }
+
+/* Filter bar */
+.lb-filters {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  margin-bottom: 20px;
+}
+.lb-filter-group {
+  display: flex; gap: 4px; background: var(--bg-2);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 3px;
+}
+.lb-filter-btn {
+  padding: 7px 14px; border-radius: var(--radius-sm); border: none;
+  background: transparent; color: var(--text-3);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all .15s; font-family: var(--font-body);
+  white-space: nowrap; -webkit-tap-highlight-color: transparent;
+}
+.lb-filter-btn.active { background: var(--bg-4); color: var(--text-1); }
+.lb-filter-btn.active.cat-reps    { background: var(--lime);   color: var(--bg-0); }
+.lb-filter-btn.active.cat-km      { background: var(--cyan);   color: var(--bg-0); }
+.lb-filter-btn.active.cat-streak  { background: var(--coral);  color: #fff; }
+.lb-filter-btn.active.cat-score   { background: var(--amber);  color: var(--bg-0); }
+.lb-filter-btn.active.time-week   { background: var(--violet); color: #fff; }
+.lb-filter-btn.active.time-month  { background: var(--cyan);   color: var(--bg-0); }
+.lb-filter-btn.active.time-all    { background: var(--bg-4);   color: var(--text-1); }
+
+/* My rank pill */
+.my-rank-pill {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(198,255,0,.07); border: 1px solid rgba(198,255,0,.2);
+  border-radius: var(--radius-lg); padding: 10px 16px;
+  font-size: 14px; margin-bottom: 16px;
+}
+.my-rank-num {
+  font-family: var(--font-display); font-size: 24px; font-weight: 900; color: var(--lime);
+}
+
+/* Podium (top 3) */
+.lb-podium {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px; margin-bottom: 24px; align-items: flex-end;
+}
+.podium-card {
+  border-radius: var(--radius-xl); padding: 20px 16px;
+  text-align: center; position: relative;
+  border: 1px solid var(--border-subtle); background: var(--bg-2);
+  transition: transform .2s;
+}
+.podium-card:hover { transform: translateY(-3px); }
+.podium-card.rank-1 {
+  background: linear-gradient(135deg, rgba(255,167,38,.12), rgba(255,167,38,.04));
+  border-color: rgba(255,167,38,.3);
+  order: 2; /* center */
+}
+.podium-card.rank-2 { order: 1; }
+.podium-card.rank-3 { order: 3; }
+.podium-medal { font-size: 32px; margin-bottom: 8px; }
+.podium-avatar {
+  width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 24px; font-weight: 900;
+  color: var(--bg-0); overflow: hidden; border: 3px solid var(--bg-0);
+}
+.podium-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.podium-rank-1 .podium-avatar { border-color: var(--amber); }
+.podium-name   { font-weight: 700; font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.podium-handle { font-size: 12px; color: var(--text-3); margin-bottom: 8px; font-family: var(--font-mono); }
+.podium-score  { font-family: var(--font-display); font-size: 22px; font-weight: 900; line-height: 1; }
+.podium-score-sub { font-size: 10px; text-transform: uppercase; letter-spacing: .8px; color: var(--text-3); margin-top: 2px; }
+.podium-crown { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 28px; }
+
+/* Rank list */
+.lb-list {
+  background: var(--bg-2); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl); overflow: hidden;
+}
+.lb-list-header {
+  display: grid; grid-template-columns: 48px 1fr 100px 80px;
+  padding: 10px 16px; border-bottom: 1px solid var(--border-subtle);
+}
+.lb-list-header span { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-4); }
+.lb-row {
+  display: grid; grid-template-columns: 48px 1fr 100px 80px;
+  padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,.03);
+  align-items: center; transition: background .15s;
+}
+.lb-row:last-child { border-bottom: none; }
+.lb-row:hover { background: var(--bg-3); }
+.lb-row.is-me { background: rgba(198,255,0,.04); }
+.lb-row.rank-top3 { background: rgba(255,167,38,.03); }
+
+.lb-rank {
+  font-family: var(--font-display); font-size: 18px; font-weight: 800;
+  color: var(--text-3); text-align: center;
+}
+.lb-rank.r1 { color: var(--amber); }
+.lb-rank.r2 { color: #c0c0c0; }
+.lb-rank.r3 { color: #cd7f32; }
+
+.lb-athlete { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.lb-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 15px; font-weight: 800;
+  color: var(--bg-0); overflow: hidden; flex-shrink: 0;
+}
+.lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.lb-name   { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lb-handle { font-size: 11px; color: var(--text-3); font-family: var(--font-mono); }
+.lb-you-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; background: rgba(198,255,0,.12); color: var(--lime); border: 1px solid rgba(198,255,0,.25); margin-left: 6px; }
+
+.lb-score { font-family: var(--font-mono); font-weight: 700; font-size: 15px; text-align: right; }
+.lb-streak { text-align: right; font-size: 13px; color: var(--text-3); }
+.lb-streak span { color: var(--coral); font-weight: 700; }
+
+/* League badges */
+.league-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 700;
+  flex-shrink: 0;
+}
+.league-bronze { background: rgba(205,127,50,.15); color: #cd7f32; border: 1px solid rgba(205,127,50,.3); }
+.league-silver { background: rgba(192,192,192,.12); color: #c0c0c0; border: 1px solid rgba(192,192,192,.25); }
+.league-gold   { background: rgba(255,167,38,.15); color: var(--amber); border: 1px solid rgba(255,167,38,.3); }
+.league-diamond{ background: rgba(0,229,255,.12); color: var(--cyan); border: 1px solid rgba(0,229,255,.25); }
+.league-elite  { background: rgba(198,255,0,.12); color: var(--lime); border: 1px solid rgba(198,255,0,.25); }
+
+/* Loading / empty */
+.lb-loading { padding: 40px; text-align: center; color: var(--text-3); }
+.lb-empty   { padding: 60px 20px; text-align: center; color: var(--text-3); }
+.lb-empty-icon { font-size: 48px; margin-bottom: 12px; }
+
+/* Responsive */
+@media (max-width: 680px) {
+  .lb-list-header, .lb-row { grid-template-columns: 40px 1fr 80px; }
+  .lb-list-header span:last-child, .lb-row .lb-streak { display: none; }
+  .lb-podium { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .podium-avatar { width: 50px; height: 50px; font-size: 18px; }
+  .podium-score  { font-size: 16px; }
+  .podium-name   { font-size: 13px; }
+  .lb-filters { gap: 8px; }
+}
+@media (max-width: 400px) {
+  .lb-podium { grid-template-columns: 1fr; }
+  .podium-card.rank-1 { order: 1; }
+  .podium-card.rank-2 { order: 2; }
+  .podium-card.rank-3 { order: 3; }
+}
+
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../config.local.js"></script>
+</head>
+<body>
+<div class="lb-page">
+  <div class="wrap">
+
+    <!-- Hero -->
+    <div class="lb-hero">
+      <div class="section-eyebrow">Community Rankings</div>
+      <h1>LEADER<br><span>BOARD</span></h1>
+      <p>Who's putting in the most work? See where you stand.</p>
+    </div>
+
+    <!-- My rank -->
+    <div class="my-rank-pill" id="myRankPill" style="display:none">
+      <span style="font-size:20px">👤</span>
+      <div>
+        <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.8px">Your Rank</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="my-rank-num" id="myRankNum">#—</span>
+          <span style="font-size:13px;color:var(--text-2)" id="myRankScore">0 reps</span>
+          <span class="league-badge" id="myLeagueBadge"></span>
+        </div>
+      </div>
+      <div style="margin-left:auto">
+        <a href="../compare/compare.html" class="btn btn-outline btn-sm">⚔️ Challenge</a>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="lb-filters">
+      <div class="lb-filter-group">
+        <button class="lb-filter-btn cat-reps active" data-cat="reps"   onclick="setFilter('cat','reps',this)">💪 Reps</button>
+        <button class="lb-filter-btn cat-km"          data-cat="km"     onclick="setFilter('cat','km',this)">🏃 Distance</button>
+        <button class="lb-filter-btn cat-streak"      data-cat="streak" onclick="setFilter('cat','streak',this)">🔥 Streak</button>
+        <button class="lb-filter-btn cat-score"       data-cat="score"  onclick="setFilter('cat','score',this)">⭐ Score</button>
+      </div>
+      <div class="lb-filter-group">
+        <button class="lb-filter-btn time-week"       data-time="week"  onclick="setFilter('time','week',this)">Week</button>
+        <button class="lb-filter-btn time-month"      data-time="month" onclick="setFilter('time','month',this)">Month</button>
+        <button class="lb-filter-btn time-all active" data-time="all"   onclick="setFilter('time','all',this)">All Time</button>
+      </div>
+    </div>
+
+    <!-- Podium -->
+    <div class="lb-podium" id="podium" style="display:none"></div>
+
+    <!-- Full list -->
+    <div class="lb-list" id="lbList">
+      <div class="lb-loading">
+        <div class="spinner" style="display:inline-block;vertical-align:middle;margin-right:8px"></div>
+        Loading rankings…
+      </div>
+    </div>
+
+    <!-- Error state (shown if table doesn't exist) -->
+    <div id="setupNeeded" style="display:none;background:rgba(255,167,38,.07);border:1px solid rgba(255,167,38,.2);border-radius:var(--radius-lg);padding:20px;margin-top:16px">
+      <div style="font-weight:700;color:var(--amber);margin-bottom:6px">⚠️ Database Setup Required</div>
+      <div style="font-size:13px;color:var(--text-2);line-height:1.6">
+        Run <code style="background:var(--bg-4);padding:2px 6px;border-radius:4px;font-size:12px">supabase-setup-v4.sql</code> in Supabase SQL Editor to create the leaderboard table.
+        <br>Once done, log a workout and your score will appear here automatically.
+      </div>
+    </div>
+
+    <!-- CTAs -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px">
+      <a href="../dashboard/log.html"       class="btn btn-lime">✏️ Log Workout</a>
+      <a href="../compare/compare.html"     class="btn btn-outline">⚔️ Compare Athletes</a>
+      <a href="../dashboard/dashboard.html" class="btn btn-ghost">📊 My Dashboard</a>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { sb } from '../shared/db.js';
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const auth = getAuth(initializeApp(CONFIG.firebase));
+  let currentUID = null;
+  let currentCat  = 'reps';
+  let currentTime = 'all';
+
+  // ── Group helpers ──────────────────────────────────────
+  const PUSH_EX   = ['push-up','diamond-push-up','incline-push-up','decline-push-up','pike-push-up','dips','hspu','planche'];
+  const PULL_EX   = ['pull-up','chin-up','bodyweight-row','muscle-up','front-lever'];
+  const LEGS_EX   = ['squat','lunges','bulgarian-split-squat','calf-raises','glute-bridge','pistol-squat','jump-squats'];
+  const CORE_EX   = ['plank','sit-ups','crunches','russian-twist','hanging-leg-raises','bicycle-crunch','l-sit'];
+  const CARDIO_EX = ['burpees','jumping-jacks','high-knees','mountain-climbers'];
+
+  // ── League ─────────────────────────────────────────────
+  function getLeague(rank) {
+    if (rank === 1)  return { label:'👑 #1',       cls:'league-elite'   };
+    if (rank <= 3)   return { label:'🥇 Gold',     cls:'league-gold'    };
+    if (rank <= 10)  return { label:'💎 Diamond',  cls:'league-diamond' };
+    if (rank <= 25)  return { label:'🥈 Silver',   cls:'league-silver'  };
+    if (rank <= 50)  return { label:'🥉 Bronze',   cls:'league-bronze'  };
+    return                   { label:'🏋️ Athlete', cls:''               };
+  }
+
+  // ── Category config ────────────────────────────────────
+  const CAT = {
+    reps:   { col:'total_reps',   wk:'weekly_reps',  mo:'monthly_reps',  label:'Reps',    unit:'',   icon:'💪' },
+    km:     { col:'total_km',     wk:'weekly_km',    mo:'monthly_km',    label:'km',      unit:'km', icon:'🏃' },
+    streak: { col:'streak_days',  wk:'streak_days',  mo:'streak_days',   label:'Streak',  unit:'d',  icon:'🔥' },
+    score:  { col:'total_score',  wk:'total_score',  mo:'total_score',   label:'Score',   unit:'',   icon:'⭐' },
+  };
+
+  // ── Auth ───────────────────────────────────────────────
+  onAuthStateChanged(auth, async user => {
+    if (!user) { window.location.href = '../auth/login.html'; return; }
+    currentUID = user.uid;
+    await refreshMyScore(user.uid);
+    await loadLeaderboard();
+  });
+
+  // ── Refresh own score ──────────────────────────────────
+  async function refreshMyScore(uid) {
+    const [profileRes, logsRes, actRes] = await Promise.all([
+      sb.from('users').select('username,name,profile_picture').eq('firebase_uid', uid).maybeSingle(),
+      sb.from('workout_logs').select('*').eq('firebase_uid', uid),
+      sb.from('activity_logs').select('distance_km,steps,calories,log_date').eq('firebase_uid', uid).then(r => r).catch(() => ({ data: [] })),
+    ]);
+
+    const profile = profileRes.data;
+    const logs    = logsRes.data || [];
+    const acts    = (actRes.data) || [];
+
+    if (!profile?.username) return;
+
+    let push=0,pull=0,legs=0,core=0,total=0;
+    logs.forEach(l => {
+      for (const [k,v] of Object.entries(l.exercises||{})) {
+        total+=v;
+        if(PUSH_EX.includes(k))push+=v; else if(PULL_EX.includes(k))pull+=v;
+        else if(LEGS_EX.includes(k))legs+=v; else if(CORE_EX.includes(k))core+=v;
+      }
+    });
+
+    const now=new Date(), weekAgo=new Date(now-7*864e5), monthAgo=new Date(now-30*864e5);
+    const repSum = (arr) => arr.reduce((s,l)=>s+Object.values(l.exercises||{}).reduce((a,b)=>a+b,0),0);
+    const wkReps = repSum(logs.filter(l=>new Date(l.log_date+'T00:00:00')>=weekAgo));
+    const moReps = repSum(logs.filter(l=>new Date(l.log_date+'T00:00:00')>=monthAgo));
+    const totalKm = acts.reduce((s,a)=>s+(+a.distance_km||0),0);
+    const wkKm    = acts.filter(a=>new Date(a.log_date+'T00:00:00')>=weekAgo).reduce((s,a)=>s+(+a.distance_km||0),0);
+    const moKm    = acts.filter(a=>new Date(a.log_date+'T00:00:00')>=monthAgo).reduce((s,a)=>s+(+a.distance_km||0),0);
+    const steps   = acts.reduce((s,a)=>s+(+a.steps||0),0);
+    const cals    = acts.reduce((s,a)=>s+(+a.calories||0),0);
+
+    function calcStreak(logs) {
+      if(!logs?.length)return 0;
+      const sorted=[...logs].sort((a,b)=>new Date(b.log_date)-new Date(a.log_date));
+      const today=new Date();today.setHours(0,0,0,0);
+      const first=new Date(sorted[0].log_date+'T00:00:00');
+      if(Math.round((today-first)/864e5)>1)return 0;
+      let streak=1,prev=first;
+      for(let i=1;i<sorted.length;i++){const cur=new Date(sorted[i].log_date+'T00:00:00');if(Math.round((prev-cur)/864e5)===1){streak++;prev=cur;}else break;}
+      return streak;
+    }
+
+    try {
+      await sb.from('leaderboard_scores').upsert({
+        firebase_uid:uid, username:profile.username, display_name:profile.name||profile.username,
+        profile_pic:profile.profile_picture||'',
+        total_reps:total, push_reps:push, pull_reps:pull, legs_reps:legs, core_reps:core,
+        cardio_reps:0, total_km:totalKm, total_steps:steps, total_calories:cals,
+        streak_days:calcStreak(logs), workout_days:new Set(logs.map(l=>l.log_date)).size,
+        weekly_reps:wkReps, weekly_km:wkKm, monthly_reps:moReps, monthly_km:moKm,
+        updated_at:new Date().toISOString(),
+      }, { onConflict:'firebase_uid' });
+    } catch(e) {
+      console.warn('leaderboard_scores table not found. Run supabase-setup-v4.sql', e.message);
+      document.getElementById('setupNeeded').style.display = 'block';
+    }
+  }
+
+  // ── Load ───────────────────────────────────────────────
+  async function loadLeaderboard() {
+    document.getElementById('lbList').innerHTML = '<div class="lb-loading"><div class="spinner" style="display:inline-block;vertical-align:middle;margin-right:8px"></div>Loading…</div>';
+    document.getElementById('podium').style.display = 'none';
+
+    const cfg = CAT[currentCat];
+    const col = currentTime==='week' ? cfg.wk : currentTime==='month' ? cfg.mo : cfg.col;
+
+    const { data, error } = await sb.from('leaderboard_scores').select('*').order(col,{ascending:false}).limit(100);
+
+    if (error) {
+      document.getElementById('lbList').innerHTML = '<div class="lb-empty"><div class="lb-empty-icon">⚠️</div><p style="color:var(--text-2)">Leaderboard table not found.<br>Run <code>supabase-setup-v4.sql</code> first.</p></div>';
+      document.getElementById('setupNeeded').style.display = 'block';
+      return;
+    }
+    if (!data?.length) {
+      document.getElementById('lbList').innerHTML = '<div class="lb-empty"><div class="lb-empty-icon">🏆</div><h3 style="color:var(--text-2)">No rankings yet</h3><p>Log a workout to appear on the leaderboard!</p></div>';
+      return;
+    }
+
+    // My rank
+    const myIdx = data.findIndex(s => s.firebase_uid === currentUID);
+    if (myIdx >= 0) {
+      const league = getLeague(myIdx+1);
+      const val    = parseFloat(data[myIdx][col]||0);
+      document.getElementById('myRankNum').textContent    = '#'+(myIdx+1);
+      document.getElementById('myRankScore').textContent  = val.toLocaleString()+(cfg.unit?' '+cfg.unit:' '+cfg.label.toLowerCase());
+      document.getElementById('myLeagueBadge').textContent = league.label;
+      document.getElementById('myLeagueBadge').className   = 'league-badge '+league.cls;
+      document.getElementById('myRankPill').style.display  = 'flex';
+    }
+
+    renderPodium(data.slice(0,3), col, cfg);
+    renderList(data, col, cfg);
+  }
+
+  // ── Podium ─────────────────────────────────────────────
+  function renderPodium(top3, col, cfg) {
+    if (!top3.length) return;
+    const MEDALS = ['🥇','🥈','🥉'];
+    const COLORS  = [
+      'linear-gradient(135deg,rgba(255,167,38,.9),#ffc800)',
+      'linear-gradient(135deg,#888,#c0c0c0)',
+      'linear-gradient(135deg,#7a4010,#cd7f32)'
+    ];
+    const pod = document.getElementById('podium');
+    pod.style.display = 'grid';
+    pod.innerHTML = top3.map((s,i) => {
+      const rank  = i+1;
+      const score = parseFloat(s[col]||0);
+      const isMe  = s.firebase_uid === currentUID;
+      const initial = (s.display_name||s.username||'?')[0].toUpperCase();
+      return `
+        <div class="podium-card rank-${rank}${isMe?' is-me':''}" style="order:${rank===1?2:rank===2?1:3}">
+          ${rank===1?'<div class="podium-crown">👑</div>':''}
+          <div class="podium-medal">${MEDALS[i]}</div>
+          <div class="podium-avatar" style="background:${COLORS[i]}">
+            ${s.profile_pic?`<img src="${s.profile_pic}" alt="${initial}" onerror="this.style.display='none';this.parentNode.insertAdjacentText('beforeend','${initial}')">`:initial}
+          </div>
+          <div class="podium-name">${s.display_name||s.username}${isMe?' <span style="font-size:11px;color:var(--lime)">(You)</span>':''}</div>
+          <div class="podium-handle">@${s.username}</div>
+          <div class="podium-score" style="color:${rank===1?'var(--amber)':rank===2?'#c0c0c0':'#cd7f32'}">${score.toLocaleString()}${cfg.unit?' '+cfg.unit:''}</div>
+          <div class="podium-score-sub">${cfg.label}</div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── List ───────────────────────────────────────────────
+  function renderList(scores, col, cfg) {
+    let html = `<div class="lb-list-header">
+      <span>#</span><span>Athlete</span>
+      <span style="text-align:right">${cfg.icon} ${cfg.label}</span>
+      <span style="text-align:right">🔥 Streak</span>
+    </div>`;
+
+    scores.forEach((s,i) => {
+      const rank   = i+1;
+      const score  = parseFloat(s[col]||0);
+      const isMe   = s.firebase_uid === currentUID;
+      const league = getLeague(rank);
+      const rankCls= rank<=3 ? 'r'+rank : '';
+      const AVBG   = rank===1 ? 'linear-gradient(135deg,rgba(255,167,38,.9),#ffc800)' : rank===2 ? 'linear-gradient(135deg,#888,#c0c0c0)' : rank===3 ? 'linear-gradient(135deg,#7a4010,#cd7f32)' : 'var(--bg-4)';
+      const initial = (s.display_name||s.username||'?')[0].toUpperCase();
+      html += `
+        <div class="lb-row${isMe?' is-me':''} ${rank<=3?'rank-top3':''}">
+          <div class="lb-rank ${rankCls}">${rank<=3?['🥇','🥈','🥉'][rank-1]:rank}</div>
+          <div class="lb-athlete">
+            <div class="lb-avatar" style="background:${AVBG}">
+              ${s.profile_pic?`<img src="${s.profile_pic}" alt="${initial}" onerror="this.style.display='none';this.parentNode.insertAdjacentText('beforeend','${initial}')">`:initial}
+            </div>
+            <div>
+              <div class="lb-name">${s.display_name||s.username||'—'}${isMe?'<span class="lb-you-badge">You</span>':''}</div>
+              <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+                <span class="lb-handle">@${s.username||'—'}</span>
+                ${league.cls?`<span class="league-badge ${league.cls}">${league.label}</span>`:''}
+              </div>
+            </div>
+          </div>
+          <div class="lb-score" style="color:${rank===1?'var(--amber)':rank<=3?'#c0c0c0':'var(--text-1)'}">${score.toLocaleString()}${cfg.unit?' '+cfg.unit:''}</div>
+          <div class="lb-streak">${s.streak_days>0?`<span>🔥 ${s.streak_days}d</span>`:'—'}</div>
+        </div>`;
+    });
+    document.getElementById('lbList').innerHTML = html;
+  }
+
+  // ── Filters ────────────────────────────────────────────
+  window.setFilter = function(type, val, btn) {
+    if (type==='cat') { currentCat=val;  document.querySelectorAll('[data-cat]').forEach(b=>b.classList.remove('active')); }
+    else               { currentTime=val; document.querySelectorAll('[data-time]').forEach(b=>b.classList.remove('active')); }
+    btn.classList.add('active');
+    loadLeaderboard();
+  };
+</script>
+<script type="module" src="../shared/navbar.js"></script>
+</body>
+</html>
