@@ -12,302 +12,397 @@
   <script src="../config.local.js"></script>
 </head>
 <body>
-
 <div class="compare-page">
   <div class="wrap">
 
-    <!-- Header -->
-    <div style="padding:48px 0 32px;border-bottom:1px solid var(--border-subtle);margin-bottom:32px">
+    <!-- Hero -->
+    <div class="compare-hero">
       <div class="section-eyebrow">Head to Head</div>
-      <h1 class="section-heading">COMPARE<br><span style="color:var(--coral)">ATHLETES</span></h1>
-      <p style="color:var(--text-2);margin-top:12px;font-size:16px">Search two usernames and see who's putting in more work.</p>
+      <h1>COMPARE<br><span>ATHLETES</span></h1>
+      <p>Enter two usernames and see who's putting in more work.</p>
     </div>
 
-    <!-- Search box -->
-    <div class="compare-search-box">
-      <div class="compare-inputs-row">
-        <div>
-          <label class="form-label">Athlete 1 Username</label>
-          <input type="text" id="user1Input" class="form-input" placeholder="e.g. john_doe" autocomplete="off" autocorrect="off" autocapitalize="none">
+    <!-- Search -->
+    <div class="compare-search">
+      <div class="compare-inputs">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Athlete 1</label>
+          <input type="text" id="u1" class="form-input" placeholder="username1"
+            autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
         </div>
-        <div class="vs-pill">VS</div>
-        <div>
-          <label class="form-label">Athlete 2 Username</label>
-          <input type="text" id="user2Input" class="form-input" placeholder="e.g. jane_smith" autocomplete="off" autocorrect="off" autocapitalize="none">
+        <div class="vs-divider">VS</div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Athlete 2</label>
+          <input type="text" id="u2" class="form-input" placeholder="username2"
+            autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
         </div>
-        <button id="compareBtn" class="btn btn-lime btn-lg" style="flex-shrink:0">⚔️ Compare</button>
+        <button class="btn btn-coral" id="compareBtn" onclick="runCompare()" style="align-self:flex-end">
+          ⚔️ Compare
+        </button>
       </div>
-      <div id="searchAlert" class="alert" style="margin-top:14px;margin-bottom:0"></div>
+      <div id="searchAlert" class="alert" style="margin-top:12px;display:none"></div>
+    </div>
+
+    <!-- Quick: compare with yourself -->
+    <div id="selfCompareTip" style="display:none;margin-bottom:20px">
+      <div class="stat-pill" style="cursor:pointer;font-size:13px" id="selfCompareBtn">
+        👤 Compare with yourself →
+      </div>
     </div>
 
     <!-- Loading -->
     <div id="loadingState" style="display:none" class="loading-row">
-      <div class="spinner"></div> Loading athlete data…
+      <div class="spinner"></div> Fetching athlete data…
     </div>
 
     <!-- Results -->
     <div id="resultsArea" style="display:none">
 
       <!-- Profiles -->
-      <div class="compare-profiles-row">
-        <div class="profile-box" id="profile1">
-          <div class="p-avatar" style="background:linear-gradient(135deg,var(--lime),var(--cyan))" id="av1">?</div>
-          <div class="p-name" id="pName1">—</div>
-          <div class="p-username" id="pUser1">—</div>
-          <div class="p-total" style="color:var(--lime)" id="pTotal1">0</div>
-          <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-top:2px">Total Reps</div>
+      <div class="compare-profiles">
+        <div class="athlete-card" id="card1">
+          <div class="athlete-avatar" id="av1" style="background:linear-gradient(135deg,var(--lime),var(--cyan))">?</div>
+          <div class="athlete-name"   id="n1">—</div>
+          <div class="athlete-handle" id="h1">—</div>
+          <div class="athlete-total"  id="t1" style="color:var(--lime)">0</div>
+          <div class="athlete-sub">Total Reps</div>
+          <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center" id="badges1"></div>
         </div>
         <div class="vs-center">VS</div>
-        <div class="profile-box" id="profile2">
-          <div class="p-avatar" style="background:linear-gradient(135deg,var(--violet),var(--coral))" id="av2">?</div>
-          <div class="p-name" id="pName2">—</div>
-          <div class="p-username" id="pUser2">—</div>
-          <div class="p-total" style="color:var(--violet)" id="pTotal2">0</div>
-          <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-top:2px">Total Reps</div>
+        <div class="athlete-card" id="card2">
+          <div class="athlete-avatar" id="av2" style="background:linear-gradient(135deg,var(--violet),var(--coral))">?</div>
+          <div class="athlete-name"   id="n2">—</div>
+          <div class="athlete-handle" id="h2">—</div>
+          <div class="athlete-total"  id="t2" style="color:var(--violet)">0</div>
+          <div class="athlete-sub">Total Reps</div>
+          <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center" id="badges2"></div>
         </div>
       </div>
 
       <!-- Winner banner -->
       <div class="winner-banner" id="winnerBanner"></div>
 
-      <!-- Individual exercise stats -->
-      <div class="compare-stats-grid">
-        <div class="cstat-box">
-          <div class="cstat-label" style="color:var(--lime)">💪 Push-ups</div>
-          <div class="bar-pair">
-            <div class="bar-wrap">
-              <div class="bar-track"><div class="bar-fill" id="bar1Push" style="background:var(--lime)"></div></div>
-              <div class="bar-label" id="lbl1Push">0</div>
-              <div class="bar-name" id="barName1">—</div>
-            </div>
-            <div class="bar-wrap">
-              <div class="bar-track"><div class="bar-fill" id="bar2Push" style="background:rgba(198,255,0,0.3)"></div></div>
-              <div class="bar-label" id="lbl2Push">0</div>
-              <div class="bar-name" id="barName2">—</div>
-            </div>
-          </div>
+      <!-- Muscle group breakdown -->
+      <div class="compare-section">
+        <div class="compare-section-title">💪 Muscle Group Breakdown</div>
+        <div id="groupBars"></div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-card-title">🕸️ Muscle Balance</div>
+          <div style="height:220px;position:relative"><canvas id="radarChart"></canvas></div>
         </div>
-        <div class="cstat-box">
-          <div class="cstat-label" style="color:var(--cyan)">🏋️ Pull-ups</div>
-          <div class="bar-pair">
-            <div class="bar-wrap">
-              <div class="bar-track"><div class="bar-fill" id="bar1Pull" style="background:var(--cyan)"></div></div>
-              <div class="bar-label" id="lbl1Pull">0</div>
-            </div>
-            <div class="bar-wrap">
-              <div class="bar-track"><div class="bar-fill" id="bar2Pull" style="background:rgba(0,229,255,0.3)"></div></div>
-              <div class="bar-label" id="lbl2Pull">0</div>
-            </div>
-          </div>
-        </div>
-        <div class="cstat-box">
-          <div class="cstat-label" style="color:var(--violet)">🦵 Squats</div>
-          <div class="bar-pair">
-            <div class="bar-wrap">
-              <div class="bar-track"><div class="bar-fill" id="bar1Squat" style="background:var(--violet)"></div></div>
-              <div class="bar-label" id="lbl1Squat">0</div>
-            </div>
-            <div class="bar-wrap">
-              <div class="bar-track"><div class="bar-fill" id="bar2Squat" style="background:rgba(180,77,255,0.3)"></div></div>
-              <div class="bar-label" id="lbl2Squat">0</div>
-            </div>
-          </div>
+        <div class="chart-card">
+          <div class="chart-card-title">📊 Rep Distribution</div>
+          <div style="height:220px;position:relative"><canvas id="barChart"></canvas></div>
         </div>
       </div>
 
-      <!-- Radar chart -->
-      <div class="radar-box">
-        <div class="box-title" style="margin-bottom:18px">🕸️ Performance Radar</div>
-        <div style="height:320px;position:relative;max-width:500px;margin:0 auto">
-          <canvas id="radarChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Detail stats table -->
-      <div class="compare-table-box">
-        <div class="box-title" style="margin-bottom:18px">📊 Full Comparison</div>
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
-          <table class="log-table" id="compareTable">
+      <!-- Full stats table -->
+      <div class="compare-section">
+        <div class="compare-section-title">📋 Full Statistics</div>
+        <div style="overflow-x:auto">
+          <table class="compare-table">
             <thead>
               <tr>
                 <th>Metric</th>
-                <th id="th1">—</th>
-                <th id="th2">—</th>
+                <th id="thUser1">User 1</th>
+                <th id="thUser2">User 2</th>
                 <th>Winner</th>
               </tr>
             </thead>
-            <tbody id="compareTbody"></tbody>
+            <tbody id="statsTable"></tbody>
           </table>
         </div>
       </div>
 
-    </div>
+    </div><!-- /resultsArea -->
 
     <!-- Empty state -->
-    <div id="emptyState" class="empty" style="padding:80px 0">
-      <div class="empty-icon">⚔️</div>
-      <h3>Challenge Anyone</h3>
-      <p style="max-width:300px;margin:0 auto 24px">Enter two usernames above to see a full head-to-head comparison with charts and stats.</p>
-      <a href="../auth/signup.html" class="btn btn-lime">Create Your Account →</a>
+    <div id="emptyState" style="text-align:center;padding:60px 20px;color:var(--text-3)">
+      <div style="font-size:56px;margin-bottom:14px">⚔️</div>
+      <h3 style="color:var(--text-2);margin-bottom:6px">Challenge a fellow athlete</h3>
+      <p>Enter two usernames above to compare their workout stats head-to-head.</p>
+      <a href="leaderboard.html" class="btn btn-outline" style="margin-top:20px">🏆 View Leaderboard</a>
     </div>
 
   </div>
 </div>
 
 <script type="module">
+  import { sb } from '../shared/db.js';
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  let radarChart;
+  const auth = getAuth(initializeApp(CONFIG.firebase));
+  let radarChart, barChart, currentUser;
 
-  function showAlert(msg, type='error') {
-    const el = document.getElementById('searchAlert');
-    el.textContent = msg;
-    el.className = `alert alert-${type} show`;
+  // ── Group config ────────────────────────────────────────
+  const PUSH_EX  = ['push-up','diamond-push-up','incline-push-up','decline-push-up','pike-push-up','dips','hspu','planche'];
+  const PULL_EX  = ['pull-up','chin-up','bodyweight-row','muscle-up','front-lever'];
+  const LEGS_EX  = ['squat','lunges','bulgarian-split-squat','calf-raises','glute-bridge','pistol-squat','jump-squats'];
+  const CORE_EX  = ['plank','sit-ups','crunches','russian-twist','hanging-leg-raises','bicycle-crunch','l-sit'];
+  const CARDIO_EX= ['burpees','jumping-jacks','high-knees','mountain-climbers'];
+
+  const GROUPS = [
+    { key:'push',   label:'💪 Push',  exes: PUSH_EX,   color: '#c6ff00' },
+    { key:'pull',   label:'🏋️ Pull',  exes: PULL_EX,   color: '#00e5ff' },
+    { key:'legs',   label:'🦵 Legs',  exes: LEGS_EX,   color: '#b44dff' },
+    { key:'core',   label:'🧘 Core',  exes: CORE_EX,   color: '#ffa726' },
+    { key:'cardio', label:'🔥 Cardio',exes: CARDIO_EX, color: '#ff4d6d' },
+  ];
+
+  function getGroups(exObj) {
+    const out = { push:0, pull:0, legs:0, core:0, cardio:0 };
+    for (const [k,v] of Object.entries(exObj||{})) {
+      if      (PUSH_EX.includes(k))   out.push   += v;
+      else if (PULL_EX.includes(k))   out.pull   += v;
+      else if (LEGS_EX.includes(k))   out.legs   += v;
+      else if (CORE_EX.includes(k))   out.core   += v;
+      else if (CARDIO_EX.includes(k)) out.cardio += v;
+    }
+    return out;
   }
 
-  document.getElementById('compareBtn').addEventListener('click', doCompare);
-  document.getElementById('user1Input').addEventListener('keydown', e => { if(e.key==='Enter') doCompare(); });
-  document.getElementById('user2Input').addEventListener('keydown', e => { if(e.key==='Enter') doCompare(); });
+  function totalReps(exObj) { return Object.values(exObj||{}).reduce((a,b)=>a+b,0); }
 
-  async function doCompare() {
-    const u1 = document.getElementById('user1Input').value.trim().toLowerCase();
-    const u2 = document.getElementById('user2Input').value.trim().toLowerCase();
+  function calcStats(logs) {
+    if (!logs?.length) return { total:0, push:0, pull:0, legs:0, core:0, cardio:0, days:0, streak:0, avgPerDay:0, bestDay:0 };
+    let push=0,pull=0,legs=0,core=0,cardio=0;
+    let bestDay=0;
+    logs.forEach(l => {
+      const g = getGroups(l.exercises);
+      push+=g.push; pull+=g.pull; legs+=g.legs; core+=g.core; cardio+=g.cardio;
+      const t = totalReps(l.exercises);
+      if (t > bestDay) bestDay = t;
+    });
+    const total = push+pull+legs+core+cardio;
+    const streak = calcStreak(logs);
+    return { total, push, pull, legs, core, cardio, days:logs.length, streak, avgPerDay: Math.round(total/(logs.length||1)), bestDay };
+  }
 
-    document.getElementById('searchAlert').classList.remove('show');
+  function calcStreak(logs) {
+    if (!logs?.length) return 0;
+    const sorted = [...logs].sort((a,b)=>new Date(b.log_date)-new Date(a.log_date));
+    const today = new Date(); today.setHours(0,0,0,0);
+    const first = new Date(sorted[0].log_date+'T00:00:00');
+    if (Math.round((today-first)/864e5) > 1) return 0;
+    let streak=1, prev=first;
+    for (let i=1;i<sorted.length;i++) {
+      const cur = new Date(sorted[i].log_date+'T00:00:00');
+      if (Math.round((prev-cur)/864e5)===1){streak++;prev=cur;}else break;
+    }
+    return streak;
+  }
 
-    if (!u1 || !u2) { showAlert('Please enter both usernames.'); return; }
-    if (u1 === u2) { showAlert('Please enter two different usernames.'); return; }
+  // ── Auth ────────────────────────────────────────────────
+  onAuthStateChanged(auth, async user => {
+    if (!user) { window.location.href = '../auth/login.html'; return; }
+    currentUser = user;
 
-    document.getElementById('emptyState').style.display = 'none';
-    document.getElementById('resultsArea').style.display = 'none';
+    // Auto-fill own username
+    const { data: profile } = await sb.from('users').select('username').eq('firebase_uid', user.uid).maybeSingle();
+    if (profile?.username) {
+      document.getElementById('selfCompareTip').style.display = 'block';
+      document.getElementById('selfCompareBtn').onclick = () => {
+        document.getElementById('u1').value = profile.username;
+        document.getElementById('u1').focus();
+      };
+    }
+  });
+
+  // ── Compare ─────────────────────────────────────────────
+  window.runCompare = async function() {
+    const u1 = document.getElementById('u1').value.trim().toLowerCase();
+    const u2 = document.getElementById('u2').value.trim().toLowerCase();
+    const alertEl = document.getElementById('searchAlert');
+
+    alertEl.style.display = 'none';
+    if (!u1 || !u2) { showAlert('Enter both usernames.', 'error'); return; }
+    if (u1 === u2)  { showAlert('Enter two different usernames.', 'error'); return; }
+
+    document.getElementById('emptyState').style.display   = 'none';
+    document.getElementById('resultsArea').style.display  = 'none';
     document.getElementById('loadingState').style.display = 'flex';
 
     try {
-      const [r1, r2] = await Promise.all([fetchUser(u1), fetchUser(u2)]);
-      if (!r1) { showAlert(`User "@${u1}" not found.`); document.getElementById('loadingState').style.display='none'; return; }
-      if (!r2) { showAlert(`User "@${u2}" not found.`); document.getElementById('loadingState').style.display='none'; return; }
+      // Fetch both users
+      const [r1, r2] = await Promise.all([
+        sb.from('users').select('*').eq('username', u1).maybeSingle(),
+        sb.from('users').select('*').eq('username', u2).maybeSingle(),
+      ]);
 
-      renderCompare(r1, r2);
+      if (!r1.data) { showAlert(`User "@${u1}" not found.`, 'error'); hideLoading(); return; }
+      if (!r2.data) { showAlert(`User "@${u2}" not found.`, 'error'); hideLoading(); return; }
+
+      const p1 = r1.data, p2 = r2.data;
+
+      // Fetch workout logs
+      const [l1, l2] = await Promise.all([
+        sb.from('workout_logs').select('*').eq('firebase_uid', p1.firebase_uid),
+        sb.from('workout_logs').select('*').eq('firebase_uid', p2.firebase_uid),
+      ]);
+
+      const logs1 = l1.data || [], logs2 = l2.data || [];
+      const s1 = calcStats(logs1), s2 = calcStats(logs2);
+
+      renderResults(p1, p2, s1, s2, logs1, logs2);
+
     } catch(err) {
-      showAlert('Error loading data. Please try again.');
-      document.getElementById('loadingState').style.display = 'none';
+      console.error(err);
+      showAlert('Something went wrong. Please try again.', 'error');
     }
+    hideLoading();
+  };
+
+  // Enter key
+  ['u1','u2'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') window.runCompare(); });
+  });
+
+  function hideLoading() { document.getElementById('loadingState').style.display = 'none'; }
+  function showAlert(msg, type) {
+    const el = document.getElementById('searchAlert');
+    el.textContent = msg; el.className = `alert alert-${type}`; el.style.display = 'block';
   }
 
-  async function fetchUser(username) {
-    const { data: user } = await sb.from('users').select('*').eq('username', username).maybeSingle();
-    if (!user) return null;
-    const { data: logs } = await sb.from('workout_logs').select('*').eq('firebase_uid', user.firebase_uid);
-    return { user, logs: logs || [] };
-  }
-
-  function sum(logs, field) { return logs.reduce((s,l)=>s+(l[field]||0),0); }
-  function best(logs, field) { return Math.max(0,...logs.map(l=>l[field]||0)); }
-  function days(logs) { return new Set(logs.map(l=>l.log_date)).size; }
-
-  function renderCompare(d1, d2) {
-    document.getElementById('loadingState').style.display = 'none';
+  // ── Render ──────────────────────────────────────────────
+  function renderResults(p1, p2, s1, s2, logs1, logs2) {
     document.getElementById('resultsArea').style.display = 'block';
+    document.getElementById('emptyState').style.display  = 'none';
 
-    // Profiles
-    setProfile(1, d1);
-    setProfile(2, d2);
+    // Avatars + Names
+    function setProfile(num, profile, stats, color) {
+      const av = document.getElementById('av'+num);
+      if (profile.profile_picture) {
+        av.innerHTML = `<img src="${profile.profile_picture}" alt="${profile.name}">`;
+      } else {
+        av.textContent = (profile.name||profile.username||'?')[0].toUpperCase();
+      }
+      document.getElementById('n'+num).textContent = profile.name || profile.username || '?';
+      document.getElementById('h'+num).textContent = '@' + (profile.username || '—');
+      const totalEl = document.getElementById('t'+num);
+      totalEl.textContent = stats.total.toLocaleString();
+      totalEl.style.color = color;
 
-    const s1 = { push: sum(d1.logs,'pushups'), pull: sum(d1.logs,'pullups'), squat: sum(d1.logs,'squats') };
-    const s2 = { push: sum(d2.logs,'pushups'), pull: sum(d2.logs,'pullups'), squat: sum(d2.logs,'squats') };
-    s1.total = s1.push+s1.pull+s1.squat;
-    s2.total = s2.push+s2.pull+s2.squat;
+      // Badges
+      const badges = [];
+      if (stats.streak >= 7)   badges.push('🔥');
+      if (stats.streak >= 30)  badges.push('🪖');
+      if (stats.total >= 10000)badges.push('💀');
+      if (stats.days >= 50)    badges.push('🏅');
+      if (stats.bestDay >= 500)badges.push('⚡');
+      document.getElementById('badges'+num).innerHTML = badges.map(b => `<span style="font-size:18px">${b}</span>`).join('');
+    }
 
-    document.getElementById('pTotal1').textContent = s1.total.toLocaleString();
-    document.getElementById('pTotal2').textContent = s2.total.toLocaleString();
+    setProfile(1, p1, s1, 'var(--lime)');
+    setProfile(2, p2, s2, 'var(--violet)');
+
+    document.getElementById('thUser1').textContent = '@' + (p1.username||p1.name);
+    document.getElementById('thUser2').textContent = '@' + (p2.username||p2.name);
 
     // Winner
-    const w = s1.total > s2.total ? d1.user.name||d1.user.username : s2.total > s1.total ? d2.user.name||d2.user.username : null;
-    document.getElementById('winnerBanner').textContent = w ? `🏆 ${w} is winning with more total reps!` : "🤝 It's a tie! Perfectly matched athletes.";
+    const winner = s1.total > s2.total ? 1 : s2.total > s1.total ? 2 : 0;
+    const wb = document.getElementById('winnerBanner');
+    if (winner === 0) {
+      wb.textContent = "🤝 It's a tie! Both athletes are equally matched.";
+      wb.style.cssText = 'display:block;background:rgba(255,167,38,0.07);border-color:rgba(255,167,38,0.2);color:var(--amber)';
+    } else {
+      const wname = winner === 1 ? (p1.name||p1.username) : (p2.name||p2.username);
+      wb.textContent = `🏆 ${wname} leads with ${Math.abs(s1.total-s2.total).toLocaleString()} more reps!`;
+      wb.style.cssText = 'display:block';
+    }
+    document.getElementById('card1').className = 'athlete-card' + (winner===1?' winner':winner===2?' loser':'');
+    document.getElementById('card2').className = 'athlete-card' + (winner===2?' winner':winner===1?' loser':'');
 
-    // Bars
-    const maxPush  = Math.max(s1.push,  s2.push,  1);
-    const maxPull  = Math.max(s1.pull,  s2.pull,  1);
-    const maxSquat = Math.max(s1.squat, s2.squat, 1);
-
-    setBars('Push',  s1.push,  s2.push,  maxPush);
-    setBars('Pull',  s1.pull,  s2.pull,  maxPull);
-    setBars('Squat', s1.squat, s2.squat, maxSquat);
-
-    document.querySelectorAll('.bar-name').forEach((el,i) => {
-      el.textContent = i < 3 ? '@'+d1.user.username : '@'+d2.user.username;
-    });
+    // Group bars
+    const maxG = Math.max(...GROUPS.map(g => Math.max(s1[g.key], s2[g.key])), 1);
+    document.getElementById('groupBars').innerHTML = GROUPS.map(g => `
+      <div class="stat-row">
+        <div class="stat-bar-wrap right">
+          <span class="stat-num" style="color:var(--lime)">${s1[g.key].toLocaleString()}</span>
+          <div class="stat-bar-track">
+            <div class="stat-bar-fill" style="width:${(s1[g.key]/maxG*100).toFixed(1)}%;background:var(--lime);margin-left:auto"></div>
+          </div>
+        </div>
+        <div class="stat-label">${g.label}</div>
+        <div class="stat-bar-wrap">
+          <div class="stat-bar-track">
+            <div class="stat-bar-fill" style="width:${(s2[g.key]/maxG*100).toFixed(1)}%;background:var(--violet)"></div>
+          </div>
+          <span class="stat-num" style="color:var(--violet)">${s2[g.key].toLocaleString()}</span>
+        </div>
+      </div>`).join('');
 
     // Radar chart
-    const maxTotal = Math.max(s1.total, s2.total, 1);
-    const rd1 = [s1.push/maxPush*100, s1.pull/maxPull*100, s1.squat/maxSquat*100, days(d1.logs)/Math.max(days(d1.logs),days(d2.logs),1)*100, best(d1.logs,'pushups')/Math.max(best(d1.logs,'pushups'),best(d2.logs,'pushups'),1)*100];
-    const rd2 = [s2.push/maxPush*100, s2.pull/maxPull*100, s2.squat/maxSquat*100, days(d2.logs)/Math.max(days(d1.logs),days(d2.logs),1)*100, best(d2.logs,'pushups')/Math.max(best(d1.logs,'pushups'),best(d2.logs,'pushups'),1)*100];
-
-    if(radarChart) radarChart.destroy();
+    if (radarChart) radarChart.destroy();
+    const normalize = (s) => {
+      const max = Math.max(s.push,s.pull,s.legs,s.core,s.cardio,1);
+      return [s.push,s.pull,s.legs,s.core,s.cardio].map(v=>Math.round(v/max*100));
+    };
     radarChart = new Chart(document.getElementById('radarChart').getContext('2d'),{
       type:'radar',
       data:{
-        labels:['Push-ups','Pull-ups','Squats','Consistency','Best Day'],
+        labels:['Push','Pull','Legs','Core','Cardio'],
         datasets:[
-          {label:'@'+d1.user.username,data:rd1,borderColor:'#c6ff00',backgroundColor:'rgba(198,255,0,0.1)',pointBackgroundColor:'#c6ff00',borderWidth:2,pointRadius:4},
-          {label:'@'+d2.user.username,data:rd2,borderColor:'#b44dff',backgroundColor:'rgba(180,77,255,0.1)',pointBackgroundColor:'#b44dff',borderWidth:2,pointRadius:4}
+          {label:'@'+(p1.username||p1.name),data:normalize(s1),borderColor:'#c6ff00',backgroundColor:'rgba(198,255,0,.1)',pointBackgroundColor:'#c6ff00',borderWidth:2,pointRadius:3},
+          {label:'@'+(p2.username||p2.name),data:normalize(s2),borderColor:'#b44dff',backgroundColor:'rgba(180,77,255,.1)',pointBackgroundColor:'#b44dff',borderWidth:2,pointRadius:3}
         ]
       },
       options:{
         responsive:true,maintainAspectRatio:false,
-        plugins:{
-          legend:{labels:{color:'#9494b8',font:{family:'Barlow',size:12},usePointStyle:true}},
-          tooltip:{backgroundColor:'#1c1c2c',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleColor:'#f2f2ff',bodyColor:'#9494b8'}
-        },
+        plugins:{legend:{labels:{color:'#9494b8',font:{family:'Barlow',size:11},usePointStyle:true}}},
+        scales:{r:{ticks:{display:false},grid:{color:'rgba(255,255,255,.06)'},angleLines:{color:'rgba(255,255,255,.06)'},pointLabels:{color:'#9494b8',font:{family:'Barlow',size:11,weight:'600'}}}}
+      }
+    });
+
+    // Bar chart
+    if (barChart) barChart.destroy();
+    barChart = new Chart(document.getElementById('barChart').getContext('2d'),{
+      type:'bar',
+      data:{
+        labels:['Push','Pull','Legs','Core','Cardio'],
+        datasets:[
+          {label:'@'+(p1.username||p1.name),data:[s1.push,s1.pull,s1.legs,s1.core,s1.cardio],backgroundColor:'rgba(198,255,0,.7)',borderColor:'#c6ff00',borderWidth:1,borderRadius:4},
+          {label:'@'+(p2.username||p2.name),data:[s2.push,s2.pull,s2.legs,s2.core,s2.cardio],backgroundColor:'rgba(180,77,255,.7)',borderColor:'#b44dff',borderWidth:1,borderRadius:4}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#9494b8',font:{family:'Barlow',size:11},usePointStyle:true}},tooltip:{backgroundColor:'#1c1c2c',borderColor:'rgba(255,255,255,.1)',borderWidth:1,titleColor:'#f2f2ff',bodyColor:'#9494b8'}},
         scales:{
-          r:{
-            ticks:{display:false,stepSize:20},
-            grid:{color:'rgba(255,255,255,0.06)'},
-            angleLines:{color:'rgba(255,255,255,0.06)'},
-            pointLabels:{color:'#9494b8',font:{family:'Barlow',size:12,weight:'600'}}
-          }
+          x:{ticks:{color:'#5a5a7a',font:{size:10}},grid:{display:false}},
+          y:{ticks:{color:'#5a5a7a',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'},beginAtZero:true}
         }
       }
     });
 
-    // Table
-    document.getElementById('th1').textContent = '@'+d1.user.username;
-    document.getElementById('th2').textContent = '@'+d2.user.username;
-
+    // Full stats table
     const rows = [
-      ['Total Push-ups',   s1.push,       s2.push,       s1.push,       s2.push],
-      ['Total Pull-ups',   s1.pull,       s2.pull,       s1.pull,       s2.pull],
-      ['Total Squats',     s1.squat,      s2.squat,      s1.squat,      s2.squat],
-      ['Grand Total',      s1.total,      s2.total,      s1.total,      s2.total],
-      ['Days Logged',      days(d1.logs), days(d2.logs), days(d1.logs), days(d2.logs)],
-      ['Best Push Day',    best(d1.logs,'pushups'), best(d2.logs,'pushups'), best(d1.logs,'pushups'), best(d2.logs,'pushups')],
-      ['Best Pull Day',    best(d1.logs,'pullups'), best(d2.logs,'pullups'), best(d1.logs,'pullups'), best(d2.logs,'pullups')],
-      ['Best Squat Day',   best(d1.logs,'squats'),  best(d2.logs,'squats'),  best(d1.logs,'squats'),  best(d2.logs,'squats')]
+      ['Total Reps',       s1.total,   s2.total,   true],
+      ['Push Reps',        s1.push,    s2.push,    true],
+      ['Pull Reps',        s1.pull,    s2.pull,    true],
+      ['Leg Reps',         s1.legs,    s2.legs,    true],
+      ['Core Reps',        s1.core,    s2.core,    true],
+      ['Cardio Reps',      s1.cardio,  s2.cardio,  true],
+      ['Workout Days',     s1.days,    s2.days,    true],
+      ['Best Day (Reps)',  s1.bestDay, s2.bestDay, true],
+      ['Avg / Day',        s1.avgPerDay,s2.avgPerDay,true],
+      ['Streak (days)',    s1.streak,  s2.streak,  true],
     ];
-
-    document.getElementById('compareTbody').innerHTML = rows.map(([label,v1,v2]) => {
-      const w = v1>v2 ? 1 : v2>v1 ? 2 : 0;
+    document.getElementById('statsTable').innerHTML = rows.map(([label,v1,v2,higher]) => {
+      const w1 = higher ? v1 > v2 : v1 < v2;
+      const w2 = higher ? v2 > v1 : v2 < v1;
+      const wIcon = v1 === v2 ? '=' : w1 ? `<span style="color:var(--lime)">@${p1.username||p1.name}</span>` : `<span style="color:var(--violet)">@${p2.username||p2.name}</span>`;
       return `<tr>
-        <td style="font-weight:600;color:var(--text-1)">${label}</td>
-        <td style="${w===1?'color:var(--lime);font-weight:700':'color:var(--text-2)'}">${Number(v1).toLocaleString()}${w===1?' 🏆':''}</td>
-        <td style="${w===2?'color:var(--violet);font-weight:700':'color:var(--text-2)'}">${Number(v2).toLocaleString()}${w===2?' 🏆':''}</td>
-        <td>${w===0?'<span class="badge badge-amber">Tie</span>':w===1?'<span class="badge badge-lime">'+('Athlete 1')+'</span>':'<span class="badge badge-violet">'+('Athlete 2')+'</span>'}</td>
+        <td style="color:var(--text-2)">${label}</td>
+        <td class="${w1?'win':w2?'lose':''}">${v1.toLocaleString()}</td>
+        <td class="${w2?'win':w1?'lose':''}">${v2.toLocaleString()}</td>
+        <td>${wIcon}</td>
       </tr>`;
     }).join('');
-  }
-
-  function setProfile(n, d) {
-    document.getElementById('pName'+n).textContent = d.user.name || d.user.username;
-    document.getElementById('pUser'+n).textContent = '@'+d.user.username;
-    document.getElementById('av'+n).textContent = (d.user.name||d.user.username||'?')[0].toUpperCase();
-  }
-
-  function setBars(type, v1, v2, max) {
-    const pct1 = Math.max(4, (v1/max)*100);
-    const pct2 = Math.max(4, (v2/max)*100);
-    document.getElementById('bar1'+type).style.height = pct1+'%';
-    document.getElementById('bar2'+type).style.height = pct2+'%';
-    document.getElementById('lbl1'+type).textContent = v1.toLocaleString();
-    document.getElementById('lbl2'+type).textContent = v2.toLocaleString();
   }
 </script>
 <script type="module" src="../shared/navbar.js"></script>
