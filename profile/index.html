@@ -43,6 +43,13 @@
     .period-label { font-weight: 700; font-size: 15px; color: var(--text-1); }
     .period-btn.active .period-label { color: var(--lime); }
     .period-sub   { font-size: 11px; color: var(--text-3); }
+
+    @media (max-width: 560px) {
+      #reportPreview > div:last-child { grid-template-columns: 1fr !important; }
+      .period-btn { padding: 12px 8px; }
+      .period-label { font-size: 13px; }
+      .period-icon { font-size: 20px; }
+    }
   </style>
 </head>
 <body>
@@ -54,10 +61,10 @@
     <div class="profile-incomplete" id="incompleteBanner" style="display:none">
       <span style="font-size:22px;flex-shrink:0">⚠️</span>
       <div style="flex:1">
-        <strong>Set your username!</strong>
-        <span>Friends can't find or challenge you without a username.</span>
+        <strong data-i18n="profile.incompleteBanner">Set your username!</strong>
+        <span data-i18n="profile.incompleteBannerDesc">Friends can't find or challenge you without a username.</span>
       </div>
-      <button class="btn btn-lime btn-sm" onclick="switchTab('edit')">Set Now →</button>
+      <button class="btn btn-lime btn-sm" onclick="switchTab('edit')" data-i18n="profile.setNow">Set Now →</button>
     </div>
 
     <!-- Cover -->
@@ -87,9 +94,9 @@
 
     <!-- Action row -->
     <div class="profile-action-row">
-      <button class="btn btn-lime" onclick="switchTab('edit')">✏️ Edit Profile</button>
-      <a href="../dashboard/log.html"   class="btn btn-outline">+ Log Workout</a>
-      <a href="../compare/compare.html" class="btn btn-ghost">⚔️ Challenge</a>
+      <button class="btn btn-lime" onclick="switchTab('edit')" data-i18n="profile.editProfile">✏️ Edit Profile</button>
+      <a href="../dashboard/log.html" class="btn btn-outline" data-i18n="profile.logWorkout">+ Log Workout</a>
+      <a href="../compare/" class="btn btn-ghost" data-i18n="profile.challenge">⚔️ Challenge</a>
     </div>
 
     <!-- Stats cards -->
@@ -118,10 +125,10 @@
 
     <!-- Tabs -->
     <div class="profile-tabs">
-      <button class="profile-tab active" id="tab-overview"  onclick="switchTab('overview')">👤 Overview</button>
-      <button class="profile-tab"        id="tab-edit"      onclick="switchTab('edit')">✏️ Edit</button>
-      <button class="profile-tab"        id="tab-security"  onclick="switchTab('security')">🔒 Security</button>
-      <button class="profile-tab"        id="tab-reports"   onclick="switchTab('reports')">📊 Reports</button>
+      <button class="profile-tab active" id="tab-overview" onclick="switchTab('overview')" data-i18n="profile.tabOverview">👤 Overview</button>
+      <button class="profile-tab" id="tab-edit" onclick="switchTab('edit')" data-i18n="profile.tabEdit">✏️ Edit</button>
+      <button class="profile-tab" id="tab-security" onclick="switchTab('security')" data-i18n="profile.tabSecurity">🔒 Security</button>
+      <button class="profile-tab" id="tab-reports" onclick="switchTab('reports')" data-i18n="profile.tabReports">📊 Reports</button>
     </div>
 
     <!-- ══ OVERVIEW TAB ══ -->
@@ -224,7 +231,8 @@
 
         <!-- Language Setting -->
         <div style="background:var(--bg-1);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:18px;margin-bottom:18px">
-          <div class="pform-title" style="margin-bottom:12px">🌐 Language / ভাষা</div>
+          <div class="pform-title" style="margin-bottom:12px" data-i18n="profile.languageSettings">🌐 Language</div>
+          <div style="font-size:12px;color:var(--text-3);margin:-4px 0 10px" data-i18n="profile.selectLanguage">Select language</div>
           <div style="display:flex;gap:10px;flex-wrap:wrap">
             <button class="lang-btn" id="langBtnEn" onclick="changeLang('en')">
               <span style="font-size:20px">🇺🇸</span>
@@ -235,8 +243,8 @@
               <span>বাংলা</span>
             </button>
           </div>
-          <p id="langSavedMsg" style="font-size:12px;color:var(--lime);margin-top:8px;display:none">
-            ✓ Language updated!
+          <p id="langSavedMsg" data-i18n="profile.languageSaved" style="font-size:12px;color:var(--lime);margin-top:8px;display:none">
+            Language updated!
           </p>
         </div>
 
@@ -410,6 +418,7 @@
     linkWithPopup, linkWithCredential, GoogleAuthProvider, unlink
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { sb } from '../shared/db.js';
+  import { initI18n, setLang as i18nSetLang, getLang } from '../shared/i18n.js';
 
   const auth = getAuth(initializeApp(CONFIG.firebase));
   let currentUser = null, currentProfile = null, usernameTimer;
@@ -468,6 +477,7 @@
   onAuthStateChanged(auth, async user => {
     if (!user) { window.location.href = '../auth/login.html'; return; }
     currentUser = user;
+    await initI18n();
 
     // 1. Load profile from users table
     await loadProfile(user);
@@ -480,7 +490,7 @@
     renderGamification(logs);
     setupReports(user, logs);
     detectProvider(user);
-    initLangButton();
+    initLangButton(getLang());
   });
 
   // ── Tab switching ─────────────────────────────────────────
@@ -1039,16 +1049,16 @@
   }
 
   // ── Language switcher ─────────────────────────────────────
-  function initLangButton() {
-    const saved = localStorage.getItem('ft-lang') || 'en';
-    const btn   = document.getElementById(saved==='bn' ? 'langBtnBn' : 'langBtnEn');
+  function initLangButton(currentLang) {
+    const saved = currentLang || localStorage.getItem('ft-lang') || 'en';
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    const btn   = document.getElementById(saved === 'bn' ? 'langBtnBn' : 'langBtnEn');
     if (btn) btn.classList.add('active');
   }
 
   window.changeLang = async function(lang) {
     try {
-      const { setLang } = await import('../shared/i18n.js');
-      await setLang(lang);
+      await i18nSetLang(lang);
     } catch {
       localStorage.setItem('ft-lang', lang);
     }

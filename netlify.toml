@@ -40,6 +40,16 @@ from = "/profile/profile.html"
 to = "/profile"
 status = 301
 
+[[redirects]]
+from = "/leaderboard/leaderboard.html"
+to = "/leaderboard"
+status = 301
+
+[[redirects]]
+from = "/leaderboard/index.html"
+to = "/leaderboard"
+status = 301
+
 [[headers]]
 for = "/locales/*"
 [headers.values]

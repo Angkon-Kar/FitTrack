@@ -10,8 +10,8 @@
     { "source": "/exercises/exercises.html", "destination": "/exercises", "permanent": true },
     { "source": "/blog/blog.html", "destination": "/blog", "permanent": true },
     { "source": "/compare/compare.html", "destination": "/compare", "permanent": true },
-    { "source": "/dashboard/dashboard.html", "destination": "/dashboard", "permanent": true },
-    { "source": "/profile/profile.html", "destination": "/profile", "permanent": true }
+    { "source": "/dashboard/", "destination": "/dashboard", "permanent": true },
+    { "source": "/profile/", "destination": "/profile", "permanent": true }
   ],
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/:path*" }

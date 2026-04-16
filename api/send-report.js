@@ -271,7 +271,7 @@ function buildEmailHTML(name, periodLabel, a, logs) {
 
     <!-- CTA -->
     <div style="text-align:center;padding:24px 0">
-      <a href="${process.env.SITE_URL || 'https://myfittrackpro.netlify.app'}/dashboard/dashboard.html"
+      <a href="${process.env.SITE_URL || 'https://myfittrackpro.netlify.app'}/dashboard/"
         style="display:inline-block;background:#c6ff00;color:#080810;font-weight:700;font-size:15px;padding:14px 32px;border-radius:8px;text-decoration:none">
         View Full Dashboard →
       </a>
@@ -282,7 +282,7 @@ function buildEmailHTML(name, periodLabel, a, logs) {
       <div style="font-size:11px;color:#38384a;line-height:1.6">
         FitTrack — Track Your Reps. Beat Your Best.<br>
         You received this because you requested a workout report.<br>
-        <a href="${process.env.SITE_URL || 'https://myfittrackpro.netlify.app'}/profile/profile.html" style="color:#5a5a7a">Manage email preferences</a>
+        <a href="${process.env.SITE_URL || 'https://myfittrackpro.netlify.app'}/profile/" style="color:#5a5a7a">Manage email preferences</a>
       </div>
     </div>
 

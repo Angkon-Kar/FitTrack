@@ -293,6 +293,12 @@
   .profile-stats { grid-template-columns: repeat(2, 1fr); }
   .form-row-2 { grid-template-columns: 1fr; }
   .profile-tabs { overflow-x: auto; }
+  .profile-tab { min-width: max-content; }
+  .profile-action-row .btn {
+    flex: 1 1 100%;
+    text-align: center;
+    justify-content: center;
+  }
 }
 @media (max-width: 400px) {
   .profile-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
@@ -350,4 +356,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 220px;
+}
+
+@media (max-width: 560px) {
+  .security-provider-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .security-provider-info {
+    width: 100%;
+  }
+  .security-provider-status {
+    max-width: 100%;
+    white-space: normal;
+  }
 }
