@@ -16,7 +16,7 @@ const root  = depth === 0 ? './' : '../'.repeat(depth);
 function isActive(href) {
   const p = window.location.pathname;
   if (href === root)
-    return p === '/' || p.endsWith('/index.html') || (p.endsWith('/') && !p.includes('/auth/') && !p.includes('/dashboard/') && !p.includes('/exercises/') && !p.includes('/blog/') && !p.includes('/compare/') && !p.includes('/profile/'));
+    return p === '/' || p.endsWith('/index.html') || (p.endsWith('/') && !p.includes('/auth/') && !p.includes('/dashboard/') && !p.includes('/exercises/') && !p.includes('/blog/') && !p.includes('/compare/') && !p.includes('/profile/') && !p.includes('/leaderboard/'));
   return p.includes(href.replace(root,'').replace('../','').replace('.html',''));
 }
 const nl = (href, icon, label) =>
@@ -33,6 +33,7 @@ document.body.insertAdjacentHTML('afterbegin', `
       ${nl('exercises/','💪','Exercises')}
       ${nl('blog/','📝','Blog')}
       ${nl('compare/','⚔️','Compare')}
+      ${nl('leaderboard/','🏆','Leaderboard')}
       ${nl('dashboard/','📊','Dashboard')}
     </ul>
     <div class="nav-right">
@@ -60,6 +61,7 @@ document.body.insertAdjacentHTML('afterbegin', `
   ${dl('exercises/','💪','Exercises')}
   ${dl('blog/','📝','Blog')}
   ${dl('compare/','⚔️','Compare')}
+  ${dl('leaderboard/','🏆','Leaderboard')}
   ${dl('dashboard/','📊','Dashboard')}
   ${dl('dashboard/log.html','✏️','Log Workout')}
   ${dl('profile/','👤','My Profile')}
