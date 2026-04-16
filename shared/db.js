@@ -8,7 +8,9 @@ export const sb = createClient(CONFIG.supabase.url, CONFIG.supabase.anonKey, {
     }
   },
   auth: {
-    persistSession: true,
-    autoRefreshToken: true
+    // Firebase manages user auth in this app, so keep Supabase stateless.
+    // This avoids browser tracking-prevention storage warnings on some setups.
+    persistSession: false,
+    autoRefreshToken: false
   }
 });
