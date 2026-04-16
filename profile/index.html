@@ -8,12 +8,10 @@
   <link rel="stylesheet" href="../shared/global.css">
   <link rel="stylesheet" href="profile.css">
   <script src="../config.local.js"></script>
-  <script type="module">
-    import { initI18n } from '../shared/i18n.js';
-    initI18n();
-  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<style>
+
+  <style>
+    /* ── Language buttons ── */
     .lang-btn {
       display: flex; align-items: center; gap: 8px;
       padding: 10px 20px; border-radius: var(--radius-lg);
@@ -23,31 +21,36 @@
       -webkit-tap-highlight-color: transparent;
     }
     .lang-btn:hover { border-color: var(--border-bright); }
-    .lang-btn.active { background: rgba(198,255,0,0.08); border-color: rgba(198,255,0,0.3); color: var(--lime); }
-    .lang-bn { font-family: 'Noto Sans Bengali', 'SolaimanLipi', sans-serif; }
-    /* Bangla font fallback */
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap');
-
-  .period-btn {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 16px 10px; border-radius: var(--radius-lg);
-    border: 1px solid var(--border-subtle); background: var(--bg-3);
-    cursor: pointer; transition: all 0.15s; font-family: var(--font-body);
-    -webkit-tap-highlight-color: transparent;
-  }
-  .period-btn:hover { border-color: var(--border-bright); }
-  .period-btn.active { background: rgba(198,255,0,0.08); border-color: rgba(198,255,0,0.3); }
-  .period-icon { font-size: 24px; }
-  .period-label { font-weight: 700; font-size: 15px; color: var(--text-1); }
-  .period-btn.active .period-label { color: var(--lime); }
-  .period-sub { font-size: 11px; color: var(--text-3); }
-</style>
+    .lang-btn.active {
+      background: rgba(198,255,0,0.08);
+      border-color: rgba(198,255,0,0.3);
+      color: var(--lime);
+    }
+    /* ── Period selector buttons ── */
+    .period-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 16px 10px; border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle); background: var(--bg-3);
+      cursor: pointer; transition: all 0.15s; font-family: var(--font-body);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .period-btn:hover { border-color: var(--border-bright); }
+    .period-btn.active {
+      background: rgba(198,255,0,0.08);
+      border-color: rgba(198,255,0,0.3);
+    }
+    .period-icon  { font-size: 24px; }
+    .period-label { font-weight: 700; font-size: 15px; color: var(--text-1); }
+    .period-btn.active .period-label { color: var(--lime); }
+    .period-sub   { font-size: 11px; color: var(--text-3); }
+  </style>
 </head>
 <body>
 
 <div class="profile-page">
   <div class="wrap-narrow">
 
+    <!-- Incomplete banner -->
     <div class="profile-incomplete" id="incompleteBanner" style="display:none">
       <span style="font-size:22px;flex-shrink:0">⚠️</span>
       <div style="flex:1">
@@ -57,11 +60,13 @@
       <button class="btn btn-lime btn-sm" onclick="switchTab('edit')">Set Now →</button>
     </div>
 
+    <!-- Cover -->
     <div class="profile-cover">
       <div class="profile-cover-pattern"></div>
       <div class="profile-cover-grid"></div>
     </div>
 
+    <!-- Avatar + Name -->
     <div class="profile-avatar-section">
       <div class="profile-avatar-outer">
         <div class="profile-avatar-ring">
@@ -80,12 +85,14 @@
       </div>
     </div>
 
+    <!-- Action row -->
     <div class="profile-action-row">
       <button class="btn btn-lime" onclick="switchTab('edit')">✏️ Edit Profile</button>
       <a href="../dashboard/log.html"   class="btn btn-outline">+ Log Workout</a>
       <a href="../compare/compare.html" class="btn btn-ghost">⚔️ Challenge</a>
     </div>
 
+    <!-- Stats cards -->
     <div class="profile-stats">
       <div class="pstat c-lime">
         <div class="pstat-val" style="color:var(--lime)" id="psTotalReps">—</div>
@@ -100,7 +107,7 @@
         <div class="pstat-label">Current Streak</div>
       </div>
       <div class="pstat c-violet">
-        <div class="pstat-val" style="color:var(--text-1); font-size: 18px;" id="psFavEx">—</div>
+        <div class="pstat-val" style="color:var(--text-1);font-size:18px" id="psFavEx">—</div>
         <div class="pstat-label">Most Logged</div>
       </div>
       <div class="pstat c-coral">
@@ -109,14 +116,17 @@
       </div>
     </div>
 
+    <!-- Tabs -->
     <div class="profile-tabs">
-      <button class="profile-tab active" id="tab-overview" onclick="switchTab('overview')">👤 Overview</button>
-      <button class="profile-tab"        id="tab-edit"     onclick="switchTab('edit')">✏️ Edit Profile</button>
-      <button class="profile-tab"        id="tab-security" onclick="switchTab('security')">🔒 Security</button>
-      <button class="profile-tab"        id="tab-reports"  onclick="switchTab('reports')">📊 Reports</button>
+      <button class="profile-tab active" id="tab-overview"  onclick="switchTab('overview')">👤 Overview</button>
+      <button class="profile-tab"        id="tab-edit"      onclick="switchTab('edit')">✏️ Edit</button>
+      <button class="profile-tab"        id="tab-security"  onclick="switchTab('security')">🔒 Security</button>
+      <button class="profile-tab"        id="tab-reports"   onclick="switchTab('reports')">📊 Reports</button>
     </div>
 
+    <!-- ══ OVERVIEW TAB ══ -->
     <div class="profile-tab-content active" id="content-overview">
+
       <div class="pform-card">
         <div class="pform-title">Profile Details</div>
         <table style="width:100%;border-collapse:collapse;font-size:14px">
@@ -131,11 +141,12 @@
           <div style="text-align:center;flex-shrink:0">
             <div id="levelBadgeIcon" style="font-size:56px;line-height:1;margin-bottom:6px">🌱</div>
             <div id="levelBadgeName" style="font-family:var(--font-display);font-size:20px;font-weight:900;color:var(--lime)">Newbie</div>
-            <div id="levelBadgePts" style="font-size:12px;color:var(--text-3);margin-top:2px">0 total reps</div>
+            <div id="levelBadgePts"  style="font-size:12px;color:var(--text-3);margin-top:2px">0 total reps</div>
           </div>
           <div style="flex:1;min-width:180px">
             <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-3);margin-bottom:5px">
-              <span id="levelCurrent"></span><span id="levelNext"></span>
+              <span id="levelCurrent"></span>
+              <span id="levelNext"></span>
             </div>
             <div style="height:8px;background:var(--bg-4);border-radius:99px;overflow:hidden;margin-bottom:10px">
               <div id="levelBar" style="height:100%;border-radius:99px;background:linear-gradient(90deg,var(--lime),var(--cyan));width:0%;transition:width 1.2s ease"></div>
@@ -159,7 +170,7 @@
         </div>
       </div>
 
-      <!-- Badges -->
+      <!-- Achievement Badges -->
       <div class="pform-card">
         <div class="pform-title">🏆 Achievement Badges</div>
         <div id="badgesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px"></div>
@@ -172,6 +183,7 @@
       </div>
     </div>
 
+    <!-- ══ EDIT TAB ══ -->
     <div class="profile-tab-content" id="content-edit">
       <div class="pform-card">
         <div class="pform-title">Personal Info</div>
@@ -210,25 +222,24 @@
           <p class="form-hint"><span id="bioCount">0</span>/120 characters</p>
         </div>
 
-
         <!-- Language Setting -->
-        <div class="pform-card" style="margin-top:0">
-          <div class="pform-title" data-i18n="profile.languageSettings">🌐 Language</div>
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label" data-i18n="profile.selectLanguage">Select Language</label>
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="lang-btn" id="langBtnEn" onclick="changeLang('en')">
-                <span style="font-size:20px">🇬🇧</span>
-                <span>English</span>
-              </button>
-              <button class="lang-btn" id="langBtnBn" onclick="changeLang('bn')">
-                <span style="font-size:20px">🇧🇩</span>
-                <span>বাংলা</span>
-              </button>
-            </div>
-            <p id="langSavedMsg" style="font-size:12px;color:var(--lime);margin-top:8px;display:none" data-i18n="profile.languageSaved">Language updated!</p>
+        <div style="background:var(--bg-1);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:18px;margin-bottom:18px">
+          <div class="pform-title" style="margin-bottom:12px">🌐 Language / ভাষা</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="lang-btn" id="langBtnEn" onclick="changeLang('en')">
+              <span style="font-size:20px">🇺🇸</span>
+              <span>English</span>
+            </button>
+            <button class="lang-btn" id="langBtnBn" onclick="changeLang('bn')">
+              <span style="font-size:20px">🇧🇩</span>
+              <span>বাংলা</span>
+            </button>
           </div>
+          <p id="langSavedMsg" style="font-size:12px;color:var(--lime);margin-top:8px;display:none">
+            ✓ Language updated!
+          </p>
         </div>
+
         <div style="display:flex;gap:10px">
           <button class="btn btn-lime" id="saveProfileBtn" onclick="saveProfile()">💾 Save Changes</button>
           <button class="btn btn-ghost" onclick="switchTab('overview')">Cancel</button>
@@ -236,12 +247,14 @@
       </div>
     </div>
 
+    <!-- ══ SECURITY TAB ══ -->
     <div class="profile-tab-content" id="content-security">
 
       <div class="pform-card" style="margin-bottom:16px">
         <div class="pform-title">Connected Accounts</div>
         <div id="securityAlert" class="alert" style="margin-bottom:14px"></div>
 
+        <!-- Google -->
         <div class="security-provider-row">
           <div class="security-provider-info">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="security-provider-icon" alt="Google">
@@ -253,6 +266,7 @@
           <button class="btn btn-sm btn-outline" id="googleProviderBtn" onclick="toggleGoogleLink()">…</button>
         </div>
 
+        <!-- Email/Password -->
         <div class="security-provider-row">
           <div class="security-provider-info">
             <div class="security-provider-icon-email">✉️</div>
@@ -265,6 +279,7 @@
         </div>
       </div>
 
+      <!-- Password form -->
       <div class="pform-card" id="passwordFormCard" style="display:none">
         <div class="pform-title" id="passwordFormTitle">Set Password</div>
         <div id="pwAlert" class="alert" style="margin-bottom:16px"></div>
@@ -309,25 +324,21 @@
           <button class="btn btn-ghost" onclick="document.getElementById('passwordFormCard').style.display='none'">Cancel</button>
         </div>
       </div>
-
     </div>
 
-    <!-- ── Reports Tab ── -->
+    <!-- ══ REPORTS TAB ══ -->
     <div class="profile-tab-content" id="content-reports">
-
-      <!-- Analysis Report -->
       <div class="pform-card">
         <div class="pform-title">📊 Send Analysis Report</div>
         <div id="reportAlert" class="alert" style="margin-bottom:14px"></div>
 
         <p style="font-size:14px;color:var(--text-2);margin-bottom:18px;line-height:1.6">
-          Get a detailed workout analysis report sent directly to your email — including reps breakdown, muscle group balance, top exercises, consistency score, and smart insights.
+          Get a detailed workout analysis report sent to your email — including reps breakdown, muscle group balance, top exercises, consistency score, and smart insights.
         </p>
 
-        <!-- Period selector -->
         <div class="form-group">
           <label class="form-label">Select Report Period</label>
-          <div id="periodSelector" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px">
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px">
             <button class="period-btn active" data-days="7"  onclick="selectPeriod(this,7)">
               <span class="period-icon">📅</span>
               <span class="period-label">1 Week</span>
@@ -351,7 +362,7 @@
           </div>
         </div>
 
-        <!-- Preview stats -->
+        <!-- Preview -->
         <div id="reportPreview" style="background:var(--bg-1);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:16px;margin-bottom:18px;display:none">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-3);margin-bottom:12px">Preview — This Period</div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
@@ -370,8 +381,8 @@
           </div>
         </div>
 
-        <div id="noDataWarning" style="display:none;background:rgba(255,167,38,0.07);border:1px solid rgba(255,167,38,0.2);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--amber);margin-bottom:14px">
-          ⚠️ No workouts logged in this period. Please select a longer period or log some workouts first.
+        <div id="noDataWarning" style="display:none;background:rgba(255,167,38,.07);border:1px solid rgba(255,167,38,.2);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--amber);margin-bottom:14px">
+          ⚠️ No workouts in this period. Select a longer period or log some workouts first.
         </div>
 
         <button class="btn btn-lime" id="sendReportBtn" onclick="sendAnalysisReport()" style="width:100%">
@@ -380,66 +391,127 @@
         <p style="font-size:12px;color:var(--text-3);text-align:center;margin-top:8px" id="reportEmailNote"></p>
       </div>
 
-      <!-- History of sent reports (localStorage) -->
       <div class="pform-card" id="reportHistoryCard" style="display:none">
         <div class="pform-title">📬 Previously Sent</div>
         <div id="reportHistoryList"></div>
       </div>
-
     </div>
 
-  </div>
-</div>
+  </div><!-- /wrap-narrow -->
+</div><!-- /profile-page -->
 
 <div id="appToast" class="toast"></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider, linkWithPopup, linkWithCredential, GoogleAuthProvider, unlink } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getAuth, onAuthStateChanged, updatePassword,
+    reauthenticateWithCredential, EmailAuthProvider,
+    linkWithPopup, linkWithCredential, GoogleAuthProvider, unlink
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { sb } from '../shared/db.js';
 
   const auth = getAuth(initializeApp(CONFIG.firebase));
   let currentUser = null, currentProfile = null, usernameTimer;
 
-  // Exercises data for the "Most Logged" icon & name mapping
-  const EXERCISE_MAP = {
-    'push-up': { name: 'Push-Up', emoji: '💪' },
-    'pull-up': { name: 'Pull-Up', emoji: '🏋️' },
-    'squat': { name: 'Squat', emoji: '🦵' },
-    'diamond-push-up': { name: 'Diamond Push-Up', emoji: '💎' },
-    'incline-push-up': { name: 'Incline Push-Up', emoji: '📐' },
-    'dips': { name: 'Dips', emoji: '🪑' },
-    'chin-up': { name: 'Chin-Up', emoji: '🤌' },
-    'plank': { name: 'Plank', emoji: '🪨' },
-    'burpees': { name: 'Burpees', emoji: '💥' }
-    // Note: You don't need all 32 here, just the popular ones. 
-    // If it's missing, it will just show the raw ID.
+  // ── Shared data cache — fetch ONCE, pass everywhere ──────
+  let cachedLogs = null; // shared workout_logs cache
+
+  async function fetchLogsOnce(uid) {
+    if (cachedLogs !== null) return cachedLogs;
+    const { data } = await sb
+      .from('workout_logs')
+      .select('*')
+      .eq('firebase_uid', uid)
+      .order('log_date', { ascending: false });
+    cachedLogs = data || [];
+    return cachedLogs;
+  }
+
+  // ── Exercise map for display ──────────────────────────────
+  const EX_MAP = {
+    'push-up':{'name':'Push-Up','emoji':'💪'},
+    'pull-up':{'name':'Pull-Up','emoji':'🏋️'},
+    'squat':{'name':'Squat','emoji':'🦵'},
+    'diamond-push-up':{'name':'Diamond Push-Up','emoji':'💎'},
+    'incline-push-up':{'name':'Incline Push-Up','emoji':'📐'},
+    'decline-push-up':{'name':'Decline Push-Up','emoji':'⬇️'},
+    'pike-push-up':{'name':'Pike Push-Up','emoji':'🔺'},
+    'dips':{'name':'Dips','emoji':'🪑'},
+    'chin-up':{'name':'Chin-Up','emoji':'🤌'},
+    'bodyweight-row':{'name':'Bodyweight Row','emoji':'🚣'},
+    'muscle-up':{'name':'Muscle-Up','emoji':'🎯'},
+    'lunges':{'name':'Lunges','emoji':'🚶'},
+    'bulgarian-split-squat':{'name':'Bulgarian Split Squat','emoji':'🏔️'},
+    'calf-raises':{'name':'Calf Raises','emoji':'🦶'},
+    'glute-bridge':{'name':'Glute Bridge','emoji':'🌉'},
+    'pistol-squat':{'name':'Pistol Squat','emoji':'🔫'},
+    'plank':{'name':'Plank','emoji':'🪨'},
+    'sit-ups':{'name':'Sit-Ups','emoji':'🧘'},
+    'crunches':{'name':'Crunches','emoji':'🦴'},
+    'russian-twist':{'name':'Russian Twist','emoji':'🌀'},
+    'hanging-leg-raises':{'name':'Hanging Leg Raises','emoji':'🦵'},
+    'bicycle-crunch':{'name':'Bicycle Crunch','emoji':'🚴'},
+    'burpees':{'name':'Burpees','emoji':'💥'},
+    'jumping-jacks':{'name':'Jumping Jacks','emoji':'⭐'},
+    'high-knees':{'name':'High Knees','emoji':'🦿'},
+    'mountain-climbers':{'name':'Mountain Climbers','emoji':'🧗'},
+    'jump-squats':{'name':'Jump Squats','emoji':'🚀'},
+    'handstand-hold':{'name':'Handstand Hold','emoji':'🤸'},
+    'hspu':{'name':'Handstand Push-Up','emoji':'🏛️'},
+    'l-sit':{'name':'L-Sit','emoji':'📐'},
+    'front-lever':{'name':'Front Lever','emoji':'🪃'},
+    'planche':{'name':'Planche','emoji':'✈️'},
   };
 
+  // ── Auth: single entry point ──────────────────────────────
   onAuthStateChanged(auth, async user => {
     if (!user) { window.location.href = '../auth/login.html'; return; }
     currentUser = user;
+
+    // 1. Load profile from users table
     await loadProfile(user);
-    await loadStats(user.uid);
+
+    // 2. Fetch workout_logs ONCE — shared by all features
+    const logs = await fetchLogsOnce(user.uid);
+
+    // 3. All features use the shared logs (no extra fetches)
+    renderStats(logs);
+    renderGamification(logs);
+    setupReports(user, logs);
     detectProvider(user);
-    await loadReportData(user);
-    await loadGamification(user);
+    initLangButton();
   });
 
-  // Tab switching
+  // ── Tab switching ─────────────────────────────────────────
   window.switchTab = function(tab) {
-    document.querySelectorAll('.profile-tab, .profile-tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.profile-tab, .profile-tab-content')
+      .forEach(el => el.classList.remove('active'));
     document.getElementById('tab-' + tab).classList.add('active');
     document.getElementById('content-' + tab).classList.add('active');
     if (tab === 'edit') fillEditForm();
   };
 
+  // ── Profile load ──────────────────────────────────────────
   async function loadProfile(user) {
     const { data } = await sb.from('users').select('*').eq('firebase_uid', user.uid).maybeSingle();
     if (!data) {
-      await sb.from('users').insert({ firebase_uid: user.uid, name: user.displayName||'', email: user.email||'', profile_picture: user.photoURL||'', username: null, username_set: false });
-      currentProfile = { firebase_uid: user.uid, name: user.displayName||'', email: user.email||'', profile_picture: user.photoURL||'', username: null, username_set: false, bio:'', date_of_birth:null };
-    } else { currentProfile = data; }
+      await sb.from('users').insert({
+        firebase_uid: user.uid,
+        name: user.displayName || '',
+        email: user.email || '',
+        profile_picture: user.photoURL || '',
+        username: null,
+        username_set: false
+      });
+      currentProfile = {
+        firebase_uid: user.uid, name: user.displayName || '',
+        email: user.email || '', profile_picture: user.photoURL || '',
+        username: null, username_set: false, bio: '', date_of_birth: null
+      };
+    } else {
+      currentProfile = data;
+    }
     renderProfile(user);
     if (!currentProfile.username_set || !currentProfile.username)
       document.getElementById('incompleteBanner').style.display = 'flex';
@@ -449,16 +521,24 @@
     const p = currentProfile;
     const name = p.name || user.displayName || 'Athlete';
     document.getElementById('profileInitial').textContent = name[0]?.toUpperCase() || '?';
+
     const photo = p.profile_picture || user.photoURL || '';
     if (photo) {
       const img = document.getElementById('profileImg');
       img.src = photo; img.style.display = 'block';
       document.getElementById('profileInitial').style.display = 'none';
     }
+
     document.getElementById('profileName').textContent = name;
     const handle = document.getElementById('profileHandle');
-    if (p.username) { handle.textContent = '@' + p.username; handle.classList.remove('not-set'); }
-    else            { handle.textContent = '⚠ No username set'; handle.classList.add('not-set'); }
+    if (p.username) {
+      handle.textContent = '@' + p.username;
+      handle.classList.remove('not-set');
+    } else {
+      handle.textContent = '⚠ No username set';
+      handle.classList.add('not-set');
+    }
+
     const bioEl = document.getElementById('profileBio');
     if (p.bio) { bioEl.textContent = p.bio; bioEl.style.display = 'block'; }
     else bioEl.style.display = 'none';
@@ -466,109 +546,198 @@
     // Pills
     const pills = document.getElementById('profilePills');
     pills.innerHTML = '';
-    const addPill = (t) => { const s=document.createElement('span'); s.className='stat-pill'; s.style.fontSize='12px'; s.textContent=t; pills.appendChild(s); };
-    if (p.email||user.email) addPill('✉️ '+(p.email||user.email));
-    if (p.date_of_birth) addPill('🎂 '+new Date(p.date_of_birth+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}));
-    if (p.created_at) addPill('📅 Joined '+new Date(p.created_at).toLocaleDateString('en-US',{month:'short',year:'numeric'}));
+    const addPill = (t) => {
+      const s = document.createElement('span');
+      s.className = 'stat-pill'; s.style.fontSize = '12px';
+      s.textContent = t; pills.appendChild(s);
+    };
+    if (p.email || user.email) addPill('✉️ ' + (p.email || user.email));
+    if (p.date_of_birth) addPill('🎂 ' + new Date(p.date_of_birth+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}));
+    if (p.created_at)    addPill('📅 Joined ' + new Date(p.created_at).toLocaleDateString('en-US',{month:'short',year:'numeric'}));
 
     // Overview table
     const rows = [
       ['Full Name',    name],
       ['Username',     p.username ? '@'+p.username : '⚠ Not set'],
-      ['Email',        p.email||user.email||'—'],
+      ['Email',        p.email || user.email || '—'],
       ['Date of Birth',p.date_of_birth ? new Date(p.date_of_birth+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '—'],
-      ['Bio',          p.bio||'—'],
+      ['Bio',          p.bio || '—'],
       ['Member Since', p.created_at ? new Date(p.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '—'],
     ];
     document.getElementById('overviewTable').innerHTML = rows.map(([k,v]) =>
       `<tr style="border-bottom:1px solid var(--border-subtle)">
-        <td style="padding:12px 0;color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;width:38%;font-weight:700">${k}</td>
+        <td style="padding:12px 0;color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:.8px;width:38%;font-weight:700">${k}</td>
         <td style="padding:12px 0;color:${v.startsWith('⚠')?'var(--coral)':'var(--text-1)'};font-size:14px">${v}</td>
       </tr>`).join('');
   }
 
-  // ── JSONB Stats Calculation ──
-  async function loadStats(uid) {
-    const { data } = await sb.from('workout_logs').select('log_date, exercises').eq('firebase_uid', uid).order('log_date', { ascending: false });
-    
-    if (!data?.length) {
-      document.getElementById('psTotalReps').textContent = '0';
-      document.getElementById('psDaysLogged').textContent = '0';
-      document.getElementById('psStreak').textContent = '0';
-      document.getElementById('psMastered').textContent = '0/32';
+  // ── Stats (uses cached logs) ──────────────────────────────
+  function renderStats(logs) {
+    if (!logs.length) {
+      ['psTotalReps','psDaysLogged','psStreak','psMastered'].forEach(id => {
+        document.getElementById(id).textContent = '0';
+      });
+      document.getElementById('psMastered').innerHTML = '0<span style="font-size:16px;color:var(--text-3)">/32</span>';
       return;
     }
 
     let totalReps = 0;
-    let exerciseCounts = {};
-    let uniqueExercises = new Set();
+    const exCounts = {}, uniqueEx = new Set();
 
-    data.forEach(log => {
-      const exObj = log.exercises || {};
-      for (const [exId, reps] of Object.entries(exObj)) {
+    logs.forEach(log => {
+      for (const [id, reps] of Object.entries(log.exercises || {})) {
         totalReps += reps;
-        exerciseCounts[exId] = (exerciseCounts[exId] || 0) + reps;
-        uniqueExercises.add(exId);
+        exCounts[id] = (exCounts[id] || 0) + reps;
+        uniqueEx.add(id);
       }
     });
 
-    // Most Logged Exercise
-    let favExId = null;
-    let maxReps = 0;
-    for (const [id, count] of Object.entries(exerciseCounts)) {
-      if (count > maxReps) { maxReps = count; favExId = id; }
+    // Most logged exercise
+    let favId = null, maxReps = 0;
+    for (const [id, count] of Object.entries(exCounts)) {
+      if (count > maxReps) { maxReps = count; favId = id; }
+    }
+    let favDisplay = '—';
+    if (favId) {
+      const ex = EX_MAP[favId];
+      favDisplay = ex
+        ? `${ex.emoji} <span style="font-size:15px">${ex.name}</span>`
+        : favId.split('-').map(w => w[0].toUpperCase()+w.slice(1)).join(' ');
     }
 
-    let favExDisplay = "—";
-    if (favExId) {
-      const exData = EXERCISE_MAP[favExId];
-      if (exData) {
-        favExDisplay = `<span>${exData.emoji}</span> <span style="font-size: 15px;">${exData.name}</span>`;
-      } else {
-        // If not in map, just show formatted ID (e.g. 'diamond-push-up' -> 'Diamond Push Up')
-        favExDisplay = favExId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-      }
-    }
-
-    // Streak calculation
+    // Streak
     let streak = 0;
-    if (data.length > 0) {
-      streak = 1;
-      let prevDate = new Date(data[0].log_date + 'T00:00:00');
-      
-      // Check if the last log is either today or yesterday to consider streak active
-      const today = new Date();
-      today.setHours(0,0,0,0);
-      const diffFromToday = (today - prevDate) / (1000 * 60 * 60 * 24);
-      
-      if (diffFromToday <= 1) {
-        for (let i = 1; i < data.length; i++) {
-          const currDate = new Date(data[i].log_date + 'T00:00:00');
-          const diff = (prevDate - currDate) / (1000 * 60 * 60 * 24);
-          if (diff === 1) { streak++; prevDate = currDate; } 
-          else break;
+    if (logs.length > 0) {
+      const today = new Date(); today.setHours(0,0,0,0);
+      const firstDate = new Date(logs[0].log_date+'T00:00:00');
+      if (Math.round((today - firstDate) / 864e5) <= 1) {
+        streak = 1;
+        let prev = firstDate;
+        for (let i = 1; i < logs.length; i++) {
+          const cur = new Date(logs[i].log_date+'T00:00:00');
+          if (Math.round((prev - cur) / 864e5) === 1) { streak++; prev = cur; } else break;
         }
-      } else {
-        streak = 0; // Streak broken
       }
     }
 
-    // Update DOM
     document.getElementById('psTotalReps').textContent  = totalReps.toLocaleString();
-    document.getElementById('psDaysLogged').textContent = data.length.toLocaleString();
-    document.getElementById('psStreak').innerHTML       = `${streak} <span style="font-size: 20px;">🔥</span>`;
-    document.getElementById('psFavEx').innerHTML        = favExDisplay;
-    document.getElementById('psMastered').innerHTML     = `${uniqueExercises.size}<span style="font-size: 16px; color: var(--text-3);">/32</span>`;
+    document.getElementById('psDaysLogged').textContent = logs.length.toLocaleString();
+    document.getElementById('psStreak').innerHTML       = `${streak} <span style="font-size:20px">🔥</span>`;
+    document.getElementById('psFavEx').innerHTML        = favDisplay;
+    document.getElementById('psMastered').innerHTML     = `${uniqueEx.size}<span style="font-size:16px;color:var(--text-3)">/32</span>`;
   }
 
-  // Edit Profile Form
+  // ── Gamification (uses cached logs) ──────────────────────
+  const LEVELS = [
+    { name:'Newbie',       icon:'🌱', min:0,     color:'#9494b8', desc:'Just getting started. Log your first workout!' },
+    { name:'Rookie',       icon:'🥉', min:100,   color:'#cd7f32', desc:'Building the habit. Keep showing up daily.' },
+    { name:'Warrior',      icon:'⚔️', min:600,   color:'#c0c0c0', desc:'Solid foundation. Your discipline is paying off.' },
+    { name:'Fighter',      icon:'🥊', min:2000,  color:'#ffa726', desc:'Serious athlete. Most people quit before here.' },
+    { name:'Champion',     icon:'🏆', min:5000,  color:'#00e5ff', desc:'Elite level. You are in the top 5% of athletes.' },
+    { name:'Elite',        icon:'💀', min:10000, color:'#c6ff00', desc:'Legendary status. Unstoppable force of nature.' },
+    { name:'GOAT',         icon:'🐐', min:25000, color:'#ff6b9d', desc:'Greatest of all time. Absolute pinnacle.' },
+  ];
+
+  const BADGES_DEF = [
+    { id:'first',    name:'First Step',     icon:'👟', desc:'Logged first workout',         check:(l)=>l.length>=1 },
+    { id:'s3',       name:'3-Day Streak',   icon:'🔥', desc:'3 consecutive days',           check:(l)=>calcStreak(l)>=3 },
+    { id:'s7',       name:'Week Warrior',   icon:'📅', desc:'7-day streak',                 check:(l)=>calcStreak(l)>=7 },
+    { id:'s30',      name:'Iron Discipline',icon:'🪖', desc:'30-day streak',                check:(l)=>calcStreak(l)>=30 },
+    { id:'r1k',      name:'1K Club',        icon:'💯', desc:'1,000 total reps',             check:(l,t)=>t>=1000 },
+    { id:'r10k',     name:'10K Warrior',    icon:'⚡', desc:'10,000 total reps',            check:(l,t)=>t>=10000 },
+    { id:'r50k',     name:'50K Legend',     icon:'👑', desc:'50,000 total reps',            check:(l,t)=>t>=50000 },
+    { id:'push100',  name:'100 Pushes',     icon:'💪', desc:'100+ push reps in one day',   check:(l)=>l.some(e=>['push-up','diamond-push-up','incline-push-up','decline-push-up','pike-push-up','dips'].reduce((s,k)=>s+(e.exercises?.[k]||0),0)>=100) },
+    { id:'var5',     name:'Variety Pack',   icon:'🎯', desc:'5 exercises in one day',      check:(l)=>l.some(e=>Object.keys(e.exercises||{}).length>=5) },
+    { id:'uniq10',   name:'Move Master',    icon:'🧠', desc:'10+ unique exercises used',   check:(l)=>new Set(l.flatMap(e=>Object.keys(e.exercises||{}))).size>=10 },
+    { id:'w10',      name:'10 Workouts',    icon:'📊', desc:'10 total workouts',            check:(l)=>l.length>=10 },
+    { id:'w50',      name:'50 Workouts',    icon:'🏅', desc:'50 total workouts',            check:(l)=>l.length>=50 },
+    { id:'w100',     name:'Century Club',   icon:'🎖️', desc:'100 total workouts',          check:(l)=>l.length>=100 },
+  ];
+
+  function calcStreak(logs) {
+    if (!logs?.length) return 0;
+    const sorted = [...logs].sort((a,b)=>new Date(b.log_date)-new Date(a.log_date));
+    const today = new Date(); today.setHours(0,0,0,0);
+    const first = new Date(sorted[0].log_date+'T00:00:00');
+    if (Math.round((today-first)/864e5) > 1) return 0;
+    let streak=1, prev=first;
+    for (let i=1;i<sorted.length;i++) {
+      const cur=new Date(sorted[i].log_date+'T00:00:00');
+      if(Math.round((prev-cur)/864e5)===1){streak++;prev=cur;}else break;
+    }
+    return streak;
+  }
+
+  function renderGamification(logs) {
+    if (!logs.length) return;
+
+    const total       = logs.reduce((s,l)=>s+Object.values(l.exercises||{}).reduce((a,b)=>a+b,0), 0);
+    const streak      = calcStreak(logs);
+    const last30      = logs.filter(l=>new Date(l.log_date+'T00:00:00')>=new Date(Date.now()-30*864e5));
+    const consistency = Math.round((last30.length/30)*100);
+    const days        = new Set(logs.map(l=>l.log_date)).size;
+
+    document.getElementById('consistencyScore').textContent = consistency + '%';
+    document.getElementById('profileStreak').textContent   = streak;
+    document.getElementById('totalWorkouts').textContent   = days;
+
+    // Level
+    const level    = LEVELS.reduce((b,l)=>total>=l.min?l:b, LEVELS[0]);
+    const nextLvl  = LEVELS.find(l=>l.min>total) || LEVELS[LEVELS.length-1];
+    const pct      = level===nextLvl ? 100 : Math.min(Math.round(((total-level.min)/(nextLvl.min-level.min))*100),100);
+
+    document.getElementById('levelBadgeIcon').textContent = level.icon;
+    document.getElementById('levelBadgeName').textContent = level.name;
+    document.getElementById('levelBadgeName').style.color = level.color;
+    document.getElementById('levelBadgePts').textContent  = total.toLocaleString()+' total reps';
+    document.getElementById('levelBar').style.width       = pct+'%';
+    document.getElementById('levelBar').style.background  = `linear-gradient(90deg,${level.color},var(--cyan))`;
+    document.getElementById('levelCurrent').textContent   = level.name;
+    document.getElementById('levelNext').textContent      = level===nextLvl ? '🔝 MAX' : `Next: ${nextLvl.name} (${(nextLvl.min-total).toLocaleString()} to go)`;
+    document.getElementById('levelDesc').textContent      = level.desc;
+
+    // Badges
+    const bg = document.getElementById('badgesGrid');
+    if (bg) bg.innerHTML = BADGES_DEF.map(b => {
+      const u = b.check(logs, total);
+      return `<div style="background:var(--bg-${u?'3':'1'});border:1px solid ${u?'rgba(198,255,0,.2)':'var(--border-subtle)'};border-radius:var(--radius-lg);padding:14px;text-align:center;opacity:${u?'1':'.4'};transition:.2s">
+        <div style="font-size:32px;margin-bottom:6px">${b.icon}</div>
+        <div style="font-size:12px;font-weight:700;color:${u?'var(--text-1)':'var(--text-3)'};margin-bottom:3px">${b.name}</div>
+        <div style="font-size:10px;color:var(--text-4);line-height:1.4">${b.desc}</div>
+        ${u?'<div style="font-size:10px;color:var(--lime);margin-top:4px;font-weight:700">✓ Unlocked</div>':'<div style="font-size:10px;color:var(--text-4);margin-top:4px">🔒 Locked</div>'}
+      </div>`;
+    }).join('');
+
+    // Personal Records
+    const pr = document.getElementById('prList');
+    if (pr) {
+      const exIds = [...new Set(logs.flatMap(l=>Object.keys(l.exercises||{})))];
+      const prs = exIds.map(id => {
+        const best = Math.max(...logs.map(l=>l.exercises?.[id]||0));
+        const bestDate = logs.find(l=>l.exercises?.[id]===best)?.log_date;
+        return { id, best, date: bestDate };
+      }).filter(p=>p.best>0).sort((a,b)=>b.best-a.best).slice(0,8);
+
+      pr.innerHTML = prs.length ? prs.map(p =>
+        `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-1);border-radius:var(--radius-sm);margin-bottom:6px">
+          <div>
+            <div style="font-weight:700;font-size:14px;text-transform:capitalize">${p.id.replace(/-/g,' ')}</div>
+            <div style="font-size:11px;color:var(--text-3)">${p.date?new Date(p.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):''}</div>
+          </div>
+          <div style="font-family:var(--font-display);font-size:24px;font-weight:900;color:var(--lime)">${p.best.toLocaleString()}</div>
+        </div>`).join('')
+        : '<div style="color:var(--text-3);font-size:13px">Log workouts to see your personal records.</div>';
+    }
+  }
+
+  // ── Edit form ─────────────────────────────────────────────
   function fillEditForm() {
     const p = currentProfile;
-    document.getElementById('editName').value     = p.name||currentUser?.displayName||'';
-    document.getElementById('editUsername').value = p.username||'';
-    document.getElementById('editDOB').value      = p.date_of_birth||'';
-    document.getElementById('editEmail').value    = p.email||currentUser?.email||'';
-    document.getElementById('editBio').value      = p.bio||'';
+    document.getElementById('editName').value     = p.name || currentUser?.displayName || '';
+    document.getElementById('editUsername').value = p.username || '';
+    document.getElementById('editDOB').value      = p.date_of_birth || '';
+    document.getElementById('editEmail').value    = p.email || currentUser?.email || '';
+    document.getElementById('editBio').value      = p.bio || '';
     document.getElementById('bioCount').textContent = (p.bio||'').length;
   }
 
@@ -583,102 +752,109 @@
     const tick    = document.getElementById('editUsernameTick');
     tick.style.display = 'none';
     if (v === (currentProfile?.username||'')) {
-      checkEl.textContent='✓ Your current username'; checkEl.className='username-check same'; tick.style.display='block'; return;
+      checkEl.textContent='✓ Your current username';
+      checkEl.className='username-check same';
+      tick.style.display='block'; return;
     }
-    if (!v||v.length<3) { checkEl.className='username-check'; return; }
-    if (v.length>=3 && !/^[a-z0-9_]+$/.test(v)) { checkEl.textContent='✗ Letters, numbers, underscores only'; checkEl.className='username-check taken'; return; }
+    if (!v || v.length < 3) { checkEl.className='username-check'; return; }
+    if (!/^[a-z0-9_]+$/.test(v)) {
+      checkEl.textContent='✗ Letters, numbers, underscores only';
+      checkEl.className='username-check taken'; return;
+    }
     checkEl.textContent='Checking…'; checkEl.className='username-check checking';
     usernameTimer = setTimeout(async () => {
       const { data } = await sb.from('users').select('id').eq('username', v).maybeSingle();
-      checkEl.textContent = data?'✗ Username taken':'✓ Available!';
+      checkEl.textContent = data ? '✗ Username taken' : '✓ Available!';
       checkEl.className   = `username-check ${data?'taken':'available'}`;
-      tick.style.display  = data?'none':'block';
+      tick.style.display  = data ? 'none' : 'block';
     }, 600);
   });
 
   window.saveProfile = async function() {
-    const btn = document.getElementById('saveProfileBtn');
+    const btn     = document.getElementById('saveProfileBtn');
     const alertEl = document.getElementById('editAlert');
     alertEl.classList.remove('show');
-    const name=document.getElementById('editName').value.trim();
-    const username=document.getElementById('editUsername').value.trim().toLowerCase();
-    const dob=document.getElementById('editDOB').value;
-    const bio=document.getElementById('editBio').value.trim();
-    
+
+    const name     = document.getElementById('editName').value.trim();
+    const username = document.getElementById('editUsername').value.trim().toLowerCase();
+    const dob      = document.getElementById('editDOB').value;
+    const bio      = document.getElementById('editBio').value.trim();
+
     if (!name) { showAlert(alertEl,'Name cannot be empty.','error'); return; }
-    if (username&&username.length<3) { showAlert(alertEl,'Username must be at least 3 characters.','error'); return; }
-    if (username&&!/^[a-z0-9_]+$/.test(username)) { showAlert(alertEl,'Username: letters, numbers, underscores only.','error'); return; }
+    if (username && username.length < 3) { showAlert(alertEl,'Username must be at least 3 characters.','error'); return; }
+    if (username && !/^[a-z0-9_]+$/.test(username)) { showAlert(alertEl,'Username: letters, numbers, underscores only.','error'); return; }
     if (document.getElementById('editUsernameCheck').classList.contains('taken')) { showAlert(alertEl,'That username is already taken.','error'); return; }
-    
+
     btn.textContent='Saving…'; btn.disabled=true;
-    
-    const updates={name,bio,date_of_birth:dob||null,username_set:!!username,profile_picture:currentUser.photoURL||currentProfile.profile_picture||''};
-    if (username) updates.username=username;
-    
-    const {error} = await sb.from('users').update(updates).eq('firebase_uid',currentUser.uid);
+
+    const updates = {
+      name, bio, date_of_birth: dob||null, username_set: !!username,
+      profile_picture: currentUser.photoURL || currentProfile.profile_picture || ''
+    };
+    if (username) updates.username = username;
+
+    const { error } = await sb.from('users').update(updates).eq('firebase_uid', currentUser.uid);
     if (error) { showAlert(alertEl,'Error saving. Please try again.','error'); }
     else {
-      currentProfile={...currentProfile,...updates};
-      if (username) currentProfile.username=username;
+      currentProfile = { ...currentProfile, ...updates };
+      if (username) currentProfile.username = username;
       renderProfile(currentUser);
-      document.getElementById('incompleteBanner').style.display='none';
+      document.getElementById('incompleteBanner').style.display = 'none';
       switchTab('overview');
       showToast('Profile saved! ✅','success');
     }
     btn.textContent='💾 Save Changes'; btn.disabled=false;
   };
 
+  // ── Security / Provider detection ────────────────────────
   function detectProvider(user) {
     const providers = user.providerData.map(p => p.providerId);
     const hasGoogle = providers.includes('google.com');
     const hasEmail  = providers.includes('password');
 
-    // Google row
-    const gBtn    = document.getElementById('googleProviderBtn');
-    const gStatus = document.getElementById('googleProviderStatus');
-    if (gBtn && gStatus) {
+    const gBtn = document.getElementById('googleProviderBtn');
+    const gSt  = document.getElementById('googleProviderStatus');
+    if (gBtn && gSt) {
       if (hasGoogle) {
         const gEmail = user.providerData.find(p=>p.providerId==='google.com')?.email || user.email;
-        gStatus.textContent = '✓ Connected — ' + gEmail;
-        gStatus.style.color = 'var(--lime)';
-        gBtn.textContent    = 'Disconnect';
-        gBtn.className      = 'btn btn-sm btn-danger';
+        gSt.textContent = '✓ Connected — ' + gEmail;
+        gSt.style.color = 'var(--lime)';
+        gBtn.textContent = 'Disconnect';
+        gBtn.className   = 'btn btn-sm btn-danger';
       } else {
-        gStatus.textContent = 'Not connected';
-        gStatus.style.color = 'var(--text-3)';
-        gBtn.textContent    = 'Connect Google';
-        gBtn.className      = 'btn btn-sm btn-outline';
+        gSt.textContent = 'Not connected';
+        gSt.style.color = 'var(--text-3)';
+        gBtn.textContent = 'Connect Google';
+        gBtn.className   = 'btn btn-sm btn-outline';
       }
     }
 
-    // Email row
-    const eBtn    = document.getElementById('emailProviderBtn');
-    const eStatus = document.getElementById('emailProviderStatus');
-    if (eBtn && eStatus) {
+    const eBtn = document.getElementById('emailProviderBtn');
+    const eSt  = document.getElementById('emailProviderStatus');
+    if (eBtn && eSt) {
       if (hasEmail) {
-        eStatus.textContent = '✓ Password is set';
-        eStatus.style.color = 'var(--lime)';
-        eBtn.textContent    = 'Change Password';
-        eBtn.className      = 'btn btn-sm btn-ghost';
+        eSt.textContent = '✓ Password is set';
+        eSt.style.color = 'var(--lime)';
+        eBtn.textContent = 'Change Password';
+        eBtn.className   = 'btn btn-sm btn-ghost';
       } else {
-        eStatus.textContent = 'No password set';
-        eStatus.style.color = 'var(--text-3)';
-        eBtn.textContent    = 'Set Password';
-        eBtn.className      = 'btn btn-sm btn-outline';
+        eSt.textContent = 'No password set';
+        eSt.style.color = 'var(--text-3)';
+        eBtn.textContent = 'Set Password';
+        eBtn.className   = 'btn btn-sm btn-outline';
       }
     }
   }
 
-  // Google link / unlink
   window.toggleGoogleLink = async function() {
     const providers = currentUser.providerData.map(p => p.providerId);
     const hasGoogle = providers.includes('google.com');
-    const alertEl = document.getElementById('securityAlert');
+    const alertEl   = document.getElementById('securityAlert');
     alertEl.classList.remove('show');
 
     if (hasGoogle) {
       if (providers.length === 1) {
-        alertEl.textContent = 'Cannot disconnect Google — it\'s your only sign-in method. Set a password first.';
+        alertEl.textContent = "Cannot disconnect Google — it's your only sign-in method. Set a password first.";
         alertEl.className = 'alert alert-error show'; return;
       }
       try {
@@ -691,92 +867,80 @@
       }
     } else {
       try {
-        const gp = new GoogleAuthProvider();
-        await linkWithPopup(currentUser, gp);
+        await linkWithPopup(currentUser, new GoogleAuthProvider());
         detectProvider(currentUser);
-        showToast('Google account connected! ✅', 'success');
+        showToast('Google connected! ✅', 'success');
       } catch(err) {
-        if (err.code === 'auth/credential-already-in-use') {
-          alertEl.textContent = 'This Google account is already linked to another FitTrack account.';
-        } else {
-          alertEl.textContent = 'Failed to connect Google. Please try again.';
-        }
+        alertEl.textContent = err.code==='auth/credential-already-in-use'
+          ? 'This Google account is already linked to another FitTrack account.'
+          : 'Failed to connect Google. Please try again.';
         alertEl.className = 'alert alert-error show';
       }
     }
   };
 
-  // Toggle password form
   window.toggleEmailSection = function() {
-    const card = document.getElementById('passwordFormCard');
-    const providers = currentUser.providerData.map(p => p.providerId);
-    const hasEmail = providers.includes('password');
-    const isOpen = card.style.display !== 'none';
+    const card     = document.getElementById('passwordFormCard');
+    const hasEmail = currentUser.providerData.some(p=>p.providerId==='password');
+    if (card.style.display !== 'none') { card.style.display='none'; return; }
 
-    if (isOpen) { card.style.display = 'none'; return; }
-
-    document.getElementById('currentPwGroup').style.display = hasEmail ? 'block' : 'none';
-    document.getElementById('passwordFormTitle').textContent = hasEmail ? 'Change Password' : 'Set a Password';
-    document.getElementById('newPwLabel').textContent = hasEmail ? 'New Password' : 'Password';
-    document.getElementById('savePwBtn').textContent = hasEmail ? '💾 Update Password' : '💾 Set Password';
-
-    ['currentPw','newPw','confirmPw'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('currentPwGroup').style.display  = hasEmail ? 'block' : 'none';
+    document.getElementById('passwordFormTitle').textContent  = hasEmail ? 'Change Password' : 'Set a Password';
+    document.getElementById('newPwLabel').textContent         = hasEmail ? 'New Password' : 'Password';
+    document.getElementById('savePwBtn').textContent          = hasEmail ? '💾 Update Password' : '💾 Set Password';
+    ['currentPw','newPw','confirmPw'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     document.getElementById('pwStrengthBar').style.width='0%';
     document.getElementById('pwStrengthLabel').textContent='';
     document.getElementById('pwAlert').classList.remove('show');
-
-    card.style.display = 'block';
-    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    card.style.display='block';
+    card.scrollIntoView({behavior:'smooth',block:'nearest'});
   };
 
-  // Save password
   window.savePassword = async function() {
-    const providers = currentUser.providerData.map(p => p.providerId);
-    const hasEmail  = providers.includes('password');
-    const newPw   = document.getElementById('newPw').value;
-    const conPw   = document.getElementById('confirmPw').value;
-    const btn     = document.getElementById('savePwBtn');
-    const alertEl = document.getElementById('pwAlert');
+    const hasEmail = currentUser.providerData.some(p=>p.providerId==='password');
+    const newPw    = document.getElementById('newPw').value;
+    const conPw    = document.getElementById('confirmPw').value;
+    const btn      = document.getElementById('savePwBtn');
+    const alertEl  = document.getElementById('pwAlert');
     alertEl.classList.remove('show');
 
-    if (newPw.length < 6) { alertEl.textContent='Password must be at least 6 characters.'; alertEl.className='alert alert-error show'; return; }
-    if (newPw !== conPw)  { alertEl.textContent="Passwords don't match."; alertEl.className='alert alert-error show'; return; }
-
-    btn.textContent = 'Saving…'; btn.disabled = true;
+    if (newPw.length<6) { alertEl.textContent='Password must be at least 6 characters.'; alertEl.className='alert alert-error show'; return; }
+    if (newPw!==conPw)  { alertEl.textContent="Passwords don't match."; alertEl.className='alert alert-error show'; return; }
+    btn.textContent='Saving…'; btn.disabled=true;
 
     try {
       if (hasEmail) {
         const curPw = document.getElementById('currentPw').value;
-        if (!curPw) { alertEl.textContent='Enter your current password.'; alertEl.className='alert alert-error show'; btn.textContent='💾 Update Password'; btn.disabled=false; return; }
-        if (curPw === newPw) { alertEl.textContent='New password must be different.'; alertEl.className='alert alert-error show'; btn.textContent='💾 Update Password'; btn.disabled=false; return; }
-        const cred = EmailAuthProvider.credential(currentUser.email, curPw);
-        await reauthenticateWithCredential(currentUser, cred);
+        if (!curPw)       { alertEl.textContent='Enter your current password.'; alertEl.className='alert alert-error show'; btn.textContent='💾 Update Password'; btn.disabled=false; return; }
+        if (curPw===newPw){ alertEl.textContent='New password must be different.'; alertEl.className='alert alert-error show'; btn.textContent='💾 Update Password'; btn.disabled=false; return; }
+        await reauthenticateWithCredential(currentUser, EmailAuthProvider.credential(currentUser.email, curPw));
         await updatePassword(currentUser, newPw);
       } else {
-        const cred = EmailAuthProvider.credential(currentUser.email, newPw);
-        await linkWithCredential(currentUser, cred);
+        await linkWithCredential(currentUser, EmailAuthProvider.credential(currentUser.email, newPw));
       }
-      document.getElementById('passwordFormCard').style.display = 'none';
+      document.getElementById('passwordFormCard').style.display='none';
       detectProvider(currentUser);
       showToast(hasEmail ? 'Password updated! 🔒' : 'Password set! Now you can sign in with email too. ✅', 'success');
     } catch(err) {
       const msg = err.code==='auth/wrong-password'||err.code==='auth/invalid-credential' ? 'Current password is incorrect.'
         : err.code==='auth/too-many-requests' ? 'Too many attempts. Please wait.'
-        : err.code==='auth/email-already-in-use' ? 'This email is already linked to another account.'
+        : err.code==='auth/email-already-in-use' ? 'Email already linked to another account.'
         : 'Failed to save password. Please try again.';
-      alertEl.textContent = msg; alertEl.className = 'alert alert-error show';
+      alertEl.textContent=msg; alertEl.className='alert alert-error show';
     }
-    const hasEmailNow = currentUser.providerData.some(p=>p.providerId==='password');
-    btn.textContent = hasEmailNow ? '💾 Update Password' : '💾 Set Password';
-    btn.disabled = false;
+    const nowHas = currentUser.providerData.some(p=>p.providerId==='password');
+    btn.textContent = nowHas ? '💾 Update Password' : '💾 Set Password';
+    btn.disabled=false;
   };
 
   document.getElementById('newPw').addEventListener('input', function() {
     const v=this.value; let s=0;
     if(v.length>=6)s++; if(v.length>=10)s++; if(/[A-Z]/.test(v))s++; if(/[0-9]/.test(v))s++; if(/[^A-Za-z0-9]/.test(v))s++;
     const l=[{p:'0%',c:'transparent',t:''},{p:'25%',c:'#ff4d6d',t:'Weak'},{p:'50%',c:'#ffa726',t:'Fair'},{p:'75%',c:'#00e5ff',t:'Good'},{p:'100%',c:'#c6ff00',t:'Strong'}][Math.min(s,4)];
-    const bar=document.getElementById('pwStrengthBar'), lbl=document.getElementById('pwStrengthLabel');
-    bar.style.width=l.p; bar.style.background=l.c; lbl.textContent=l.t; lbl.style.color=l.c;
+    document.getElementById('pwStrengthBar').style.width=l.p;
+    document.getElementById('pwStrengthBar').style.background=l.c;
+    document.getElementById('pwStrengthLabel').textContent=l.t;
+    document.getElementById('pwStrengthLabel').style.color=l.c;
   });
 
   window.togglePwVis = function(id, btn) {
@@ -785,152 +949,33 @@
     btn.textContent=inp.type==='password'?'👁':'🙈';
   };
 
-  // ── GAMIFICATION ─────────────────────────────────────
-  const LEVELS = [
-    { name:'Newbie',       icon:'🌱', min:0,      max:100,   color:'#9494b8', desc:'Just getting started. Log your first workout!' },
-    { name:'Rookie',       icon:'🥉', min:100,    max:600,   color:'#cd7f32', desc:'Building the habit. Keep showing up daily.' },
-    { name:'Warrior',      icon:'⚔️', min:600,    max:2000,  color:'#c0c0c0', desc:'Solid foundation. Your discipline is paying off.' },
-    { name:'Fighter',      icon:'🥊', min:2000,   max:5000,  color:'#ffa726', desc:'Serious athlete. Most people quit before here.' },
-    { name:'Champion',     icon:'🏆', min:5000,   max:10000, color:'#00e5ff', desc:'Elite level. You are in the top 5% of athletes.' },
-    { name:'Elite Athlete',icon:'💀', min:10000,  max:25000, color:'#c6ff00', desc:'Legendary status. Unstoppable force of nature.' },
-    { name:'GOAT',         icon:'🐐', min:25000,  max:999999,color:'#ff6b9d', desc:'Greatest of all time. Absolute pinnacle of dedication.' },
-  ];
-
-  const BADGES_DEF = [
-    { id:'first-workout',  name:'First Step',        icon:'👟', desc:'Logged your first workout',    check: (logs) => logs.length >= 1 },
-    { id:'streak-3',       name:'3-Day Streak',       icon:'🔥', desc:'3 consecutive days trained',  check: (logs) => calcProfileStreak(logs) >= 3 },
-    { id:'streak-7',       name:'Week Warrior',       icon:'📅', desc:'7-day training streak',       check: (logs) => calcProfileStreak(logs) >= 7 },
-    { id:'streak-30',      name:'Iron Discipline',    icon:'🪖', desc:'30-day training streak',      check: (logs) => calcProfileStreak(logs) >= 30 },
-    { id:'total-1k',       name:'1K Club',            icon:'💯', desc:'1,000 total reps logged',     check: (logs, total) => total >= 1000 },
-    { id:'total-10k',      name:'10K Warrior',        icon:'⚡', desc:'10,000 total reps logged',    check: (logs, total) => total >= 10000 },
-    { id:'total-50k',      name:'50K Legend',         icon:'👑', desc:'50,000 total reps logged',    check: (logs, total) => total >= 50000 },
-    { id:'push-100-day',   name:'100 Pushes',         icon:'💪', desc:'100+ push reps in one day',   check: (logs) => logs.some(l => Object.entries(l.exercises||{}).filter(([k])=>['push-up','diamond-push-up','incline-push-up','decline-push-up','pike-push-up','dips'].includes(k)).reduce((s,[,v])=>s+v,0) >= 100) },
-    { id:'exercises-5',    name:'Variety Pack',       icon:'🎯', desc:'Logged 5 different exercises in one day', check: (logs) => logs.some(l => Object.keys(l.exercises||{}).length >= 5) },
-    { id:'exercises-10',   name:'Movement Master',    icon:'🧠', desc:'Used 10+ unique exercises',   check: (logs) => new Set(logs.flatMap(l => Object.keys(l.exercises||{}))).size >= 10 },
-    { id:'workouts-10',    name:'10 Workouts',         icon:'📊', desc:'Completed 10 workouts',       check: (logs) => logs.length >= 10 },
-    { id:'workouts-50',    name:'50 Workouts',         icon:'🏅', desc:'Completed 50 workouts',       check: (logs) => logs.length >= 50 },
-    { id:'workouts-100',   name:'Century Club',       icon:'🎖️', desc:'100 total workouts logged',   check: (logs) => logs.length >= 100 },
-  ];
-
-  function calcProfileStreak(logs) {
-    if (!logs?.length) return 0;
-    const sorted = [...logs].sort((a,b)=>new Date(b.log_date)-new Date(a.log_date));
-    const today = new Date(); today.setHours(0,0,0,0);
-    const first = new Date(sorted[0].log_date+'T00:00:00');
-    if (Math.round((today-first)/864e5) > 1) return 0;
-    let streak=1, prev=first;
-    for(let i=1;i<sorted.length;i++){
-      const cur=new Date(sorted[i].log_date+'T00:00:00');
-      if(Math.round((prev-cur)/864e5)===1){streak++;prev=cur;}else break;
-    }
-    return streak;
-  }
-
-  function getTotalReps(logs) {
-    return logs.reduce((s,l)=>s+Object.values(l.exercises||{}).reduce((a,b)=>a+b,0),0);
-  }
-
-  async function loadGamification(user) {
-    const { data: logs } = await sb.from('workout_logs').select('*').eq('firebase_uid', user.uid).order('log_date', { ascending: false });
-    if (!logs || !logs.length) return;
-
-    const total = getTotalReps(logs);
-    const streak = calcProfileStreak(logs);
-    const last30Days = logs.filter(l => new Date(l.log_date+'T00:00:00') >= new Date(Date.now()-30*864e5));
-    const consistency = Math.round((last30Days.length / 30) * 100);
-    const uniqueDates = new Set(logs.map(l=>l.log_date)).size;
-
-    // Update quick stats
-    document.getElementById('consistencyScore').textContent = consistency + '%';
-    document.getElementById('profileStreak').textContent    = streak;
-    document.getElementById('totalWorkouts').textContent    = uniqueDates;
-
-    // Level
-    const level = LEVELS.reduce((best, l) => total >= l.min ? l : best, LEVELS[0]);
-    const nextLevel = LEVELS.find(l => l.min > total) || LEVELS[LEVELS.length-1];
-    const pct = level === nextLevel ? 100 : Math.min(Math.round(((total - level.min) / (nextLevel.min - level.min)) * 100), 100);
-
-    document.getElementById('levelBadgeIcon').textContent  = level.icon;
-    document.getElementById('levelBadgeName').textContent  = level.name;
-    document.getElementById('levelBadgeName').style.color  = level.color;
-    document.getElementById('levelBadgePts').textContent   = total.toLocaleString() + ' total reps';
-    document.getElementById('levelBar').style.width        = pct + '%';
-    document.getElementById('levelBar').style.background   = `linear-gradient(90deg, ${level.color}, var(--cyan))`;
-    document.getElementById('levelCurrent').textContent    = level.name;
-    document.getElementById('levelNext').textContent       = level === nextLevel ? '🔝 MAX' : `Next: ${nextLevel.name} (${(nextLevel.min-total).toLocaleString()} to go)`;
-    document.getElementById('levelDesc').textContent       = level.desc;
-
-    // Badges
-    const badgesEl = document.getElementById('badgesGrid');
-    if (badgesEl) {
-      badgesEl.innerHTML = BADGES_DEF.map(b => {
-        const unlocked = b.check(logs, total);
-        return `<div style="background:var(--bg-${unlocked?'3':'1'});border:1px solid ${unlocked?'rgba(198,255,0,0.2)':'var(--border-subtle)'};border-radius:var(--radius-lg);padding:14px;text-align:center;opacity:${unlocked?'1':'0.4'};transition:.2s">
-          <div style="font-size:32px;margin-bottom:6px">${b.icon}</div>
-          <div style="font-size:12px;font-weight:700;color:${unlocked?'var(--text-1)':'var(--text-3)'};margin-bottom:3px">${b.name}</div>
-          <div style="font-size:10px;color:var(--text-4);line-height:1.4">${b.desc}</div>
-          ${unlocked?'<div style="font-size:10px;color:var(--lime);margin-top:4px;font-weight:700">✓ Unlocked</div>':'<div style="font-size:10px;color:var(--text-4);margin-top:4px">🔒 Locked</div>'}
-        </div>`;
-      }).join('');
-    }
-
-    // Personal Records
-    const prEl = document.getElementById('prList');
-    if (prEl && logs.length) {
-      const exIds = [...new Set(logs.flatMap(l => Object.keys(l.exercises||{})))];
-      const prs = exIds.map(id => {
-        const best = Math.max(...logs.map(l => l.exercises?.[id]||0));
-        const bestDate = logs.find(l => l.exercises?.[id] === best)?.log_date;
-        return { id, best, date: bestDate };
-      }).filter(p => p.best > 0).sort((a,b)=>b.best-a.best).slice(0,8);
-
-      prEl.innerHTML = prs.length ? prs.map(p => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-1);border-radius:var(--radius-sm);margin-bottom:6px">
-          <div>
-            <div style="font-weight:700;font-size:14px;text-transform:capitalize">${p.id.replace(/-/g,' ')}</div>
-            <div style="font-size:11px;color:var(--text-3)">${p.date ? new Date(p.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''}</div>
-          </div>
-          <div style="font-family:var(--font-display);font-size:24px;font-weight:900;color:var(--lime)">${p.best.toLocaleString()}</div>
-        </div>`).join('') : '<div style="color:var(--text-3);font-size:13px">Log workouts to see your personal records.</div>';
-    }
-  }
-
-  // ── REPORTS TAB ────────────────────────────────────────
+  // ── Reports (uses cached logs passed in) ──────────────────
   let selectedPeriodDays = 7;
-  let allLogsCache = [];
+  let reportsLogs        = [];
+
+  function setupReports(user, logs) {
+    reportsLogs = logs;
+    document.getElementById('reportEmailNote').textContent =
+      'Report will be sent to: ' + (user.email || '');
+    updateReportPreview();
+    loadReportHistory();
+  }
 
   window.selectPeriod = function(btn, days) {
-    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     selectedPeriodDays = days;
     updateReportPreview();
   };
 
-  function getPeriodLabel(days) {
-    return { 7:'1 Week', 14:'2 Weeks', 21:'3 Weeks', 30:'1 Month' }[days] || days + ' Days';
-  }
-
-  async function loadReportData(user) {
-    const { data } = await sb.from('workout_logs').select('*').eq('firebase_uid', user.uid).order('log_date', { ascending: false });
-    allLogsCache = data || [];
-    document.getElementById('reportEmailNote').textContent = 'Report will be sent to: ' + (user.email || '');
-    updateReportPreview();
-    loadReportHistory();
-  }
-
   function updateReportPreview() {
-    const cutoff = new Date(Date.now() - selectedPeriodDays * 864e5);
-    const periodLogs = allLogsCache.filter(l => new Date(l.log_date + 'T00:00:00') >= cutoff);
-    const preview = document.getElementById('reportPreview');
-    const warn    = document.getElementById('noDataWarning');
+    const cutoff     = new Date(Date.now() - selectedPeriodDays * 864e5);
+    const periodLogs = reportsLogs.filter(l=>new Date(l.log_date+'T00:00:00')>=cutoff);
+    const preview    = document.getElementById('reportPreview');
+    const warn       = document.getElementById('noDataWarning');
 
-    if (!periodLogs.length) {
-      preview.style.display = 'none';
-      warn.style.display = 'block';
-      return;
-    }
-    warn.style.display = 'none';
-    preview.style.display = 'block';
+    if (!periodLogs.length) { preview.style.display='none'; warn.style.display='block'; return; }
+    warn.style.display='none'; preview.style.display='block';
 
     const total = periodLogs.reduce((s,l)=>s+Object.values(l.exercises||{}).reduce((a,b)=>a+b,0),0);
     const exSet = new Set(periodLogs.flatMap(l=>Object.keys(l.exercises||{})));
@@ -940,61 +985,50 @@
   }
 
   window.sendAnalysisReport = async function() {
-    const btn = document.getElementById('sendReportBtn');
+    const btn     = document.getElementById('sendReportBtn');
     const alertEl = document.getElementById('reportAlert');
     alertEl.classList.remove('show');
 
-    if (!currentUser?.email) { alertEl.textContent = 'No email on your account.'; alertEl.className = 'alert alert-error show'; return; }
+    if (!currentUser?.email) { alertEl.textContent='No email on your account.'; alertEl.className='alert alert-error show'; return; }
+    const cutoff     = new Date(Date.now() - selectedPeriodDays * 864e5);
+    const periodLogs = reportsLogs.filter(l=>new Date(l.log_date+'T00:00:00')>=cutoff);
+    if (!periodLogs.length) { alertEl.textContent='No workouts in this period.'; alertEl.className='alert alert-error show'; return; }
 
-    const cutoff = new Date(Date.now() - selectedPeriodDays * 864e5);
-    const periodLogs = allLogsCache.filter(l => new Date(l.log_date + 'T00:00:00') >= cutoff);
-
-    if (!periodLogs.length) { alertEl.textContent = 'No workouts in this period.'; alertEl.className = 'alert alert-error show'; return; }
-
-    btn.textContent = '⏳ Sending…'; btn.disabled = true;
-
+    btn.textContent='⏳ Sending…'; btn.disabled=true;
     try {
-      const response = await fetch('/api/send-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch('/api/send-report', {
+        method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
           email: currentUser.email,
           name: currentProfile?.name || currentUser.displayName || 'Athlete',
           period: selectedPeriodDays,
-          periodLabel: getPeriodLabel(selectedPeriodDays),
+          periodLabel: { 7:'1 Week',14:'2 Weeks',21:'3 Weeks',30:'1 Month' }[selectedPeriodDays] || selectedPeriodDays+' Days',
           logs: periodLogs,
         }),
       });
-
-      const result = await response.json();
-
-      if (!response.ok) throw new Error(result.error || 'Server error');
-
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Server error');
       alertEl.textContent = `✅ Report sent to ${currentUser.email}! Check your inbox.`;
       alertEl.className = 'alert alert-success show';
-
-      // Save to history
-      const history = JSON.parse(localStorage.getItem('ft-report-history') || '[]');
-      history.unshift({ period: getPeriodLabel(selectedPeriodDays), date: new Date().toISOString(), email: currentUser.email });
-      localStorage.setItem('ft-report-history', JSON.stringify(history.slice(0, 10)));
+      const hist = JSON.parse(localStorage.getItem('ft-report-history')||'[]');
+      hist.unshift({ period:{ 7:'1 Week',14:'2 Weeks',21:'3 Weeks',30:'1 Month' }[selectedPeriodDays], date:new Date().toISOString(), email:currentUser.email });
+      localStorage.setItem('ft-report-history', JSON.stringify(hist.slice(0,10)));
       loadReportHistory();
-      showToast('Report sent to your email! 📧', 'success');
-
+      showToast('Report sent! 📧','success');
     } catch(err) {
-      alertEl.textContent = '❌ Failed to send: ' + err.message;
-      alertEl.className = 'alert alert-error show';
+      alertEl.textContent='❌ Failed to send: '+err.message;
+      alertEl.className='alert alert-error show';
     }
-
-    btn.textContent = '📧 Send Report to My Email'; btn.disabled = false;
+    btn.textContent='📧 Send Report to My Email'; btn.disabled=false;
   };
 
   function loadReportHistory() {
-    const history = JSON.parse(localStorage.getItem('ft-report-history') || '[]');
+    const hist = JSON.parse(localStorage.getItem('ft-report-history')||'[]');
     const card = document.getElementById('reportHistoryCard');
     const list = document.getElementById('reportHistoryList');
-    if (!history.length) { card.style.display = 'none'; return; }
-    card.style.display = 'block';
-    list.innerHTML = history.map(h => `
+    if (!hist.length) { card.style.display='none'; return; }
+    card.style.display='block';
+    list.innerHTML = hist.map(h=>`
       <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-subtle)">
         <div>
           <div style="font-size:14px;font-weight:600">${h.period} Report</div>
@@ -1004,33 +1038,39 @@
       </div>`).join('');
   }
 
-  // ── Language Switcher ─────────────────────────────────
+  // ── Language switcher ─────────────────────────────────────
+  function initLangButton() {
+    const saved = localStorage.getItem('ft-lang') || 'en';
+    const btn   = document.getElementById(saved==='bn' ? 'langBtnBn' : 'langBtnEn');
+    if (btn) btn.classList.add('active');
+  }
+
   window.changeLang = async function(lang) {
     try {
       const { setLang } = await import('../shared/i18n.js');
       await setLang(lang);
-    } catch(e) {
-      // Fallback if i18n module not loaded
+    } catch {
       localStorage.setItem('ft-lang', lang);
-      location.reload();
     }
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    const btn = document.getElementById(lang === 'en' ? 'langBtnEn' : 'langBtnBn');
+    localStorage.setItem('ft-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+    const btn = document.getElementById(lang==='bn' ? 'langBtnBn' : 'langBtnEn');
     if (btn) btn.classList.add('active');
     const msg = document.getElementById('langSavedMsg');
-    if (msg) { msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 2000); }
-    showToast(lang === 'bn' ? 'ভাষা পরিবর্তন হয়েছে! 🌐' : 'Language updated! 🌐', 'success');
+    if (msg) { msg.style.display='block'; setTimeout(()=>msg.style.display='none', 2000); }
+    showToast(lang==='bn' ? 'ভাষা পরিবর্তন হয়েছে! 🌐' : 'Language updated! 🌐', 'success');
   };
 
-  // Set active lang button on load
-  (function() {
-    const saved = localStorage.getItem('ft-lang') || 'en';
-    const btn = document.getElementById(saved === 'bn' ? 'langBtnBn' : 'langBtnEn');
-    if (btn) btn.classList.add('active');
-  })();
-
-  function showAlert(el,msg,type){el.textContent=msg;el.className=`alert alert-${type} show`;}
-  function showToast(msg,type='success'){const t=document.getElementById('appToast');t.textContent=msg;t.className=`toast ${type} visible`;setTimeout(()=>t.classList.remove('visible'),3000);}
+  // ── Helpers ───────────────────────────────────────────────
+  function showAlert(el, msg, type) {
+    el.textContent = msg;
+    el.className   = `alert alert-${type} show`;
+  }
+  function showToast(msg, type='success') {
+    const t = document.getElementById('appToast');
+    t.textContent = msg; t.className = `toast ${type} visible`;
+    setTimeout(()=>t.classList.remove('visible'), 3000);
+  }
 </script>
 <script type="module" src="../shared/navbar.js"></script>
 </body>
